@@ -45,13 +45,29 @@ typedef struct
 
 typedef struct
 {
-
-
+	int score;
+	int milk; // used as resource/currency
+	int current_level;
+	int available_towers;
+	int level_time;
 
 
 } HUD;
 
+typedef struct
+{
+	int game_state; // e.g. 0 = title screen, 1 = some menu, 2 = in game
+	int enemy_count;
+	int phaseFlag; //subject to removal
 
+} Management;
+
+typedef struct
+{
+	int pos;		// where it is in the grid
+	int state;		// on or off
+
+} Cursor;
 
 
 #endif

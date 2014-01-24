@@ -1,6 +1,7 @@
 #ifndef _GAME_STRUCTS_H_
 #define _GAME_STRUCTS_H_
 
+/* Tower/Babies Struct*/
 typedef struct
 {
 	int health;
@@ -11,10 +12,12 @@ typedef struct
 	//left x-coordinate = pos[2], left y-coordinate = pos[3]
 	int body_pos[4];  
 	// vga info like the boxes that make up the image and colour
+	int colour;
 
 
 }Tower;
 
+/*Enemy/Sharks struct*/
 typedef struct 
 {
 	int type;
@@ -31,6 +34,7 @@ typedef struct
 
 }Enemy;
 
+/*Bullet struct*/
 typedef struct 
 {
 	int damage;
@@ -43,6 +47,7 @@ typedef struct
 	// vga info like colour
 }Bullet;
 
+/*Game HUD struct*/
 typedef struct
 {
 	int score;
@@ -54,6 +59,7 @@ typedef struct
 
 } HUD;
 
+/*Management struct*/
 typedef struct
 {
 	int game_state; // e.g. 0 = title screen, 1 = some menu, 2 = in game
@@ -62,9 +68,10 @@ typedef struct
 
 } Management;
 
+/*Cursor struct*/
 typedef struct
 {
-	int pos;		// where it is in the grid
+	int pos[4];		// where it is in the grid
 	int state;		// on or off
 
 } Cursor;

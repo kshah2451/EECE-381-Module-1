@@ -31,6 +31,7 @@ typedef struct
 	int body_pos[4];
 	int ID;
 	// vga info like the boxes that make up the image and colour
+	int colour;
 
 }Enemy;
 
@@ -45,6 +46,7 @@ typedef struct
 	int pos[4];
 	int speed;
 	// vga info like colour
+	int colour;
 }Bullet;
 
 /*Game HUD struct*/
@@ -73,6 +75,7 @@ typedef struct
 {
 	int pos[4];		// where it is in the grid
 	int state;		// on or off
+	int colour;
 
 } Cursor;
 

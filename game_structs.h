@@ -78,6 +78,7 @@ typedef struct
 	int colour;
 
 } Cursor;
+Cursor cur;
 
 
 #endif

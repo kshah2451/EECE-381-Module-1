@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include "altera_up_avalon_video_pixel_buffer_dma.h"
 #include "altera_up_avalon_video_character_buffer_with_dma.h"
+
+#include "title_screen.h"
+#include "graphics.h"
+#include "game_structs.h"
+
+
 /*Title Screen code*/
 void title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer, int start, alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii)
 

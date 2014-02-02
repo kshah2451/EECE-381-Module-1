@@ -76,12 +76,14 @@ void title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_
 
 	// Write some text
 	alt_up_char_buffer_string(char_buffer, "Sharks VS Babies", 32, 32);
-	alt_up_char_buffer_string(char_buffer, "Press 'A' to start", 30, 40);
+	alt_up_char_buffer_string(char_buffer, "Press ENTER to start", 30, 40);
 	/*alt_up_char_buffer_string(char_buffer, "Load Game", 35, 38);
 	alt_up_char_buffer_string(char_buffer, "Options", 36, 40);
 	alt_up_char_buffer_string(char_buffer, "Help", 38, 42);*/
 
-	while(data != 0x1c){ //wait for user to press start
+	while(data != 0x5a){ //wait for user to press start
+
+		alt_up_char_buffer_string(char_buffer, "Press ENTER to start", 30, 40);
 
 		//Default Shark image
 		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 160, 80, 176, 84, 0x0099, 0);
@@ -90,6 +92,8 @@ void title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_
 
 		//Shark opens mouth
 		for(j = 0; j < 500000; j++);
+		alt_up_char_buffer_string(char_buffer, "                      ", 30, 40);
+
 		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 160, 84, 172, 100, 0xCEFD, 0);
 		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 160, 90, 168, 96, 0x0099, 0);
 		for(k = 0; k < 550000; k++);

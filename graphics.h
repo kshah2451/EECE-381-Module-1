@@ -21,14 +21,14 @@
 #define BG_LOWER_Y 125
 
 //void initialize_baby(Tower*, int, int, int, int , int);
-void set_baby_positions(Tower*);
+void set_baby_positions(Tower* baby[]);
 //void set_baby_positions(Tower baby[]);
-void set_baby_attributes(Tower*, int grid, int*);
+void set_baby_attributes(Tower* baby[], int grid, int*);
 
 //void initialize_sharks(int, int , int, int, int , int , int );
 void set_cursor(int, int);
 //void draw_baby(int*, int*, int , alt_up_pixel_buffer_dma_dev*);
-void draw_baby(Tower* , int, alt_up_pixel_buffer_dma_dev*);
+void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev*);
 //void draw_baby(Tower baby[] , int, alt_up_pixel_buffer_dma_dev*);
 
 //void draw_shark(int ,int , alt_up_pixel_buffer_dma_dev* );

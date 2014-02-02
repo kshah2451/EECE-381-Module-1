@@ -156,11 +156,27 @@
          type = "int";
       }
    }
+   element sdram_0.s1
+   {
+      datum baseAddress
+      {
+         value = "16777216";
+         type = "long";
+      }
+   }
    element timer_2.s1
    {
       datum baseAddress
       {
          value = "16448";
+         type = "long";
+      }
+   }
+   element timer_1.s1
+   {
+      datum baseAddress
+      {
+         value = "16416";
          type = "long";
       }
    }
@@ -172,28 +188,12 @@
          type = "long";
       }
    }
-   element sdram_0.s1
-   {
-      datum baseAddress
-      {
-         value = "16777216";
-         type = "long";
-      }
-   }
    element onchip_memory2_0.s1
    {
       datum _lockedAddress
       {
          value = "1";
          type = "boolean";
-      }
-   }
-   element timer_1.s1
-   {
-      datum baseAddress
-      {
-         value = "16416";
-         type = "long";
       }
    }
    element scaler
@@ -269,10 +269,10 @@
  <parameter name="globalResetBus" value="false" />
  <parameter name="hdlLanguage" value="VERILOG" />
  <parameter name="maxAdditionalLatency" value="1" />
- <parameter name="projectName" value="sharksvsbabies.qpf" />
+ <parameter name="projectName" value="game.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1391129758127" />
+ <parameter name="timeStamp" value="1391304265976" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface
@@ -585,8 +585,8 @@
   <parameter name="alwaysRun" value="false" />
   <parameter name="counterSize" value="32" />
   <parameter name="fixedPeriod" value="false" />
-  <parameter name="period" value="2" />
-  <parameter name="periodUnits" value="MSEC" />
+  <parameter name="period" value="1" />
+  <parameter name="periodUnits" value="SEC" />
   <parameter name="resetOutput" value="false" />
   <parameter name="snapshot" value="true" />
   <parameter name="systemFrequency" value="50000000" />

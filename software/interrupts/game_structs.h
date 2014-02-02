@@ -27,17 +27,7 @@
 typedef struct Tower
 {
 	int health;
-
-	//Type of bullet this tower makes
-	int bulletType;
-
-	//Countdown to attack
-	int toAttack;
-
-	//Value to reset attack countdown
-	int baseAttack;
-
-
+	int fire_rate;
 	// Position of Tower's body (assuming tower is just a rectangle)
 	//right x-coordinate = position[0], right y-coordinate = pos[1],
 	//left x-coordinate = pos[2], left y-coordinate = pos[3]
@@ -98,20 +88,13 @@ typedef struct Bullet
 {
         int damage;
         int type;
-
-
+        // Position of a single bullet
+        //right x-coordinate = position[0], right y-coordinate = pos[1],
+        //left x-coordinate = pos[2], left y-coordinate = pos[3]
+        int pos[4];
         int speed;
         // vga info like colour
         int colour;
-
-        // Position of top left of bullet 0 is x, 1 is y
-        int body_pos[2];
-
-        // Countdown until enemy moves
-        int toMove;
-
-        //Value to reset move countdown
-        int baseMove;
 
         //pointer to next and previous bullet
         struct Bullet* next;
@@ -135,7 +118,7 @@ typedef struct HUD
 typedef struct gameData {
 
 	//list of towers
-	struct Tower* towers[NUMTOW];
+	struct Tower towers[NUMTOW];
 
 	//pointer to first enemy in the row
 	struct Enemy* eneHead[NUMROW];

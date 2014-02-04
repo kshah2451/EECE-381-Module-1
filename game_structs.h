@@ -50,6 +50,8 @@ typedef struct Tower
 	//0 for no, 1 for yes
 	int isAlive;
 
+	int lane;
+
 	//pointer to the earliest created of this towers bullets
 	struct Bullet* bulHead;
 

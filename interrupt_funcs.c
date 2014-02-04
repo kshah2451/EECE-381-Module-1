@@ -1,8 +1,12 @@
 #include "interrupt_funcs.h"
 #include "graphics.h"
+#include "background_graphics.h"
 #include "altera_up_avalon_video_pixel_buffer_dma.h"
 
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
+extern int gameOverFlag;
+
+
 //Interrupt function
 void timerroutine(void* context, alt_u32 id){
 	printf("THIS SHIT IS WORKING BEFORE DATAPTR\n");
@@ -14,7 +18,8 @@ void timerroutine(void* context, alt_u32 id){
 
 	//Advance/create enemies
 	goEnemies(data);
-
+	draw_grids(pixel_buffer);
+	draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
 
 
 
@@ -27,7 +32,8 @@ void timerroutine(void* context, alt_u32 id){
 
 		//then advance/create its bullets
 		goBullets(data->towers[i], data);
-
+		draw_grids(pixel_buffer);
+		draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
 
 
 		}
@@ -63,6 +69,7 @@ void goEnemies(dataPtr data){
 		if(data->eneHead[i] == NULL){
 			if(isNewEnemy()){
 				printf("enegetEX\n");
+				printf("%iFIRSTENE", i);
 				data->eneHead[i] = createEnemy(NULL, i);
 				printf("eneMAKE\n");
 				moveEnemy(data->eneHead[i]);
@@ -100,6 +107,7 @@ void goEnemies(dataPtr data){
 			if(ene->next == NULL){
 				if(isNewEnemy()){
 					ene = createEnemy(ene, i);
+					printf("%iSECONDENE", i);
 					moveEnemy(ene);
 				}
 			}
@@ -123,7 +131,7 @@ int isNewEnemy(void){
 	//
 	//
 
-	int q = rand() % 10;
+	int q = rand() % 100;
 
 	if(q == 1)return 1;
 	else return 0;
@@ -144,9 +152,9 @@ enePtr createEnemy(enePtr prevEne, int row){
 
     switch(randType){
 
-        case 1:
+        case 0:
         	ene -> damage = 1;
-        	ene -> health = 1;
+        	ene -> health = 200;
         	ene -> speed = 5;
         	ene -> toAttack = 1;
         	ene -> baseAttack = 1;
@@ -156,10 +164,10 @@ enePtr createEnemy(enePtr prevEne, int row){
         	ene -> colour = 0x7bef;
         break;
 
-        case 2:
+        case 1:
         	ene -> damage = 1;
-        	ene -> health = 1;
-        	ene -> speed = 8;
+        	ene -> health = 300;
+        	ene -> speed = 6;
         	ene -> toAttack = 1;
         	ene -> baseAttack = 1;
         	ene -> toMove = 3;
@@ -173,12 +181,12 @@ enePtr createEnemy(enePtr prevEne, int row){
     //row determines their y-pos
     switch(row){
 
-    	case 1:
+    	case 0:
     		ene -> body_pos[0] = 320;
     		ene -> body_pos[1] = 45;
         break;
 
-        case 2:
+        case 1:
         	ene -> body_pos[0] = 320;
         	ene -> body_pos[1] = 85;
         break;
@@ -240,6 +248,20 @@ void moveEnemy(enePtr ene){
 
 		if(ene->toMove <= 0){
 
+			if((ene->body_pos[0] - 24) <= 16){
+
+
+				//
+				//
+				//GAME OVER GOES HERE
+				gameOverFlag = 1;
+				//
+				//
+				ene-> moveBlocked = 1;
+
+				return;
+			}
+			ene->toMove = ene->baseMove;
 
 			draw_background_sharkfin(pixel_buffer, ene->body_pos[0], ene->body_pos[1]);
 
@@ -248,21 +270,6 @@ void moveEnemy(enePtr ene){
 
 
 
-
-
-			if((ene->body_pos[0] - 24) <= 16){
-
-
-				//
-				//
-				//GAME OVER GOES HERE
-				//
-				//
-
-
-				return;
-			}
-			ene->toMove = ene->baseMove;
 		}
 		else ene->toMove--;
 	}
@@ -335,7 +342,7 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 
 		case 1:
 			bul -> damage = 1;
-			bul -> speed = 1;
+			bul -> speed = 5;
 			bul -> toMove = 1;
 			bul -> baseMove = 1;
 			bul -> colour = 0xFFFF;
@@ -343,7 +350,7 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 
 	    case 2:
 			bul -> damage = 1;
-			bul -> speed = 1;
+			bul -> speed = 8;
 			bul -> toMove = 1;
 			bul -> baseMove = 1;
 			bul -> colour = 0x0F00;
@@ -360,8 +367,12 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 }
 
 
-void moveBullet(bulPtr bul){printf("bullet MOVEMENT\n");
+void moveBullet(bulPtr bul){
 	if(bul->toMove <= 0){
+
+		draw_background_bullet(pixel_buffer, bul->body_pos[0], bul->body_pos[1]);
+
+
 		bul->body_pos[0] += bul->speed;
 		bul->toMove = bul->baseMove;
 
@@ -370,7 +381,7 @@ void moveBullet(bulPtr bul){printf("bullet MOVEMENT\n");
 		//DRAW IT HERE
 		//
 
-		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, bul->body_pos[0], bul->body_pos[1], bul->body_pos[0]+2, bul->body_pos[1]+2, bul->colour, 0);
+		draw_bullet(pixel_buffer, bul->body_pos[0], bul->body_pos[1], bul -> colour);
 
 
 		//
@@ -382,6 +393,7 @@ void moveBullet(bulPtr bul){printf("bullet MOVEMENT\n");
 
 void killBullet(bulPtr bul, towPtr ownerTow){
 	//DRAW OVER THE BULLET WITH BACKGROUND
+	draw_background_bullet(pixel_buffer, bul->body_pos[0], bul->body_pos[1]);
 
 	if(bul->prev != NULL){
 		(bul->prev)->next = bul->next;
@@ -424,8 +436,8 @@ void killEnemy(enePtr ene, dataPtr data, int i){
 //Function to detect collision, will call the kill functions
 void detectCollision(dataPtr data, towPtr tow, bulPtr bul){
 
-
-	int i = 0;
+/*
+	int i;
 
 	if(tow->body_pos[1] >= 45 && tow->body_pos[1] <= 84){
 		i = 0;
@@ -439,17 +451,26 @@ void detectCollision(dataPtr data, towPtr tow, bulPtr bul){
 	else if(tow->body_pos[1] >= 165 && tow->body_pos[1] <= 204){
 		i = 3;
 	}
+*/
+
+	enePtr ene = data->eneHead[(tow->lane)];
 
 
+	while(ene != NULL){
+		if((ene->body_pos[0] - 24) <= (bul->body_pos[0]) ){
 
-	if((data->eneHead[i]->body_pos[0] - 24) <= (bul->body_pos[0]) ){
-
-		data->eneHead[i]->health -= bul->damage;
+		ene->health -= bul->damage;
 		killBullet(bul,tow);
-		if(data->eneHead[i]->health <= 0) killEnemy(data->eneHead[i], data, i);
+
+		if(ene->health <= 0) killEnemy(ene, data, (tow->lane));
+		return;
+
+		}
+		ene = ene->next;
 
 
 	}
+
 
 }
 

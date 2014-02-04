@@ -7,11 +7,12 @@
 #include "game_structs.h"
 #include "tower_select.h"
 #include "background_graphics.h"
-
+#include "heads_up_display.h"
+extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 
 
 void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii, int temp_baby[]){
-
+	int tower;
 
 		if(data == 0x16){  //if user presses 1 : Dairy Cow (Resource Generator)
 
@@ -19,7 +20,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 			temp_baby[1] = 50;
 			temp_baby[2] = 0;
 			temp_baby[3] = 1;
-
+			tower = 0;
 
 
 		}
@@ -30,7 +31,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 			temp_baby[1] = 100; //health
 			temp_baby[2] = 1;  //bullet type
 			temp_baby[3] = 1;  //toAttack/baseAttack
-
+			tower = 1;
 
 
 		}
@@ -41,9 +42,10 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 			temp_baby[1] = 75;
 			temp_baby[2] = 2;
 			temp_baby[3] = 1;
-
+			tower = 2;
 
 		}
+		tower_indicator(tower, pixel_buffer);
 
 }
 

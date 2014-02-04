@@ -30,6 +30,7 @@
 #include "tower_select.h"
 #include "cursor.h"
 #include "system.h"
+#include "heads_up_display.h"
 
 /*
 #define PS2_NAME "/dev/ps2"
@@ -40,7 +41,16 @@
 #define PS2_HDL_PARAMETERS ""
 #define ALT_MODULE_CLASS_ps2 altera_up_avalon_ps2
 */
+
+
+
+
+//GLOBAL VARIABLES
 alt_up_pixel_buffer_dma_dev* pixel_buffer;
+int gameOverFlag = 0;
+
+
+
 
 /*main gameplay cursor logic, with some title screen features .. will have to seperate*/
 int main()
@@ -119,10 +129,11 @@ int main()
 
 
 
-
+//while(1){
 
 				/* TITLE SCREEN*/
 	// display the title screen
+	//title:
 	title_screen(pixel_buffer, char_buffer, start, ps2_kb, decode_mode, data, ascii);
 
 
@@ -135,6 +146,7 @@ int main()
 	draw_ocean(pixel_buffer);
 
 	draw_grids(pixel_buffer);
+	heads_up_display_static();
 
 
 
@@ -143,8 +155,9 @@ int main()
 	set_cursor(grid_pos, CURSOR_COLOUR);
 	draw_cursor(cur.pos,cur.colour, pixel_buffer);
 	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
-	while(1)
-	 {
+	while(gameOverFlag == 0)
+	//while(1)
+	{
 
 		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0)
 		{
@@ -209,6 +222,15 @@ int main()
 		}
 
 	}
+
+	alt_irq_disable(TIMER_0_IRQ);
+
+
+	gameover(pixel_buffer,char_buffer);
+
+	//goto title;
+
+//}
 
 
   return 0;

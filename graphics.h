@@ -25,6 +25,10 @@ void set_baby_positions(Tower* baby[]);
 //void set_baby_positions(Tower baby[]);
 void set_baby_attributes(Tower* baby[], int grid, int*);
 
+void draw_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start, int color);
+
+void draw_background_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start);
+
 //void initialize_sharks(int, int , int, int, int , int , int );
 void set_cursor(int, int);
 //void draw_baby(int*, int*, int , alt_up_pixel_buffer_dma_dev*);

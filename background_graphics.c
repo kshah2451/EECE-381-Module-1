@@ -8,13 +8,14 @@ void draw_sky(alt_up_pixel_buffer_dma_dev* pixel_buffer){
 	int x1_pos = 320;
 	int change = 4;
 	int y_pos;
-	
+
+
 	// Draws sky
 	for(y_pos = 0; y_pos < 45; y_pos++) {
-		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x0_pos, x1_pos, y_pos, BLACK + color_inc, 0);
+		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x0_pos, x1_pos, y_pos, 0xF800 + color_inc, 0);
 		if(y_pos % 3 == 0) color_inc++;
 	}
-		
+
 	x0_pos = 155;
 	x1_pos = 165;
 	// Draws sun

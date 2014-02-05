@@ -37,7 +37,6 @@ void set_baby_positions(Tower* baby[]){
 			baby[i]->body_pos[3] = body_y2 ; // 100
 			baby[i]->lane = 0;
 			baby[i]->isAlive = 0;
-			baby[i]->bulHead = NULL;
 
 		}
 
@@ -52,7 +51,6 @@ void set_baby_positions(Tower* baby[]){
 			baby[i]->body_pos[3] = body_y2 + increment;
 			baby[i]->lane = 1;
 			baby[i]->isAlive = 0;
-			baby[i]->bulHead = NULL;
 
 		}
 
@@ -67,6 +65,8 @@ void set_baby_attributes(Tower* baby[], int grid, int temp []){
 	baby[grid]->bulletType = temp[2];
 	baby[grid]->toAttack = temp[3];
 	baby[grid]->baseAttack = temp[3];
+	baby[grid]->bulHead = NULL;
+
 
 
 

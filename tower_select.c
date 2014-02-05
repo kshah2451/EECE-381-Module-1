@@ -39,7 +39,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 		else if(data == 0x26){  //if user presses 3 : Rapid-fire Rugrat
 
 			temp_baby[0] = 0xFFE0;
-			temp_baby[1] = 75;
+			temp_baby[1] = 50;
 			temp_baby[2] = 2;
 			temp_baby[3] = 1;
 			tower = 2;

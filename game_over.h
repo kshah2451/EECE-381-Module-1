@@ -14,6 +14,8 @@
 #define WHITE 0xFFFF
 #define RED 0xF800
 
+void victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer);
+
 void gameover(alt_up_pixel_buffer_dma_dev*,alt_up_char_buffer_dev*);
 
 #endif /* HEADS_UP_DISPLAY_H_ */

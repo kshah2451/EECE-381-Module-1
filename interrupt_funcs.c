@@ -5,6 +5,7 @@
 
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 extern int gameOverFlag;
+extern int victoryFlag;
 
 
 //Interrupt function
@@ -18,8 +19,8 @@ void timerroutine(void* context, alt_u32 id){
 
 	//Advance/create enemies
 	goEnemies(data);
-	draw_grids(pixel_buffer);
-	draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
+//	draw_grids(pixel_buffer);
+//	draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
 
 
 
@@ -32,8 +33,8 @@ void timerroutine(void* context, alt_u32 id){
 
 		//then advance/create its bullets
 		goBullets(data->towers[i], data);
-		draw_grids(pixel_buffer);
-		draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
+		//draw_grids(pixel_buffer);
+		//draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
 
 
 		}
@@ -154,7 +155,7 @@ enePtr createEnemy(enePtr prevEne, int row){
 
         case 0:
         	ene -> damage = 1;
-        	ene -> health = 200;
+        	ene -> health = 3;//200;
         	ene -> speed = 5;
         	ene -> toAttack = 1;
         	ene -> baseAttack = 1;
@@ -166,7 +167,7 @@ enePtr createEnemy(enePtr prevEne, int row){
 
         case 1:
         	ene -> damage = 1;
-        	ene -> health = 300;
+        	ene -> health = 5;//300;
         	ene -> speed = 6;
         	ene -> toAttack = 1;
         	ene -> baseAttack = 1;
@@ -211,7 +212,7 @@ void sharkAttack(enePtr ene, towPtr tow){
 		return;
 	}
 
-	if((ene->body_pos[0] - 24) <= (tow->body_pos[3]) ){
+	if((ene->body_pos[0] - 24) <= (tow->body_pos[2]) ){
 		ene->moveBlocked = 1;
 
 		if(ene->toAttack <= 0){
@@ -349,7 +350,7 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 	    break;
 
 	    case 2:
-			bul -> damage = 1;
+			bul -> damage = 0;
 			bul -> speed = 8;
 			bul -> toMove = 1;
 			bul -> baseMove = 1;
@@ -429,6 +430,8 @@ void killEnemy(enePtr ene, dataPtr data, int i){
 	ene->next = NULL;
 	ene->prev = NULL;
 	free(ene);
+
+	victoryFlag++;
 
 }
 

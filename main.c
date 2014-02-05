@@ -48,6 +48,7 @@
 //GLOBAL VARIABLES
 alt_up_pixel_buffer_dma_dev* pixel_buffer;
 int gameOverFlag = 0;
+int victoryFlag = 0;
 
 
 
@@ -155,8 +156,8 @@ int main()
 	set_cursor(grid_pos, CURSOR_COLOUR);
 	draw_cursor(cur.pos,cur.colour, pixel_buffer);
 	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
-	while(gameOverFlag == 0)
-	//while(1)
+	while(gameOverFlag == 0 && victoryFlag < 10)
+//	while(1)
 	{
 
 		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0)
@@ -222,11 +223,15 @@ int main()
 		}
 
 	}
-
 	alt_irq_disable(TIMER_0_IRQ);
 
 
+	if(gameOverFlag == 1){
 	gameover(pixel_buffer,char_buffer);
+	}
+	else if(victoryFlag >= 10){
+		victory(pixel_buffer, char_buffer);
+	}
 
 	//goto title;
 

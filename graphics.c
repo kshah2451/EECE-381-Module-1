@@ -6,6 +6,7 @@
 #include "graphics.h"
 #include "game_structs.h"
 #include "tower_select.h"
+#include "Colors.h"
 //#include "cursor.h"
 
 
@@ -18,16 +19,15 @@ void set_baby_positions(Tower* baby[]){
 
 
 		int body_x1 = 269;
-		int body_y1 = 60;//75;
+		int body_y1 = 60;
 		int body_x2 = 279;
-		int body_y2 = 70;//85;
-
+		int body_y2 = 65;
 
 		// how may spaces the babies are spaced apart
 		int increment = 40;
 
 
-		// set tower positions for lane 1
+		// set tower positions for lane 0
 		for(i = 0; i<(MAX_GRIDS/2); i++){
 			baby[i] = malloc(sizeof(Tower));
 			//starting at grid 1 all the way to grid 7, give the towers their permanent positions
@@ -35,11 +35,13 @@ void set_baby_positions(Tower* baby[]){
 			baby[i]->body_pos[1] = body_y1 ; // 60
 			baby[i]->body_pos[2] = body_x2 - ((i)*increment); // 40
 			baby[i]->body_pos[3] = body_y2 ; // 100
+			baby[i]->lane = 0;
 			baby[i]->isAlive = 0;
+			baby[i]->bulHead = NULL;
 
 		}
 
-		// set tower positions for lane 2
+		// set tower positions for lane 1
 		for(i = (MAX_GRIDS/2); i<MAX_GRIDS; i++){
 			//starting at grid 8 all the way to grid 14, give the towers their permanent positions
 			baby[i] = malloc(sizeof(Tower));
@@ -48,8 +50,9 @@ void set_baby_positions(Tower* baby[]){
 			baby[i]->body_pos[1] = body_y1 + increment;
 			baby[i]->body_pos[2] = body_x2 - ((i%((MAX_GRIDS/2)))*increment);
 			baby[i]->body_pos[3] = body_y2 + increment;
+			baby[i]->lane = 1;
 			baby[i]->isAlive = 0;
-
+			baby[i]->bulHead = NULL;
 
 		}
 
@@ -64,7 +67,7 @@ void set_baby_attributes(Tower* baby[], int grid, int temp []){
 	baby[grid]->bulletType = temp[2];
 	baby[grid]->toAttack = temp[3];
 	baby[grid]->baseAttack = temp[3];
-	baby[grid]->bulHead = NULL;
+
 
 
 }
@@ -211,4 +214,22 @@ void draw_cursor(int pos[],int colour, alt_up_pixel_buffer_dma_dev* pixel_buffer
 	printf("After CurosrASDAKSDASD\n");
 }
 
+/* Draws bullet */
+void draw_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start, int color) {
+	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, x_start, y_start, x_start + 2, y_start + 2, color, 0);
+}
+/* Draws bullet with background color */
+void draw_background_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start) {
+	int color_inc = 1;
+	int i;
+	for(i = 45; i < y_start; i++) {
+		if(i%8 == 0) color_inc++;
+	}
+	for(i = y_start; i <= y_start + 2; i++) {
+		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+12, i, BLACK + color_inc, 0);
+		if(i % 8 == 0) {
+			color_inc++;
+		}
+	}
+}
 

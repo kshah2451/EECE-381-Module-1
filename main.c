@@ -22,6 +22,7 @@
 #include "altera_up_avalon_video_pixel_buffer_dma.h"
 #include "altera_up_avalon_video_character_buffer_with_dma.h"
 
+
 #include "title_screen.h"
 #include "graphics.h"
 #include "game_structs.h"
@@ -31,6 +32,7 @@
 #include "cursor.h"
 #include "system.h"
 #include "heads_up_display.h"
+#include "keyboard_codes.h"
 
 /*
 #define PS2_NAME "/dev/ps2"
@@ -164,7 +166,7 @@ int main()
 		{
 
 				//if user presses one of the number keys (1 and 2 and 3 for now)
-				if(data == 0x16 || data == 0x1E || data == 0x26){
+				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY){
 					//enter tower selection function, and raise hasTowerBeenSelected flag
 					tower_selection(ps2_kb, decode_mode, data, ascii, temp_baby_attributes);
 
@@ -175,7 +177,7 @@ int main()
 				// already an existing tower in that grid (in that case, don't place anything)
 				// draw the baby on the current grid position, raise hasTowerBeenPlaced flag and reset
 				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
-				if(data == 0x1c && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)){ // user presses A
+				if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)){ // user presses A
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
 					draw_baby(game_data->towers[grid_pos], pixel_buffer);
 					game_data->towers[grid_pos]->isAlive = 1;
@@ -187,13 +189,13 @@ int main()
 				}
 
 				//If player presses B while cursor highlights a tower, the tower is removed
-				if(data == 0x32 && (game_data->towers[grid_pos]->isAlive == 1)){
+				if(data == B && (game_data->towers[grid_pos]->isAlive == 1)){
 
 					remove_baby(game_data->towers[grid_pos], grid_pos, pixel_buffer);
 				}
 
 				//check if user has pressed any of the directional keys, update the cursor moved flag
-				if(data == 0x72 || data == 0x74 || data == 0x6b || data == 0x75){
+				if(data == UP_ARROW || data == DOWN_ARROW || data == LEFT_ARROW || data == RIGHT_ARROW){
 					hasCursorMoved++;
 				}
 

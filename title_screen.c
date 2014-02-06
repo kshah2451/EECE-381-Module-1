@@ -5,6 +5,7 @@
 #include "title_screen.h"
 #include "graphics.h"
 #include "game_structs.h"
+#include "keyboard_codes.h"
 
 
 /*Title Screen code*/
@@ -81,7 +82,7 @@ void title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_
 	alt_up_char_buffer_string(char_buffer, "Options", 36, 40);
 	alt_up_char_buffer_string(char_buffer, "Help", 38, 42);*/
 
-	while(data != 0x5a){ //wait for user to press start
+	while(data != ENTER){ //wait for user to press start
 
 		alt_up_char_buffer_string(char_buffer, "Press ENTER to start", 30, 40);
 

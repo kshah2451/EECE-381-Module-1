@@ -1,10 +1,10 @@
 #ifndef KEYBOARD_CODES_H_
 #define KEYBOARD_CODES_H_
 
-#define UP_ARROW 0x75
-#define DOWN_ARROW 0x72
-#define LEFT_ARROW 0x6B
-#define RIGHT_ARROW 0x74
+#define UP 0x75
+#define DOWN 0x72
+#define LEFT 0x6B
+#define RIGHT 0x74
 
 #define ENTER 0x5A
 #define ESC 0x76
@@ -21,11 +21,11 @@
 #define NINE_KEY 0x46
 #define ZERO_KEY 0x45
 
-#define A 0x1C
-#define B 0x32
-#define D 0x23
-#define W 0x1D
-#define S 0x1B
+#define A_KEY 0x1C
+#define B_KEY 0x32
+#define D_KEY 0x23
+#define W_KEY 0x1D
+#define S_KEY 0x1B
 
 
 #endif

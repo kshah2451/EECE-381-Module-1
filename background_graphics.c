@@ -108,16 +108,19 @@ void draw_background_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_
 /* Draws grids for tower placement */
 
 void draw_grids(alt_up_pixel_buffer_dma_dev* pixel_buffer){
-	int i;
+	int i,j;
+	int increment = 40;
 	int x1 = BG_UPPER_X;
 	int y1 = BG_UPPER_Y;
-	int x2 = BG_UPPER_X + (BG_LOWER_X - BG_UPPER_X)/(MAX_GRIDS/2);
-	int y2 = BG_LOWER_Y - ((BG_LOWER_Y - BG_UPPER_Y)/2);
-	int increment = 40;
-	for(i = 0; i < 7; i++){
-	alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, x1 + (i* increment), y1,x2+ (i* increment), y2, SEA_COLOUR, 0);
+	int x2 = BG_UPPER_X + increment;
+	int y2 = BG_LOWER_Y - ((NUMROW-1)*increment);
+
+	for(i = 0; i < (NUMTOW/NUMROW); i++){
+		for(j = 0; j < NUMROW; j++){
+			alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, x1 + (i* increment), y1+(j*increment),x2+ (i* increment), y2+(j*increment), SEA_COLOUR, 0);
+		}
 	}
-	for(i = 0; i < 7; i++){
-	alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, x1 + (i* increment), y1+ increment,x2+ (i* increment), y2 + increment, SEA_COLOUR, 0);
-	}
+
+
+
 }

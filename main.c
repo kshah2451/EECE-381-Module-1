@@ -22,7 +22,6 @@
 #include "altera_up_avalon_video_pixel_buffer_dma.h"
 #include "altera_up_avalon_video_character_buffer_with_dma.h"
 
-
 #include "title_screen.h"
 #include "graphics.h"
 #include "game_structs.h"
@@ -32,7 +31,7 @@
 #include "cursor.h"
 #include "system.h"
 #include "heads_up_display.h"
-#include "keyboard_codes.h"
+#include "keyboard_keys.h"
 
 /*
 #define PS2_NAME "/dev/ps2"
@@ -80,17 +79,7 @@ int main()
 
 
 				/* HAL INITIALIZATIONS*/
-	//create our baby struct array
-	//Tower baby[NUMTOW];
 
-	/*
-	Tower* baby;
-	baby = (Tower*)malloc(14 * sizeof (Tower));
-
-	for(i = 0; i < NUMTOW; i++) {
-		tower_data->towers[i] = baby[i];
-	}
-*/
 
 
 	// set positions of baby towers
@@ -132,11 +121,9 @@ int main()
 
 
 
-//while(1){
 
 				/* TITLE SCREEN*/
 	// display the title screen
-	//title:
 	title_screen(pixel_buffer, char_buffer, start, ps2_kb, decode_mode, data, ascii);
 
 
@@ -189,13 +176,13 @@ int main()
 				}
 
 				//If player presses B while cursor highlights a tower, the tower is removed
-				if(data == B && (game_data->towers[grid_pos]->isAlive == 1)){
+				if(data == B_KEY && (game_data->towers[grid_pos]->isAlive == 1)){
 
 					remove_baby(game_data->towers[grid_pos], grid_pos, pixel_buffer);
 				}
 
 				//check if user has pressed any of the directional keys, update the cursor moved flag
-				if(data == UP_ARROW || data == DOWN_ARROW || data == LEFT_ARROW || data == RIGHT_ARROW){
+				if(data == UP || data == DOWN || data == LEFT || data == RIGHT){
 					hasCursorMoved++;
 				}
 
@@ -203,7 +190,7 @@ int main()
 				if(hasCursorMoved >= 2){
 					//move the cursor and update the grid position
 					grid_pos = move_cursor(grid_pos, ps2_kb, decode_mode, data, ascii, pixel_buffer);
-
+					printf("%i \n", grid_pos);
 					//reset hasCursorMoved flag
 					hasCursorMoved = 0;
 
@@ -234,10 +221,6 @@ int main()
 	else if(victoryFlag >= 10){
 		victory(pixel_buffer, char_buffer);
 	}
-
-	//goto title;
-
-//}
 
 
   return 0;

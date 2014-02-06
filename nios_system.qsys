@@ -156,22 +156,6 @@
          type = "int";
       }
    }
-   element timer_0.s1
-   {
-      datum baseAddress
-      {
-         value = "16384";
-         type = "long";
-      }
-   }
-   element timer_2.s1
-   {
-      datum baseAddress
-      {
-         value = "16448";
-         type = "long";
-      }
-   }
    element sdram_0.s1
    {
       datum baseAddress
@@ -193,6 +177,22 @@
       datum baseAddress
       {
          value = "16416";
+         type = "long";
+      }
+   }
+   element timer_2.s1
+   {
+      datum baseAddress
+      {
+         value = "16448";
+         type = "long";
+      }
+   }
+   element timer_0.s1
+   {
+      datum baseAddress
+      {
+         value = "16384";
          type = "long";
       }
    }
@@ -269,10 +269,10 @@
  <parameter name="globalResetBus" value="false" />
  <parameter name="hdlLanguage" value="VERILOG" />
  <parameter name="maxAdditionalLatency" value="1" />
- <parameter name="projectName" value="game.qpf" />
+ <parameter name="projectName" value="sharksvsbabies.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1391468299719" />
+ <parameter name="timeStamp" value="1391730524716" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface
@@ -364,7 +364,7 @@
   <parameter name="mmu_tlbPtrSz" value="7" />
   <parameter name="mmu_tlbNumWays" value="16" />
   <parameter name="mmu_processIDNumBits" value="8" />
-  <parameter name="impl" value="Small" />
+  <parameter name="impl" value="Fast" />
   <parameter name="icache_size" value="4096" />
   <parameter name="icache_ramBlockType" value="Automatic" />
   <parameter name="icache_numTCIM" value="0" />
@@ -585,7 +585,7 @@
   <parameter name="alwaysRun" value="false" />
   <parameter name="counterSize" value="32" />
   <parameter name="fixedPeriod" value="false" />
-  <parameter name="period" value="30" />
+  <parameter name="period" value="50" />
   <parameter name="periodUnits" value="MSEC" />
   <parameter name="resetOutput" value="false" />
   <parameter name="snapshot" value="true" />

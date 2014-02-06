@@ -13,8 +13,8 @@
 #include <stdlib.h>
 
 
-#define NUMTOW 14
-#define NUMROW 2
+#define NUMTOW 28
+#define NUMROW 4
 
 //Max number of enemy types per level
 #define NUMENETYPES 2

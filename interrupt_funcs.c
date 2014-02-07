@@ -10,7 +10,6 @@ extern int victoryFlag;
 
 //Interrupt function
 void timerroutine(void* context, alt_u32 id){
-	printf("THIS SHIT IS WORKING BEFORE DATAPTR\n");
 
 	dataPtr data = (dataPtr)context;
 
@@ -19,8 +18,8 @@ void timerroutine(void* context, alt_u32 id){
 
 	//Advance/create enemies
 	goEnemies(data);
-//	draw_grids(pixel_buffer);
-//	draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
+	//	draw_grids(pixel_buffer);
+	//	draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
 
 
 
@@ -31,10 +30,10 @@ void timerroutine(void* context, alt_u32 id){
 		//if the tower exists
 		if(data->towers[i]->isAlive){
 
-		//then advance/create its bullets
-		goBullets(data->towers[i], data);
-		//draw_grids(pixel_buffer);
-		//draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
+			//then advance/create its bullets
+			goBullets(data->towers[i], data);
+			//draw_grids(pixel_buffer);
+			//draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
 
 
 		}
@@ -62,17 +61,14 @@ void goEnemies(dataPtr data){
 
 		//find the first tower in a row
 		int firstTow = (NUMTOW/NUMROW)*i;
-		printf("FIRSTTOWIS%i\n", firstTow);
+
 
 
 
 		//if there's no enemies in that row, try and make one
 		if(data->eneHead[i] == NULL){
 			if(isNewEnemy()){
-				printf("enegetEX\n");
-				printf("%iFIRSTENE", i);
 				data->eneHead[i] = createEnemy(NULL, i);
-				printf("eneMAKE\n");
 				moveEnemy(data->eneHead[i]);
 			}
 		}
@@ -108,7 +104,6 @@ void goEnemies(dataPtr data){
 			if(ene->next == NULL){
 				if(isNewEnemy()){
 					ene = createEnemy(ene, i);
-					printf("%iSECONDENE", i);
 					moveEnemy(ene);
 				}
 			}
@@ -149,52 +144,62 @@ enePtr createEnemy(enePtr prevEne, int row){
 	enePtr ene = malloc(sizeof(Enemy));
 
 	//Enemies type is random, and determines their stats
-    ene->type = randType;
+	ene->type = randType;
 
-    switch(randType){
+	switch(randType){
 
-        case 0:
-        	ene -> damage = 1;
-        	ene -> health = 3;//200;
-        	ene -> speed = 5;
-        	ene -> toAttack = 1;
-        	ene -> baseAttack = 1;
-        	ene -> toMove = 5;
-        	ene -> baseMove = 5;
-        	ene -> moveBlocked = 0;
-        	ene -> colour = 0x7bef;
-        break;
+	case 0:
+		ene -> damage = 1;
+		ene -> health = 3;//200;
+		ene -> speed = 5;
+		ene -> toAttack = 1;
+		ene -> baseAttack = 1;
+		ene -> toMove = 5;
+		ene -> baseMove = 5;
+		ene -> moveBlocked = 0;
+		ene -> colour = 0x7bef;
+		break;
 
-        case 1:
-        	ene -> damage = 1;
-        	ene -> health = 5;//300;
-        	ene -> speed = 6;
-        	ene -> toAttack = 1;
-        	ene -> baseAttack = 1;
-        	ene -> toMove = 3;
-        	ene -> baseMove = 3;
-        	ene -> moveBlocked = 0;
-        	ene -> colour = 0xffff;
-        break;
+	case 1:
+		ene -> damage = 1;
+		ene -> health = 5;//300;
+		ene -> speed = 6;
+		ene -> toAttack = 1;
+		ene -> baseAttack = 1;
+		ene -> toMove = 3;
+		ene -> baseMove = 3;
+		ene -> moveBlocked = 0;
+		ene -> colour = 0xffff;
+		break;
 
-    }
+	}
 
-    //row determines their y-pos
-    switch(row){
+	//row determines their y-pos
+	switch(row){
 
-    	case 0:
-    		ene -> body_pos[0] = 320;
-    		ene -> body_pos[1] = 45;
-        break;
+	case 0:
+		ene -> body_pos[0] = 320;
+		ene -> body_pos[1] = 45;
+		break;
 
-        case 1:
-        	ene -> body_pos[0] = 320;
-        	ene -> body_pos[1] = 85;
-        break;
+	case 1:
+		ene -> body_pos[0] = 320;
+		ene -> body_pos[1] = 85;
+		break;
 
-    }
+	case 2:
+		ene -> body_pos[0] = 320;
+		ene -> body_pos[1] = 125;
+		break;
 
-    //since this is the newest enemy, next is null, and then point to previous enemy (or NULL) and have it point back if there is one
+	case 3:
+		ene -> body_pos[0] = 320;
+		ene -> body_pos[1] = 165;
+		break;
+
+	}
+
+	//since this is the newest enemy, next is null, and then point to previous enemy (or NULL) and have it point back if there is one
 	ene -> next = NULL;
 	ene -> prev = prevEne;
 	if(prevEne != NULL) prevEne -> next = ene;
@@ -285,6 +290,8 @@ void moveEnemy(enePtr ene){
 //Function for bullet advancement/creation
 void goBullets(towPtr tow, dataPtr data){
 
+	int bulFlag = 0;
+
 	//if there's no bullet for that tower, try and make one
 	if(tow->bulHead == NULL){
 		if(isNewBullet(tow)){
@@ -297,32 +304,47 @@ void goBullets(towPtr tow, dataPtr data){
 	//point to the first bullet
 	bulPtr bul = tow->bulHead;
 
+
+
 	//Go through bullets until we hit the end of the list
 	while(bul != NULL){
+
+
+
+		//if at the end of the bullets, try and make a new one
+		if(bul->next == NULL)
+			if(isNewBullet(tow) && bulFlag == 0){
+				bul = createBullet(tow, bul);
+			}
+		bulFlag = 1;
 		//move then detect collisions
 		moveBullet(bul);
 		detectCollision(data, tow, bul);
+		if(bul->body_pos[0] >= 320)
+			killBullet(bul, tow);
+
 
 		//move on to the next bullet
 		bul = bul->next;
 	}
+
+
 }
 
 //Checks if it's time for a new bullet
 int isNewBullet(towPtr tow){
 
-	printf("%i\n", tow->toAttack);
 
 
 	if(tow->toAttack <= 0){
-		printf("yes its time\n");
+
 		tow->toAttack = tow->baseAttack;
 		return 1;
 	}
 	else{
-		printf("no its not\n");
+
 		tow->toAttack--;
-		printf("%i\n", tow->toAttack);
+
 		return 0;
 	}
 	return 0;
@@ -330,7 +352,7 @@ int isNewBullet(towPtr tow){
 
 
 bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
-	printf("bullet CREATION\n");
+
 	//Malloc some space for the bullet
 	bulPtr bul = malloc(sizeof(Bullet));
 
@@ -341,21 +363,21 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 
 	switch(bul->type){
 
-		case 1:
-			bul -> damage = 1;
-			bul -> speed = 5;
-			bul -> toMove = 1;
-			bul -> baseMove = 1;
-			bul -> colour = 0xFFFF;
-	    break;
+	case 1:
+		bul -> damage = 1;
+		bul -> speed = 5;
+		bul -> toMove = 1;
+		bul -> baseMove = 1;
+		bul -> colour = 0xFFFF;
+		break;
 
-	    case 2:
-			bul -> damage = 0;
-			bul -> speed = 8;
-			bul -> toMove = 1;
-			bul -> baseMove = 1;
-			bul -> colour = 0x0F00;
-	    break;
+	case 2:
+		bul -> damage = 0;
+		bul -> speed = 8;
+		bul -> toMove = 1;
+		bul -> baseMove = 1;
+		bul -> colour = 0x0F00;
+		break;
 
 	}
 
@@ -439,22 +461,7 @@ void killEnemy(enePtr ene, dataPtr data, int i){
 //Function to detect collision, will call the kill functions
 void detectCollision(dataPtr data, towPtr tow, bulPtr bul){
 
-/*
-	int i;
 
-	if(tow->body_pos[1] >= 45 && tow->body_pos[1] <= 84){
-		i = 0;
-	}
-	else if(tow->body_pos[1] >= 85 && tow->body_pos[1] <= 124){
-		i = 1;
-	}
-	else if(tow->body_pos[1] >= 125 && tow->body_pos[1] <= 164){
-		i = 2;
-	}
-	else if(tow->body_pos[1] >= 165 && tow->body_pos[1] <= 204){
-		i = 3;
-	}
-*/
 
 	enePtr ene = data->eneHead[(tow->lane)];
 
@@ -462,11 +469,11 @@ void detectCollision(dataPtr data, towPtr tow, bulPtr bul){
 	while(ene != NULL){
 		if((ene->body_pos[0] - 24) <= (bul->body_pos[0]) ){
 
-		ene->health -= bul->damage;
-		killBullet(bul,tow);
+			ene->health -= bul->damage;
+			killBullet(bul,tow);
 
-		if(ene->health <= 0) killEnemy(ene, data, (tow->lane));
-		return;
+			if(ene->health <= 0) killEnemy(ene, data, (tow->lane));
+			return;
 
 		}
 		ene = ene->next;

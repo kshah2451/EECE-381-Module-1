@@ -31,7 +31,9 @@
 #include "cursor.h"
 #include "system.h"
 #include "heads_up_display.h"
-#include "keyboard_keys.h"
+#include "keyboard_codes.h"
+#include "game_over.h"
+
 
 /*
 #define PS2_NAME "/dev/ps2"

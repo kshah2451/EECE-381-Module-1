@@ -147,7 +147,7 @@ int main()
 	set_cursor(grid_pos, CURSOR_COLOUR);
 	draw_cursor(cur.pos,cur.colour, pixel_buffer);
 	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
-	while(gameOverFlag == 0 && victoryFlag < 10)
+	while(gameOverFlag == 0 && victoryFlag < 1000)
 //	while(1)
 	{
 

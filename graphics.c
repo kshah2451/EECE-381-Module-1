@@ -115,8 +115,9 @@ void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower
 
 	int i,j,k;
 	int pixel_el = 0;
-
-	printf("data = %x before huge ass array \n");
+	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
+	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer));
+		printf("data = %x before huge ass array \n");
 
 	int image_to_draw[750];
 
@@ -142,14 +143,14 @@ void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower
 	{
 		for(j = 0; j < 25; j++){
 
-			if(baby_bmp[pixel_el]!= BLACK){
+			if(image_to_draw[pixel_el]!= BLACK){
 				alt_up_pixel_buffer_dma_draw(pixel_buffer, image_to_draw[pixel_el], baby->body_pos[0]+j, baby->body_pos[1]+i);
 			}
 			pixel_el++;
 		}
 
 	}
-
+	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
 	printf("data = %x after drawing \n");
 
 

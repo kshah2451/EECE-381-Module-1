@@ -99,6 +99,9 @@ void title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_
 		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 160, 90, 168, 96, 0x0099, 0);
 		for(k = 0; k < 550000; k++);
 		decode_scancode(ps2_kb, &decode_mode, &data, &ascii);
+		if(data == 0x1c){
+			printf("fuck \n");
+		}
 
 
 	}

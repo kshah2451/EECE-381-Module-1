@@ -1,19 +1,3 @@
-/*
- * "Hello World" example.
- *
- * This example prints 'Hello from Nios II' to the STDOUT stream. It runs on
- * the Nios II 'standard', 'full_featured', 'fast', and 'low_cost' example
- * designs. It runs with or without the MicroC/OS-II RTOS and requires a STDOUT
- * device in your system's hardware.
- * The memory footprint of this hosted application is ~69 kbytes by default
- * using the standard reference design.
- *
- * For a reduced footprint version of this template, and an explanation of how
- * to reduce the memory footprint for a given application, see the
- * "small_hello_world" template.
- *
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "altera_up_ps2_keyboard.h"
@@ -32,8 +16,20 @@
 #include "system.h"
 #include "heads_up_display.h"
 #include "keyboard_codes.h"
-//#include "bitmaps.h"
 #include "game_over.h"
+
+
+/*
+#define PS2_NAME "/dev/ps2"
+#define PS2_TYPE "altera_up_avalon_ps2"
+#define PS2_BASE 0x00004030
+#define PS2_SPAN 8
+#define PS2_IRQ 0
+#define PS2_HDL_PARAMETERS ""
+#define ALT_MODULE_CLASS_ps2 altera_up_avalon_ps2
+*/
+
+
 
 
 //GLOBAL VARIABLES
@@ -83,22 +79,28 @@ int main()
 
 	//pixel buffer initializations
 
-	pixel_buffer =
-	  alt_up_pixel_buffer_dma_open_dev("/dev/pixel_buffer_dma");
+	// Use the name of your pixel buffer DMA core
+	pixel_buffer = alt_up_pixel_buffer_dma_open_dev("/dev/pixel_buffer_dma");
 
-	// Set the background buffer address – Although we don’t use the
-	//background, // they only provide a function to change the background
-	//buffer address, so
-	// we must set that, and then swap it to the foreground.
+	unsigned int pixel_buffer_addr1 = PIXEL_BUFFER_BASE;
+	unsigned int pixel_buffer_addr2 = PIXEL_BUFFER_BASE + (320 * 240 * 2);
+	// Set the 1st buffer address
 	alt_up_pixel_buffer_dma_change_back_buffer_address(pixel_buffer,
-	PIXEL_BUFFER_BASE);
+	 pixel_buffer_addr1);
 
-	// Swap background and foreground buffers
+	// Swap buffers  we have to swap because there is only an API function
+	// to set the address of the background buffer.
 	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
+	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer))
+	 ;
 
-	// Wait for the swap to complete
-	while
-	(alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer));
+	// Set the 2nd buffer address
+	alt_up_pixel_buffer_dma_change_back_buffer_address(pixel_buffer,
+	 pixel_buffer_addr2);
+
+	// Clear both buffers (this makes all pixels black)
+	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
+	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 1);
 
 	// Initialize the character buffer
 	alt_up_char_buffer_dev *char_buffer;
@@ -107,9 +109,6 @@ int main()
 
 	//clear pixel buffer memory
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
-
-
-
 
 
 
@@ -136,7 +135,7 @@ int main()
 	set_cursor(grid_pos, CURSOR_COLOUR);
 	draw_cursor(cur.pos,cur.colour, pixel_buffer);
 	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
-	while(gameOverFlag == 0 && victoryFlag < 10)
+	while(gameOverFlag == 0 && victoryFlag < 1000)
 //	while(1)
 	{
 
@@ -166,6 +165,10 @@ int main()
 					hasTowerBeenSelected = 0;
 					towerCanBePlaced = 0;
 
+				}
+
+				else if(data == ESC) {
+				//	switch_to_menu(pixel_buffer, char_buffer, ps2_kb, decode_mode);
 				}
 
 				//If player presses B while cursor highlights a tower, the tower is removed

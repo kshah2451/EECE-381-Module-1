@@ -1,19 +1,3 @@
-/*
- * "Hello World" example.
- *
- * This example prints 'Hello from Nios II' to the STDOUT stream. It runs on
- * the Nios II 'standard', 'full_featured', 'fast', and 'low_cost' example
- * designs. It runs with or without the MicroC/OS-II RTOS and requires a STDOUT
- * device in your system's hardware.
- * The memory footprint of this hosted application is ~69 kbytes by default
- * using the standard reference design.
- *
- * For a reduced footprint version of this template, and an explanation of how
- * to reduce the memory footprint for a given application, see the
- * "small_hello_world" template.
- *
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "altera_up_ps2_keyboard.h"
@@ -31,6 +15,9 @@
 #include "cursor.h"
 #include "system.h"
 #include "heads_up_display.h"
+#include "keyboard_codes.h"
+#include "game_over.h"
+
 
 /*
 #define PS2_NAME "/dev/ps2"
@@ -48,6 +35,7 @@
 //GLOBAL VARIABLES
 alt_up_pixel_buffer_dma_dev* pixel_buffer;
 int gameOverFlag = 0;
+int victoryFlag = 0;
 
 
 
@@ -77,17 +65,7 @@ int main()
 
 
 				/* HAL INITIALIZATIONS*/
-	//create our baby struct array
-	//Tower baby[NUMTOW];
 
-	/*
-	Tower* baby;
-	baby = (Tower*)malloc(14 * sizeof (Tower));
-
-	for(i = 0; i < NUMTOW; i++) {
-		tower_data->towers[i] = baby[i];
-	}
-*/
 
 
 	// set positions of baby towers
@@ -101,22 +79,28 @@ int main()
 
 	//pixel buffer initializations
 
-	pixel_buffer =
-	  alt_up_pixel_buffer_dma_open_dev("/dev/pixel_buffer_dma");
+	// Use the name of your pixel buffer DMA core
+	pixel_buffer = alt_up_pixel_buffer_dma_open_dev("/dev/pixel_buffer_dma");
 
-	// Set the background buffer address – Although we don’t use the
-	//background, // they only provide a function to change the background
-	//buffer address, so
-	// we must set that, and then swap it to the foreground.
+	unsigned int pixel_buffer_addr1 = PIXEL_BUFFER_BASE;
+	unsigned int pixel_buffer_addr2 = PIXEL_BUFFER_BASE + (320 * 240 * 2);
+	// Set the 1st buffer address
 	alt_up_pixel_buffer_dma_change_back_buffer_address(pixel_buffer,
-	PIXEL_BUFFER_BASE);
+	 pixel_buffer_addr1);
 
-	// Swap background and foreground buffers
+	// Swap buffers  we have to swap because there is only an API function
+	// to set the address of the background buffer.
 	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
+	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer))
+	 ;
 
-	// Wait for the swap to complete
-	while
-	(alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer));
+	// Set the 2nd buffer address
+	alt_up_pixel_buffer_dma_change_back_buffer_address(pixel_buffer,
+	 pixel_buffer_addr2);
+
+	// Clear both buffers (this makes all pixels black)
+	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
+	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 1);
 
 	// Initialize the character buffer
 	alt_up_char_buffer_dev *char_buffer;
@@ -129,16 +113,12 @@ int main()
 
 
 
-//while(1){
+					/* TITLE SCREEN*/
+				// display the title screen
+	title_screen(pixel_buffer, char_buffer, start, ps2_kb, decode_mode, data, ascii); //wait here until "ENTER"
 
-				/* TITLE SCREEN*/
-	// display the title screen
-	//title:
-	title_screen(pixel_buffer, char_buffer, start, ps2_kb, decode_mode, data, ascii);
+	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 
-
-
-				/* MAIN GAME*/
 
 	//set background image
 	draw_sky(pixel_buffer);
@@ -155,15 +135,16 @@ int main()
 	set_cursor(grid_pos, CURSOR_COLOUR);
 	draw_cursor(cur.pos,cur.colour, pixel_buffer);
 	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
-	while(gameOverFlag == 0)
-	//while(1)
+	while(gameOverFlag == 0 && victoryFlag < 1000)
+//	while(1)
 	{
 
 		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0)
 		{
 
+				printf("What was pressed: %x \n", data);
 				//if user presses one of the number keys (1 and 2 and 3 for now)
-				if(data == 0x16 || data == 0x1E || data == 0x26){
+				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY){
 					//enter tower selection function, and raise hasTowerBeenSelected flag
 					tower_selection(ps2_kb, decode_mode, data, ascii, temp_baby_attributes);
 
@@ -174,9 +155,10 @@ int main()
 				// already an existing tower in that grid (in that case, don't place anything)
 				// draw the baby on the current grid position, raise hasTowerBeenPlaced flag and reset
 				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
-				if(data == 0x1c && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)){ // user presses A
+				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)){ // user presses A
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
-					draw_baby(game_data->towers[grid_pos], pixel_buffer);
+					printf("data = %x when it goes in else if \n", data);
+					draw_baby(game_data->towers[grid_pos], pixel_buffer, game_data->towers[grid_pos]->bulletType);
 					game_data->towers[grid_pos]->isAlive = 1;
 
 					hasTowerBeenPlaced++;
@@ -185,26 +167,38 @@ int main()
 
 				}
 
+				else if(data == ESC) {
+				//	switch_to_menu(pixel_buffer, char_buffer, ps2_kb, decode_mode);
+				}
+
 				//If player presses B while cursor highlights a tower, the tower is removed
-				if(data == 0x32 && (game_data->towers[grid_pos]->isAlive == 1)){
+				else if(data == B_KEY && (game_data->towers[grid_pos]->isAlive == 1)){
 
 					remove_baby(game_data->towers[grid_pos], grid_pos, pixel_buffer);
 				}
 
 				//check if user has pressed any of the directional keys, update the cursor moved flag
-				if(data == 0x72 || data == 0x74 || data == 0x6b || data == 0x75){
+				else if(data == UP || data == DOWN || data == LEFT || data == RIGHT){
 					hasCursorMoved++;
 				}
 
-				//only when cursormoved >= 2 (because of keyboard sensitivity, move the cursor
-				if(hasCursorMoved >= 2){
-					//move the cursor and update the grid position
-					grid_pos = move_cursor(grid_pos, ps2_kb, decode_mode, data, ascii, pixel_buffer);
+				else{
 
-					//reset hasCursorMoved flag
-					hasCursorMoved = 0;
+					printf("data = %x when incorrect key pressed \n", data);
 
-					}
+				}
+
+					//only when cursor moved >= 2 (because of keyboard sensitivity, move the cursor
+					if(hasCursorMoved >= 2){
+						//move the cursor and update the grid position
+						grid_pos = move_cursor(grid_pos, ps2_kb, decode_mode, data, ascii, pixel_buffer);
+						//reset hasCursorMoved flag
+						hasCursorMoved = 0;
+
+						}
+
+
+
 
 			}
 
@@ -222,15 +216,15 @@ int main()
 		}
 
 	}
-
 	alt_irq_disable(TIMER_0_IRQ);
 
 
+	if(gameOverFlag == 1){
 	gameover(pixel_buffer,char_buffer);
-
-	//goto title;
-
-//}
+	}
+	else if(victoryFlag >= 10){
+		victory(pixel_buffer, char_buffer);
+	}
 
 
   return 0;

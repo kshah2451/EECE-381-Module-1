@@ -7,53 +7,38 @@
 #include "game_structs.h"
 #include "tower_select.h"
 #include "Colors.h"
+#include "bitmaps.h"
 //#include "cursor.h"
-
-
+extern int baby_bmp[];
+extern int infantry_bmp[];
 
 //Function will initialize position and colour values for the baby graphics
 //void initialize_baby(Tower baby, int num, int health, int bullet, int fire_rate, int grid, int colour){
 void set_baby_positions(Tower* baby[]){
 
-		int i;
-
-
-		int body_x1 = 269;
-		int body_y1 = 60;
-		int body_x2 = 279;
-		int body_y2 = 65;
-
+		int i,j;
+		int grid = 0;
 		// how may spaces the babies are spaced apart
 		int increment = 40;
 
+		int body_x1 = BG_LOWER_X - (0.8*increment); //269
+		int body_y1 = BG_UPPER_Y + (0.2*increment);
+		int body_x2 = body_x1 + 25;
+		int body_y2 = body_y1 + 30;
 
-		// set tower positions for lane 0
-		for(i = 0; i<(MAX_GRIDS/2); i++){
-			baby[i] = malloc(sizeof(Tower));
-			//starting at grid 1 all the way to grid 7, give the towers their permanent positions
-			baby[i]->body_pos[0] = body_x1 - ((i)*increment); //0
-			baby[i]->body_pos[1] = body_y1 ; // 60
-			baby[i]->body_pos[2] = body_x2 - ((i)*increment); // 40
-			baby[i]->body_pos[3] = body_y2 ; // 100
-			baby[i]->lane = 0;
-			baby[i]->isAlive = 0;
-			baby[i]->bulHead = NULL;
+		for(j = 0; j < NUMROW; j++){
+			for(i = 0; i < (NUMTOW/NUMROW); i++){
+				baby[grid] = malloc(sizeof(Tower));
+				//starting at grid 1 all the way to grid 7, give the towers their permanent positions
+				baby[grid]->body_pos[0] = body_x1 - ((i)*increment); //0
+				baby[grid]->body_pos[1] = body_y1 + ((j)*increment) ; // 60
+				baby[grid]->body_pos[2] = body_x2 - ((i)*increment); // 40
+				baby[grid]->body_pos[3] = body_y2 + ((j)*increment); // 100
+				baby[grid]->lane = j;
+				baby[grid]->isAlive = 0;
+				grid++;
 
-		}
-
-		// set tower positions for lane 1
-		for(i = (MAX_GRIDS/2); i<MAX_GRIDS; i++){
-			//starting at grid 8 all the way to grid 14, give the towers their permanent positions
-			baby[i] = malloc(sizeof(Tower));
-
-			baby[i]->body_pos[0] = body_x1 - ((i%((MAX_GRIDS/2)))*increment);
-			baby[i]->body_pos[1] = body_y1 + increment;
-			baby[i]->body_pos[2] = body_x2 - ((i%((MAX_GRIDS/2)))*increment);
-			baby[i]->body_pos[3] = body_y2 + increment;
-			baby[i]->lane = 1;
-			baby[i]->isAlive = 0;
-			baby[i]->bulHead = NULL;
-
+			}
 		}
 
 
@@ -67,6 +52,9 @@ void set_baby_attributes(Tower* baby[], int grid, int temp []){
 	baby[grid]->bulletType = temp[2];
 	baby[grid]->toAttack = temp[3];
 	baby[grid]->baseAttack = temp[3];
+	baby[grid]->bulHead = NULL;
+
+
 
 
 
@@ -80,138 +68,102 @@ void initialize_shark(int type, int dmg, int health, int speed, int attack, int 
 
 /*initializes cursor struct*/
 void set_cursor(int grid, int colour){
-
+	int x_multiplier;
+	int y_multiplier;
+	int increment = 40;
+	int grids_per_row = (NUMTOW/NUMROW);
 	int x1 = BG_UPPER_X;
 	int y1 = BG_UPPER_Y;
-	int x2 = BG_UPPER_X + (BG_LOWER_X - BG_UPPER_X)/(MAX_GRIDS/2);
-	int y2 = BG_LOWER_Y - ((BG_LOWER_Y - BG_UPPER_Y)/2);
-	int increment = ((BG_LOWER_Y - BG_UPPER_Y)/2);
+	int x2 = BG_UPPER_X + increment;
+	int y2 = BG_LOWER_Y - ((NUMROW-1)*increment);
+
 	prev_cur.pos[0] = cur.pos[0];
 	prev_cur.pos[1] = cur.pos[1];
 	prev_cur.pos[2] = cur.pos[2];
 	prev_cur.pos[3] = cur.pos[3];
-	switch(grid){
-		case 6:
-			cur.pos[0] = x1; //0
-			cur.pos[1] = y1; // 60
-			cur.pos[2] = x2; // 40
-			cur.pos[3] = y2; // 100
-			break;
 
-		case 5:
-			cur.pos[0] = x1 + increment;
-			cur.pos[1] = y1;
-			cur.pos[2] = x2 + increment;
-			cur.pos[3] = y2;
-			break;
-		case 4:
-			cur.pos[0] = x1 + 2*increment;
-			cur.pos[1] = y1;
-			cur.pos[2] = x2 + 2*increment;
-			cur.pos[3] = y2;
-			break;
-		case 3:
-			cur.pos[0] = x1 + 3*increment;
-			cur.pos[1] = y1;
-			cur.pos[2] = x2 + 3*increment;
-			cur.pos[3] = y2;
-			break;
-		case 2:
-			cur.pos[0] = x1 + 4*increment;
-			cur.pos[1] = y1;
-			cur.pos[2] = x2 + 4*increment;
-			cur.pos[3] = y2;
-			break;
-		case 1:
-			cur.pos[0] = x1 + 5 * increment;
-			cur.pos[1] = y1;
-			cur.pos[2] = x2 + 5*increment;
-			cur.pos[3] = y2;
-			break;
-		case 0:
-			cur.pos[0] = x1 + 6*increment;
-			cur.pos[1] = y1;
-			cur.pos[2] = x2 + 6*increment;
-			cur.pos[3] = y2;
-			break;
-
-		case 13:
-			cur.pos[0] = x1;
-			cur.pos[1] = y1 + increment;
-			cur.pos[2] = x2;
-			cur.pos[3] = y2 + increment;
-			break;
-		case 12:
-			cur.pos[0] = x1 + increment;
-			cur.pos[1] = y1 + increment;
-			cur.pos[2] = x2 + increment;
-			cur.pos[3] = y2 + increment;
-			break;
-		case 11:
-			cur.pos[0] = x1 + 2*increment;
-			cur.pos[1] = y1 + increment;
-			cur.pos[2] = x2 + 2*increment;
-			cur.pos[3] = y2 + increment;
-			break;
-		case 10:
-			cur.pos[0] = x1 + 3*increment;
-			cur.pos[1] = y1 + increment;
-			cur.pos[2] = x2 + 3*increment;
-			cur.pos[3] = y2 + increment;
-			break;
-		case 9:
-			cur.pos[0] = x1 + 4*increment;
-			cur.pos[1] = y1 + increment;
-			cur.pos[2] = x2 + 4*increment;
-			cur.pos[3] = y2 + increment;
-			break;
-		case 8:
-			cur.pos[0] = x1 + 5*increment;
-			cur.pos[1] = y1 + increment;
-			cur.pos[2] = x2 + 5*increment;
-			cur.pos[3] = y2 + increment;
-			break;
-
-		case 7:
-			cur.pos[0] = x1 + 6*increment;
-			cur.pos[1] = y1 + increment;
-			cur.pos[2] = x2 + 6*increment;
-			cur.pos[3] = y2 + increment;
-			break;
-
+	x_multiplier = ((grids_per_row-1)-(grid%grids_per_row));
+	if(grid <= grids_per_row-1){
+		y_multiplier = 0;
 	}
+	else if (grid <= (2*grids_per_row)-1){
+		y_multiplier = 1;
+	}
+	else if (grid <= (3*grids_per_row)-1){
+		y_multiplier = 2;
+	}
+	else if (grid <= (4*grids_per_row)-1){
+		y_multiplier = 3;
+	}
+
+	cur.pos[0] = x1 + (x_multiplier*increment); //14
+	cur.pos[1] = y1 + (y_multiplier*increment); // 45
+	cur.pos[2] = x2 + (x_multiplier*increment); // 54
+	cur.pos[3] = y2 + (y_multiplier*increment); // 85
+
+
+
+
+
 
 	cur.colour = colour;
 }
 
 // Function will draw a baby image using info generated by the initialize function
 //void draw_baby(Tower* baby[], int num, int body_pos[], int diaper_pos[], int colour, alt_up_pixel_buffer_dma_dev* pixel_buffer){
-void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer){
+void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower_type){
 
-	//draws baby's body
-	//alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby[num].body_pos[0], baby[num].body_pos[1], baby[num].body_pos[2], baby[num].body_pos[3], baby[num].colour, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby->body_pos[0], baby->body_pos[1], baby->body_pos[2], baby->body_pos[3], baby->colour, 0);
-	//alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby[num].diaper_pos[0], baby[num].diaper_pos[1], baby[num].diaper_pos[2], baby[num].diaper_pos[3], 0xFFFF, 0);
+	int i,j,k;
+	int pixel_el = 0;
+	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
+	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer));
+		printf("data = %x before huge ass array \n");
+
+	int image_to_draw[750];
+
+	//Check which .bmp image to draw. Depends on what the tower on this grid's type is
+	switch (tower_type){
+	case 1:
+
+		for(k = 0; k < 750; k++){
+		image_to_draw[k] = baby_bmp[k];
+		}
+		break;
+	case 2:
+
+		for(k = 0; k < 750; k++){
+		image_to_draw[k] = infantry_bmp[k];
+		}
+		break;
+	}
+
+	printf("data = %x after array \n");
+	// go through the bmp array, and draw image pixel by pixel, skipping transparent pixels.
+	for(i = 0; i < 30; i++)
+	{
+		for(j = 0; j < 25; j++){
+
+			if(image_to_draw[pixel_el]!= BLACK){
+				alt_up_pixel_buffer_dma_draw(pixel_buffer, image_to_draw[pixel_el], baby->body_pos[0]+j, baby->body_pos[1]+i);
+			}
+			pixel_el++;
+		}
+
+	}
+	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
+	printf("data = %x after drawing \n");
+
+
+
 
 }
-/*
-// Function will draw a baby image using info generated by the initialize function
-void draw_sharks(int body_pos[], int colour, alt_up_pixel_buffer_dma_dev* pixel_buffer){
-        //draws shark's body
-        alt_up_pixel_buffer_dma_draw_box(pixel_buffer, body_pos[0], body_pos[1], body_pos[2], body_pos[3], colour, 0);
-
-}
-
-*/
 
 /*draws and updates the cursor on the screen*/
 void draw_cursor(int pos[],int colour, alt_up_pixel_buffer_dma_dev* pixel_buffer){
 	//alt_up_pixel_buffer_dma_draw_box(pixel_buffer, BG_UPPER_X, BG_UPPER_Y, BG_LOWER_X, BG_LOWER_Y, SEA_COLOUR, 0);
-	printf("ABefore Cursor\n");
 
 	alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, prev_cur.pos[0], prev_cur.pos[1],prev_cur.pos[2], prev_cur.pos[3], SEA_COLOUR, 0);
 	alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, pos[0], pos[1],pos[2], pos[3], colour, 0);
-	printf("After CurosrASDAKSDASD\n");
 }
 
 /* Draws bullet */

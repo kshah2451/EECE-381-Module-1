@@ -97,7 +97,7 @@ void goEnemies(dataPtr data){
 		//Go through enemies until we hit the end of the list
 		while(ene != NULL){
 			//try to attack then move
-			sharkAttack(ene, tow);
+			sharkAttack(ene, tow, data);
 			moveEnemy(ene);
 
 			//if at the end of the enemies, try and make a new one
@@ -150,13 +150,13 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	//Normal Shark
 	case 0:
-		ene -> damage = 1;
-		ene -> health = 3;
+		ene -> damage = 3;
+		ene -> health = 15;
 		ene -> speed = 5;
-		ene -> toAttack = 1;
-		ene -> baseAttack = 1;
-		ene -> toMove = 5;
-		ene -> baseMove = 5;
+		ene -> toAttack = 5;
+		ene -> baseAttack = 5;
+		ene -> toMove = 7;
+		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
 		ene -> status = 0;
 		ene -> statusCountdown = 0;
@@ -165,13 +165,13 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	//Fast shark
 	case 1:
-		ene -> damage = 1;
-		ene -> health = 5;
+		ene -> damage = 4;
+		ene -> health = 9;
 		ene -> speed = 6;
-		ene -> toAttack = 1;
-		ene -> baseAttack = 1;
-		ene -> toMove = 3;
-		ene -> baseMove = 3;
+		ene -> toAttack = 3;
+		ene -> baseAttack = 3;
+		ene -> toMove = 4;
+		ene -> baseMove = 4;
 		ene -> moveBlocked = 0;
 		ene -> status = 0;
 		ene -> statusCountdown = 0;
@@ -180,29 +180,29 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	//Armored shark
 	case 2:
-		ene -> damage = 1;
-		ene -> health = 5;
-		ene -> speed = 6;
-		ene -> toAttack = 1;
-		ene -> baseAttack = 1;
-		ene -> toMove = 3;
-		ene -> baseMove = 3;
+		ene -> damage = 2;
+		ene -> health = 30;
+		ene -> speed = 3;
+		ene -> toAttack = 5;
+		ene -> baseAttack = 5;
+		ene -> toMove = 7;
+		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
 		ene -> status = 0;
 		ene -> statusCountdown = 0;
-		ene -> colour = 0xff00;
+		ene -> colour = 0x0000;
 		break;
 
 
 	//Kamikaze shark  !!!!SPECIAL SHARK!!!!
 	case 3:
-		ene -> damage = 1;
-		ene -> health = 5;//300;
+		ene -> damage = 20;
+		ene -> health = 15;
 		ene -> speed = 6;
-		ene -> toAttack = 1;
-		ene -> baseAttack = 1;
-		ene -> toMove = 3;
-		ene -> baseMove = 3;
+		ene -> toAttack = 0;
+		ene -> baseAttack = 0;
+		ene -> toMove = 7;
+		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
 		ene -> status = 0;
 		ene -> statusCountdown = 0;
@@ -212,13 +212,13 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	//Mini-Boss shark !!!!SPECIAL SPAWNRATE!!!!
 	case 4:
-		ene -> damage = 1;
-		ene -> health = 5;//300;
-		ene -> speed = 6;
-		ene -> toAttack = 1;
-		ene -> baseAttack = 1;
-		ene -> toMove = 3;
-		ene -> baseMove = 3;
+		ene -> damage = 10;
+		ene -> health = 40;
+		ene -> speed = 3;
+		ene -> toAttack = 5;
+		ene -> baseAttack = 5;
+		ene -> toMove = 7;
+		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
 		ene -> status = 0;
 		ene -> statusCountdown = 0;
@@ -228,13 +228,13 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	//FINARU BOSSU SHAKKU  !!!!SPECIAL EVERYTHING, MAY REMOVE FROM HERE!!!!
 	case 5:
-		ene -> damage = 1;
-		ene -> health = 5;//300;
-		ene -> speed = 6;
-		ene -> toAttack = 1;
-		ene -> baseAttack = 1;
-		ene -> toMove = 3;
-		ene -> baseMove = 3;
+		ene -> damage = 50;
+		ene -> health = 60;//300;
+		ene -> speed = 3;
+		ene -> toAttack = 5;
+		ene -> baseAttack = 5;
+		ene -> toMove = 10;
+		ene -> baseMove = 10;
 		ene -> moveBlocked = 0;
 		ene -> status = 0;
 		ene -> statusCountdown = 0;
@@ -278,7 +278,9 @@ enePtr createEnemy(enePtr prevEne, int row){
 }
 
 //Function to detect shark attacks
-void sharkAttack(enePtr ene, towPtr tow){
+void sharkAttack(enePtr ene, towPtr tow, dataPtr data){
+
+
 
 	if(tow->isAlive == 0 || tow == NULL){
 		ene->moveBlocked = 0;
@@ -287,6 +289,23 @@ void sharkAttack(enePtr ene, towPtr tow){
 	}
 
 	if((ene->body_pos[0] - 24) <= (tow->body_pos[2]) ){
+
+		if(ene->type == 3){
+			tow->health -= ene->damage;
+			killEnemy(ene, data, tow->lane);
+
+			if(tow->health <= 0){
+
+				//
+				//
+				//REMOV BABY HERE REMOVE BELOW ISALIVE
+				//
+				//
+				tow->isAlive = 0;
+			}
+			return;
+		}
+
 		ene->moveBlocked = 1;
 
 		if(ene->toAttack <= 0){
@@ -297,7 +316,7 @@ void sharkAttack(enePtr ene, towPtr tow){
 
 				//
 				//
-				//REMOV BABY IMAGE HERE
+				//REMOV BABY HERE REMOVE BELOW ISALIVE
 				//
 				//
 

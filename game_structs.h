@@ -17,7 +17,7 @@
 #define NUMROW 4
 
 //Max number of enemy types per level
-#define NUMENETYPES 2
+#define NUMENETYPES 6
 
 
 

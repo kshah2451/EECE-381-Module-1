@@ -31,19 +31,9 @@
 #include "cursor.h"
 #include "system.h"
 #include "heads_up_display.h"
-#include "keyboard_keys.h"
-
-/*
-#define PS2_NAME "/dev/ps2"
-#define PS2_TYPE "altera_up_avalon_ps2"
-#define PS2_BASE 0x00004030
-#define PS2_SPAN 8
-#define PS2_IRQ 0
-#define PS2_HDL_PARAMETERS ""
-#define ALT_MODULE_CLASS_ps2 altera_up_avalon_ps2
-*/
-
-
+#include "keyboard_codes.h"
+//#include "bitmaps.h"
+#include "game_over.h"
 
 
 //GLOBAL VARIABLES
@@ -122,13 +112,14 @@ int main()
 
 
 
-				/* TITLE SCREEN*/
-	// display the title screen
-	title_screen(pixel_buffer, char_buffer, start, ps2_kb, decode_mode, data, ascii);
 
 
+					/* TITLE SCREEN*/
+				// display the title screen
+	title_screen(pixel_buffer, char_buffer, start, ps2_kb, decode_mode, data, ascii); //wait here until "ENTER"
 
-				/* MAIN GAME*/
+	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
+
 
 	//set background image
 	draw_sky(pixel_buffer);
@@ -152,6 +143,7 @@ int main()
 		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0)
 		{
 
+				printf("What was pressed: %x \n", data);
 				//if user presses one of the number keys (1 and 2 and 3 for now)
 				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY){
 					//enter tower selection function, and raise hasTowerBeenSelected flag
@@ -164,9 +156,10 @@ int main()
 				// already an existing tower in that grid (in that case, don't place anything)
 				// draw the baby on the current grid position, raise hasTowerBeenPlaced flag and reset
 				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
-				if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)){ // user presses A
+				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)){ // user presses A
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
-					draw_baby(game_data->towers[grid_pos], pixel_buffer);
+					printf("data = %x when it goes in else if \n", data);
+					draw_baby(game_data->towers[grid_pos], pixel_buffer, game_data->towers[grid_pos]->bulletType);
 					game_data->towers[grid_pos]->isAlive = 1;
 
 					hasTowerBeenPlaced++;
@@ -176,25 +169,33 @@ int main()
 				}
 
 				//If player presses B while cursor highlights a tower, the tower is removed
-				if(data == B_KEY && (game_data->towers[grid_pos]->isAlive == 1)){
+				else if(data == B_KEY && (game_data->towers[grid_pos]->isAlive == 1)){
 
 					remove_baby(game_data->towers[grid_pos], grid_pos, pixel_buffer);
 				}
 
 				//check if user has pressed any of the directional keys, update the cursor moved flag
-				if(data == UP || data == DOWN || data == LEFT || data == RIGHT){
+				else if(data == UP || data == DOWN || data == LEFT || data == RIGHT){
 					hasCursorMoved++;
 				}
 
-				//only when cursormoved >= 2 (because of keyboard sensitivity, move the cursor
-				if(hasCursorMoved >= 2){
-					//move the cursor and update the grid position
-					grid_pos = move_cursor(grid_pos, ps2_kb, decode_mode, data, ascii, pixel_buffer);
-					printf("%i \n", grid_pos);
-					//reset hasCursorMoved flag
-					hasCursorMoved = 0;
+				else{
 
-					}
+					printf("data = %x when incorrect key pressed \n", data);
+
+				}
+
+					//only when cursor moved >= 2 (because of keyboard sensitivity, move the cursor
+					if(hasCursorMoved >= 2){
+						//move the cursor and update the grid position
+						grid_pos = move_cursor(grid_pos, ps2_kb, decode_mode, data, ascii, pixel_buffer);
+						//reset hasCursorMoved flag
+						hasCursorMoved = 0;
+
+						}
+
+
+
 
 			}
 

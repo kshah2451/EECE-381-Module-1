@@ -10,7 +10,6 @@ extern int victoryFlag;
 
 //Interrupt function
 void timerroutine(void* context, alt_u32 id){
-	printf("THIS SHIT IS WORKING BEFORE DATAPTR\n");
 
 	dataPtr data = (dataPtr)context;
 
@@ -18,7 +17,7 @@ void timerroutine(void* context, alt_u32 id){
 
 
 	//Advance/create enemies
-	goEnemies(data);
+//	goEnemies(data);
 //	draw_grids(pixel_buffer);
 //	draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
 
@@ -62,17 +61,13 @@ void goEnemies(dataPtr data){
 
 		//find the first tower in a row
 		int firstTow = (NUMTOW/NUMROW)*i;
-		printf("FIRSTTOWIS%i\n", firstTow);
 
 
 
 		//if there's no enemies in that row, try and make one
 		if(data->eneHead[i] == NULL){
 			if(isNewEnemy()){
-				printf("enegetEX\n");
-				printf("%iFIRSTENE", i);
 				data->eneHead[i] = createEnemy(NULL, i);
-				printf("eneMAKE\n");
 				moveEnemy(data->eneHead[i]);
 			}
 		}
@@ -108,7 +103,6 @@ void goEnemies(dataPtr data){
 			if(ene->next == NULL){
 				if(isNewEnemy()){
 					ene = createEnemy(ene, i);
-					printf("%iSECONDENE", i);
 					moveEnemy(ene);
 				}
 			}
@@ -311,18 +305,14 @@ void goBullets(towPtr tow, dataPtr data){
 //Checks if it's time for a new bullet
 int isNewBullet(towPtr tow){
 
-	printf("%i\n", tow->toAttack);
 
 
 	if(tow->toAttack <= 0){
-		printf("yes its time\n");
 		tow->toAttack = tow->baseAttack;
 		return 1;
 	}
 	else{
-		printf("no its not\n");
 		tow->toAttack--;
-		printf("%i\n", tow->toAttack);
 		return 0;
 	}
 	return 0;
@@ -330,7 +320,6 @@ int isNewBullet(towPtr tow){
 
 
 bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
-	printf("bullet CREATION\n");
 	//Malloc some space for the bullet
 	bulPtr bul = malloc(sizeof(Bullet));
 

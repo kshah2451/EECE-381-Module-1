@@ -30,7 +30,7 @@ int isNewEnemy(void);
 enePtr createEnemy(enePtr prevEne, int row);
 
 //Function to detect shark attacks
-void sharkAttack(enePtr ene, towPtr tow);
+void sharkAttack(enePtr ene, towPtr tow, dataPtr data);
 
 //More enemy functions
 void moveEnemy(enePtr ene);

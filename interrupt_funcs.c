@@ -97,7 +97,7 @@ void goEnemies(dataPtr data){
 		//Go through enemies until we hit the end of the list
 		while(ene != NULL){
 			//try to attack then move
-			sharkAttack(ene, tow);
+			sharkAttack(ene, tow, data);
 			moveEnemy(ene);
 
 			//if at the end of the enemies, try and make a new one
@@ -148,28 +148,97 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	switch(randType){
 
+	//Normal Shark
 	case 0:
-		ene -> damage = 1;
-		ene -> health = 3;//200;
+		ene -> damage = 3;
+		ene -> health = 15;
 		ene -> speed = 5;
-		ene -> toAttack = 1;
-		ene -> baseAttack = 1;
-		ene -> toMove = 5;
-		ene -> baseMove = 5;
+		ene -> toAttack = 5;
+		ene -> baseAttack = 5;
+		ene -> toMove = 7;
+		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
+		ene -> status = 0;
+		ene -> statusCountdown = 0;
 		ene -> colour = 0x7bef;
 		break;
 
+	//Fast shark
 	case 1:
-		ene -> damage = 1;
-		ene -> health = 5;//300;
+		ene -> damage = 5;
+		ene -> health = 9;
 		ene -> speed = 6;
-		ene -> toAttack = 1;
-		ene -> baseAttack = 1;
-		ene -> toMove = 3;
-		ene -> baseMove = 3;
+		ene -> toAttack = 3;
+		ene -> baseAttack = 3;
+		ene -> toMove = 4;
+		ene -> baseMove = 4;
 		ene -> moveBlocked = 0;
+		ene -> status = 0;
+		ene -> statusCountdown = 0;
 		ene -> colour = 0xffff;
+		break;
+
+	//Armored shark
+	case 2:
+		ene -> damage = 2;
+		ene -> health = 30;
+		ene -> speed = 3;
+		ene -> toAttack = 5;
+		ene -> baseAttack = 5;
+		ene -> toMove = 7;
+		ene -> baseMove = 7;
+		ene -> moveBlocked = 0;
+		ene -> status = 0;
+		ene -> statusCountdown = 0;
+		ene -> colour = 0x0000;
+		break;
+
+
+	//Kamikaze shark  !!!!SPECIAL SHARK!!!!
+	case 3:
+		ene -> damage = 20;
+		ene -> health = 15;
+		ene -> speed = 6;
+		ene -> toAttack = 0;
+		ene -> baseAttack = 0;
+		ene -> toMove = 7;
+		ene -> baseMove = 7;
+		ene -> moveBlocked = 0;
+		ene -> status = 0;
+		ene -> statusCountdown = 0;
+		ene -> colour = 0x00ff;
+		break;
+
+
+	//Mini-Boss shark !!!!SPECIAL SPAWNRATE!!!!
+	case 4:
+		ene -> damage = 10;
+		ene -> health = 40;
+		ene -> speed = 3;
+		ene -> toAttack = 5;
+		ene -> baseAttack = 5;
+		ene -> toMove = 7;
+		ene -> baseMove = 7;
+		ene -> moveBlocked = 0;
+		ene -> status = 0;
+		ene -> statusCountdown = 0;
+		ene -> colour = 0x0ff0;
+		break;
+
+
+	//FINARU BOSSU SHAKKU  !!!!SPECIAL EVERYTHING, MAY REMOVE FROM HERE!!!!
+	case 5:
+		ene -> damage = 50;
+		ene -> health = 60;//300;
+		ene -> speed = 3;
+		ene -> toAttack = 5;
+		ene -> baseAttack = 5;
+		ene -> toMove = 10;
+		ene -> baseMove = 10;
+		ene -> moveBlocked = 0;
+		ene -> status = 0;
+		ene -> statusCountdown = 0;
+		ene -> colour = 0x9955;
 		break;
 
 	}
@@ -209,7 +278,9 @@ enePtr createEnemy(enePtr prevEne, int row){
 }
 
 //Function to detect shark attacks
-void sharkAttack(enePtr ene, towPtr tow){
+void sharkAttack(enePtr ene, towPtr tow, dataPtr data){
+
+
 
 	if(tow->isAlive == 0 || tow == NULL){
 		ene->moveBlocked = 0;
@@ -218,6 +289,23 @@ void sharkAttack(enePtr ene, towPtr tow){
 	}
 
 	if((ene->body_pos[0] - 24) <= (tow->body_pos[2]) ){
+
+		if(ene->type == 3){
+			tow->health -= ene->damage;
+			killEnemy(ene, data, tow->lane);
+
+			if(tow->health <= 0){
+
+				//
+				//
+				//REMOV BABY HERE REMOVE BELOW ISALIVE
+				//
+				//
+				tow->isAlive = 0;
+			}
+			return;
+		}
+
 		ene->moveBlocked = 1;
 
 		if(ene->toAttack <= 0){
@@ -228,7 +316,7 @@ void sharkAttack(enePtr ene, towPtr tow){
 
 				//
 				//
-				//REMOV BABY IMAGE HERE
+				//REMOV BABY HERE REMOVE BELOW ISALIVE
 				//
 				//
 
@@ -246,12 +334,6 @@ void sharkAttack(enePtr ene, towPtr tow){
 void moveEnemy(enePtr ene){
 
 	if (ene->moveBlocked == 0){
-		//
-		//
-		//SOMEONE CHANGE THE VALUES AND/OR LOGIC IN HERE/toMove/baseMove/speed TO MAKE ANIMATION GET
-		//
-		//
-
 		if(ene->toMove <= 0){
 
 			if((ene->body_pos[0] - 24) <= 16){
@@ -259,10 +341,12 @@ void moveEnemy(enePtr ene){
 
 				//
 				//
-				//GAME OVER GOES HERE
+				//GAME OVER GOES HERE, REMEMBER TO FREE ALL MEM EITHER HERE OR OUTSIDE
+				//
+				//
+
 				gameOverFlag = 1;
-				//
-				//
+
 				ene-> moveBlocked = 1;
 
 				return;
@@ -293,7 +377,7 @@ void goBullets(towPtr tow, dataPtr data){
 	int bulFlag = 0;
 
 	//if there's no bullet for that tower, try and make one
-	if(tow->bulHead == NULL){
+	if(tow->bulHead == NULL  && tow->bulletType != 2 && tow->bulletType != 4 && tow->bulletType != 5){
 		if(isNewBullet(tow)){
 			tow->bulHead = createBullet(tow, NULL);
 			moveBullet(tow->bulHead);
@@ -308,8 +392,6 @@ void goBullets(towPtr tow, dataPtr data){
 
 	//Go through bullets until we hit the end of the list
 	while(bul != NULL){
-
-
 
 		//if at the end of the bullets, try and make a new one
 		if(bul->next == NULL)
@@ -337,14 +419,11 @@ int isNewBullet(towPtr tow){
 
 
 	if(tow->toAttack <= 0){
-
 		tow->toAttack = tow->baseAttack;
 		return 1;
 	}
 	else{
-
 		tow->toAttack--;
-
 		return 0;
 	}
 	return 0;
@@ -363,20 +442,81 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 
 	switch(bul->type){
 
+
+
+	//Resource Tower  !!!!SPECIAL CASE, SHOULDNT MAKE BULLETS AT THIS BUL TYPE!!!!
 	case 1:
-		bul -> damage = 1;
+		bul -> damage = 0;
+		bul -> speed = 0;
+		bul -> toMove = 0;
+		bul -> baseMove = 0;
+		bul -> colour = 0;
+		break;
+
+
+	//Normal Tower
+	case 2:
+		bul -> damage = 3;
 		bul -> speed = 5;
 		bul -> toMove = 1;
 		bul -> baseMove = 1;
 		bul -> colour = 0xFFFF;
 		break;
 
-	case 2:
-		bul -> damage = 0;
+
+	//Rapid Fire
+	case 3:
+		bul -> damage = 1;
 		bul -> speed = 8;
 		bul -> toMove = 1;
 		bul -> baseMove = 1;
 		bul -> colour = 0x0F00;
+		break;
+
+	//Defensive Tower 	!!!!SPECIAL CASE, SHOULDN'T MAKE BULLETS AT THIS TYPE!!!!
+	case 4:
+		bul -> damage = 0;
+		bul -> speed = 0;
+		bul -> toMove = 0;
+		bul -> baseMove = 0;
+		bul -> colour = 0;
+		break;
+
+	//Mine 	!!!!SPECIAL CASE, SHOULDN'T MAKE BULLETS AT THIS TYPE!!!!
+	case 5:
+		bul -> damage = 0;
+		bul -> speed = 0;
+		bul -> toMove = 0;
+		bul -> baseMove = 0;
+		bul -> colour = 0;
+		break;
+
+	//Ice Tower    !!!!SPECIAL TOWER, SLOW EFFECT!!!!
+	case 6:
+		bul -> damage = 2;
+		bul -> speed = 5;
+		bul -> toMove = 1;
+		bul -> baseMove = 1;
+		bul -> colour = 0x000F;
+		break;
+
+
+	//Poison Tower    !!!!SPECIAL TOWER, POISON EFFECT!!!!
+	case 7:
+		bul -> damage = 2;
+		bul -> speed = 5;
+		bul -> toMove = 1;
+		bul -> baseMove = 1;
+		bul -> colour = 0xF00F;
+		break;
+
+	//Rocket Tower
+	case 8:
+		bul -> damage = 8;
+		bul -> speed = 7;
+		bul -> toMove = 1;
+		bul -> baseMove = 1;
+		bul -> colour = 0x0000;
 		break;
 
 	}

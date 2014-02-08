@@ -67,7 +67,7 @@ int main()
 	int start = 0;		//i dont think im actually using this... will have to check
 	int num_babies = 0; //i dont think im actually using this... will have to check
 	int i;
-	dataPtr game_data = (dataPtr)malloc(sizeof(gameData));
+	dataPtr game_data = malloc(sizeof(gameData));
 	for(i = 0; i < NUMROW; i++){
 		game_data->eneHead[i] = NULL;
 	}

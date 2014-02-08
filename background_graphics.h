@@ -15,6 +15,7 @@ void draw_grids(alt_up_pixel_buffer_dma_dev*);
 
 void draw_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int y_start, int color);
 
+void draw_background_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int y_start);
 
 #endif
 

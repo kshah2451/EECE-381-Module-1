@@ -165,7 +165,7 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	//Fast shark
 	case 1:
-		ene -> damage = 4;
+		ene -> damage = 5;
 		ene -> health = 9;
 		ene -> speed = 6;
 		ene -> toAttack = 3;
@@ -442,8 +442,20 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 
 	switch(bul->type){
 
-	//Normal Tower
+
+
+	//Resource Tower  !!!!SPECIAL CASE, SHOULDNT MAKE BULLETS AT THIS BUL TYPE!!!!
 	case 1:
+		bul -> damage = 0;
+		bul -> speed = 0;
+		bul -> toMove = 0;
+		bul -> baseMove = 0;
+		bul -> colour = 0;
+		break;
+
+
+	//Normal Tower
+	case 2:
 		bul -> damage = 3;
 		bul -> speed = 5;
 		bul -> toMove = 1;
@@ -451,14 +463,6 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 		bul -> colour = 0xFFFF;
 		break;
 
-	//Resource Tower  !!!!SPECIAL CASE, SHOULDNT MAKE BULLETS AT THIS BUL TYPE!!!!
-	case 2:
-		bul -> damage = 0;
-		bul -> speed = 0;
-		bul -> toMove = 0;
-		bul -> baseMove = 0;
-		bul -> colour = 0;
-		break;
 
 	//Rapid Fire
 	case 3:
@@ -469,7 +473,7 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 		bul -> colour = 0x0F00;
 		break;
 
-	//Mine 	!!!!SPECIAL CASE, SHOULDN'T MAKE BULLETS AT THIS TYPE!!!!
+	//Defensive Tower 	!!!!SPECIAL CASE, SHOULDN'T MAKE BULLETS AT THIS TYPE!!!!
 	case 4:
 		bul -> damage = 0;
 		bul -> speed = 0;
@@ -478,7 +482,7 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 		bul -> colour = 0;
 		break;
 
-	//Defensive Tower 	!!!!SPECIAL CASE, SHOULDN'T MAKE BULLETS AT THIS TYPE!!!!
+	//Mine 	!!!!SPECIAL CASE, SHOULDN'T MAKE BULLETS AT THIS TYPE!!!!
 	case 5:
 		bul -> damage = 0;
 		bul -> speed = 0;
@@ -487,22 +491,23 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 		bul -> colour = 0;
 		break;
 
-	//Poison Tower    !!!!SPECIAL TOWER, POISON EFFECT!!!!
+	//Ice Tower    !!!!SPECIAL TOWER, SLOW EFFECT!!!!
 	case 6:
 		bul -> damage = 2;
 		bul -> speed = 5;
 		bul -> toMove = 1;
 		bul -> baseMove = 1;
-		bul -> colour = 0xF00F;
+		bul -> colour = 0x000F;
 		break;
 
-	//Ice Tower    !!!!SPECIAL TOWER, SLOW EFFECT!!!!
+
+	//Poison Tower    !!!!SPECIAL TOWER, POISON EFFECT!!!!
 	case 7:
 		bul -> damage = 2;
 		bul -> speed = 5;
 		bul -> toMove = 1;
 		bul -> baseMove = 1;
-		bul -> colour = 0x000F;
+		bul -> colour = 0xF00F;
 		break;
 
 	//Rocket Tower

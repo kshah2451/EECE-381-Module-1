@@ -30,6 +30,7 @@
 #include "tower_select.h"
 #include "cursor.h"
 #include "system.h"
+#include "in_game_menu.h"
 #include "heads_up_display.h"
 #include "keyboard_codes.h"
 #include "game_over.h"
@@ -95,22 +96,28 @@ int main()
 
 	//pixel buffer initializations
 
-	pixel_buffer =
-	  alt_up_pixel_buffer_dma_open_dev("/dev/pixel_buffer_dma");
+	// Use the name of your pixel buffer DMA core
+	pixel_buffer = alt_up_pixel_buffer_dma_open_dev("/dev/pixel_buffer_dma");
 
-	// Set the background buffer address – Although we don’t use the
-	//background, // they only provide a function to change the background
-	//buffer address, so
-	// we must set that, and then swap it to the foreground.
+	unsigned int pixel_buffer_addr1 = PIXEL_BUFFER_BASE;
+	unsigned int pixel_buffer_addr2 = PIXEL_BUFFER_BASE + (320 * 240 * 2);
+	// Set the 1st buffer address
 	alt_up_pixel_buffer_dma_change_back_buffer_address(pixel_buffer,
-	PIXEL_BUFFER_BASE);
+	 pixel_buffer_addr1);
 
-	// Swap background and foreground buffers
+	// Swap buffers – we have to swap because there is only an API function
+	// to set the address of the background buffer.
 	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
+	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer))
+	 ;
 
-	// Wait for the swap to complete
-	while
-	(alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer));
+	// Set the 2nd buffer address
+	alt_up_pixel_buffer_dma_change_back_buffer_address(pixel_buffer,
+	 pixel_buffer_addr2);
+
+	// Clear both buffers (this makes all pixels black)
+	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
+	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 1);
 
 	// Initialize the character buffer
 	alt_up_char_buffer_dev *char_buffer;
@@ -121,13 +128,9 @@ int main()
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 
 
-
-
-
 				/* TITLE SCREEN*/
 	// display the title screen
 	title_screen(pixel_buffer, char_buffer, start, ps2_kb, decode_mode, data, ascii);
-
 
 
 				/* MAIN GAME*/
@@ -168,13 +171,17 @@ int main()
 				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
 				if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)){ // user presses A
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
-					draw_baby(game_data->towers[grid_pos], pixel_buffer);
+					draw_baby_bmp(game_data->towers[grid_pos], pixel_buffer);
 					game_data->towers[grid_pos]->isAlive = 1;
 
 					hasTowerBeenPlaced++;
 					hasTowerBeenSelected = 0;
 					towerCanBePlaced = 0;
 
+				}
+
+				if(data == ESC) {
+					switch_to_menu(pixel_buffer, char_buffer, ps2_kb, decode_mode);
 				}
 
 				//If player presses B while cursor highlights a tower, the tower is removed

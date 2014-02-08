@@ -34,12 +34,16 @@ void draw_background_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_sta
 void set_cursor(int, int);
 //void draw_baby(int*, int*, int , alt_up_pixel_buffer_dma_dev*);
 void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev*);
+
+void draw_baby_bmp(Tower* baby, alt_up_pixel_buffer_dma_dev*);
 //void draw_baby(Tower baby[] , int, alt_up_pixel_buffer_dma_dev*);
 
 //void draw_shark(int ,int , alt_up_pixel_buffer_dma_dev* );
 void draw_cursor(int*,int, alt_up_pixel_buffer_dma_dev*);
 
 //void tower_selection(Tower*, int, alt_up_ps2_dev* , KB_CODE_TYPE , alt_u8 , char );
+void draw_boat(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start, int boat_height, int boat_width);
 
+void draw_background_boat(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start, int boat_height, int boat_width);
 
 #endif /* GRAPHICS_H_ */

@@ -7,7 +7,10 @@
 #include "game_structs.h"
 #include "tower_select.h"
 #include "Colors.h"
+#include "bitmap.h"
 //#include "cursor.h"
+
+extern int baby_bmp[];
 
 
 
@@ -20,10 +23,10 @@ void set_baby_positions(Tower* baby[]){
 		// how may spaces the babies are spaced apart
 		int increment = 40;
 
-		int body_x1 = BG_LOWER_X - (0.625*increment); //269
-		int body_y1 = BG_UPPER_Y + (0.375*increment);
-		int body_x2 = body_x1 + 10;
-		int body_y2 = body_y1 + 5;
+		int body_x1 = BG_LOWER_X - (0.8*increment); //269
+		int body_y1 = BG_UPPER_Y + (0.2*increment);
+		int body_x2 = body_x1 + 25;
+		int body_y2 = body_y1 + 30;
 
 		for(j = 0; j < NUMROW; j++){
 			for(i = 0; i < (NUMTOW/NUMROW); i++){
@@ -155,5 +158,54 @@ void draw_background_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_sta
 			color_inc++;
 		}
 	}
+}
+
+void draw_boat(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start, int boat_height, int boat_width) {
+	int x0 = x_start;
+	int x1 = x_start + boat_width;
+	int y;
+	for(y = y_start; y < y_start + boat_height; y++) {
+		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x0, x1, y, BLACK, 0);
+		x0++;
+		x1--;
+	}
+}
+
+
+void draw_background_boat(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start, int boat_height, int boat_width) {
+	int color_inc = 1;
+	int x0 = x_start;
+	int x1 = x_start + boat_width;
+	int y;
+	for(y = 0; y < y_start; y++) {
+		if(y % 3 == 0) color_inc++;
+	}
+	for(y = y_start; y < y_start + boat_height; y++) {
+		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x0, x1, y, 0xF800 + color_inc, 0);
+		x0++;
+		x1--;
+		if(y % 3 == 0) color_inc++;
+	}
+}
+
+void draw_baby_bmp(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer) {
+	int pixel_el = 0;
+	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
+	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer))
+				 ;
+	int i, j;
+		for(i = 0; i < 30; i++)
+		{
+			for(j = 0; j < 25; j++){
+				if(baby_bmp[pixel_el]!= BLACK){
+					alt_up_pixel_buffer_dma_draw(pixel_buffer, baby_bmp[pixel_el], baby->body_pos[0]+j, baby->body_pos[1]+i);
+					//alt_up_pix
+				}
+				pixel_el++;
+			}
+		}
+		alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
+		//while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer))
+		//	 ;
 }
 

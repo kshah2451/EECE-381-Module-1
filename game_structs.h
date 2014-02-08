@@ -15,6 +15,7 @@
 
 #define NUMTOW 28
 #define NUMROW 4
+#define NUMCOLS 7
 
 //Max number of enemy types per level
 #define NUMENETYPES 2
@@ -166,6 +167,15 @@ typedef struct Cursor
 } Cursor;
 Cursor cur;
 Cursor prev_cur;
+
+typedef struct Boat
+{
+	int x_pos;
+	int y_pos;
+	int boat_height;
+	int boat_width;
+	int grid_position;
+} Boat;
 
 
 

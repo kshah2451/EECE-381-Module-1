@@ -18,6 +18,7 @@
 #include "keyboard_codes.h"
 #include "game_over.h"
 #include "level_one.h"
+#include "level_two.h"
 #include "story_seq.h"
 
 

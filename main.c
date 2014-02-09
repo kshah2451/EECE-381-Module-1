@@ -18,6 +18,7 @@
 #include "keyboard_codes.h"
 #include "game_over.h"
 #include "level_one.h"
+#include "story_seq.h"
 
 
 
@@ -109,6 +110,7 @@ int main()
 		}
 		else if (menu_selection == 1){ // New Game
 			/*LEVEL ONE*/
+			pre_level_story_1(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
 			mainGame_level1(ps2_kb, decode_mode, data, ascii);
 
 			if(gameOverFlag == 1){  //Lv1 Game Over
@@ -119,9 +121,12 @@ int main()
 			else if(victoryFlag >= 5){ // Level 1 Victory
 				gameOverFlag = 0;
 				victoryFlag = 0;
-				victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+				level1_victory(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+				alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
+
 				/*LEVEL TWO*/
 				//replace this with level 2
+				pre_level_story_2(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
 				mainGame_level2(ps2_kb, decode_mode, data, ascii);
 				if(gameOverFlag == 1){  //Lv2 Game Over
 					gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
@@ -129,12 +134,14 @@ int main()
 					victoryFlag = 0;
 				}
 
-				else if(victoryFlag >= 5){ //Lv2 Victory
+				else if(victoryFlag >= 10){ //Lv2 Victory
 					gameOverFlag = 0;
 					victoryFlag = 0;
-					victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+					level2_victory(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+					alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 					/*LEVEL THREE*/
 					//replace this with level 3
+					pre_level_story_3(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
 					mainGame_level2(ps2_kb, decode_mode, data, ascii);
 
 					if(gameOverFlag == 1){ //Lv 3 Game Over
@@ -142,7 +149,7 @@ int main()
 						gameOverFlag = 0;
 						victoryFlag = 0;
 					}
-					else if(victoryFlag >= 5){ // Lv 3 Victory
+					else if(victoryFlag >= 10){ // Lv 3 Victory
 						victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
 						gameOverFlag = 0;
 						victoryFlag = 0;

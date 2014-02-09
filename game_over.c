@@ -158,3 +158,60 @@ void gameover(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev 
 	//alt_up_char_buffer_string(char_buffer, "PRESS A TO RETURN TO MAIN MENU", 32, 42);
 
 }
+
+
+
+void level1_victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer, alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii){
+
+	int spacebar_detected = 0;
+
+	alt_up_char_buffer_clear(char_buffer);
+	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 0, 0, 320, 240, 0x0A00, 0);
+
+	while(spacebar_detected < 2){
+		// display graphic
+		alt_up_char_buffer_string(char_buffer, "CONGRATULATIONS!", 20, 20);
+		alt_up_char_buffer_string(char_buffer, "YOU'VE DEFEATED THE SHARKS!", 20, 22);
+
+		alt_up_char_buffer_string(char_buffer, "YOU'VE UNLOCKED TOWER 4, 5 and 6!", 20, 25);
+		alt_up_char_buffer_string(char_buffer, "INSERT TOWER GRAPHICS HERE", 20, 28);
+		alt_up_char_buffer_string(char_buffer, "Press SPACEBAR to continue", 40, 50);
+		if(decode_scancode(ps2_kb, &decode_mode, &data, &ascii)== 0){
+			if(data == SPACEBAR){
+				spacebar_detected++;
+			}
+		}
+	}
+}
+
+void level2_victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer, alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii){
+
+	int spacebar_detected = 0;
+
+	alt_up_char_buffer_clear(char_buffer);
+	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 0, 0, 320, 240, 0x0A00, 0);
+
+	while(spacebar_detected < 2){
+		// display graphic
+		alt_up_char_buffer_string(char_buffer, "CONGRATULATIONS!", 20, 20);
+		alt_up_char_buffer_string(char_buffer, "YOU'VE DEFEATED THE SHARKS!", 20, 22);
+
+		alt_up_char_buffer_string(char_buffer, "YOU'VE UNLOCKED TOWER 7 and 8", 20, 25);
+		alt_up_char_buffer_string(char_buffer, "INSERT TOWER GRAPHICS HERE", 20, 28);
+		alt_up_char_buffer_string(char_buffer, "Press SPACEBAR to continue", 40, 50);
+		if(decode_scancode(ps2_kb, &decode_mode, &data, &ascii)== 0){
+			if(data == SPACEBAR){
+				spacebar_detected++;
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+

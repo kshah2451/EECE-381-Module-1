@@ -17,7 +17,7 @@
 #include "heads_up_display.h"
 #include "keyboard_codes.h"
 #include "game_over.h"
-#include "main_game.h"
+#include "level_one.h"
 
 
 
@@ -122,7 +122,7 @@ int main()
 				victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
 				/*LEVEL TWO*/
 				//replace this with level 2
-				mainGame_level1(ps2_kb, decode_mode, data, ascii);
+				mainGame_level2(ps2_kb, decode_mode, data, ascii);
 				if(gameOverFlag == 1){  //Lv2 Game Over
 					gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
 					gameOverFlag = 0;
@@ -135,7 +135,7 @@ int main()
 					victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
 					/*LEVEL THREE*/
 					//replace this with level 3
-					mainGame_level1(ps2_kb, decode_mode, data, ascii);
+					mainGame_level2(ps2_kb, decode_mode, data, ascii);
 
 					if(gameOverFlag == 1){ //Lv 3 Game Over
 						gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);

@@ -6,10 +6,10 @@
  */
 
 #include "game_structs.h"
-#ifndef MAIN_GAME_H_
-#define MAIN_GAME_H_
+#ifndef LEVEL_TWO_H_
+#define LEVEL_TWO_H_
 
-void mainGame_level1(alt_up_ps2_dev *, KB_CODE_TYPE, alt_u8, char );
+void mainGame_level2(alt_up_ps2_dev *, KB_CODE_TYPE, alt_u8, char );
 
 
 

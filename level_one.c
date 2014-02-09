@@ -11,7 +11,7 @@
 #include "altera_up_avalon_ps2_regs.h"
 #include "altera_up_avalon_video_pixel_buffer_dma.h"
 #include "altera_up_avalon_video_character_buffer_with_dma.h"
-#include "main_game.h"
+#include "level_one.h"
 #include "keyboard_codes.h"
 #include "game_structs.h"
 #include "Colors.h"
@@ -73,8 +73,8 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 		{
 
 				printf("What was pressed: %x \n", data);
-				//if user presses one of the number keys (1 and 2 and 3 for now)
-				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY || data == FOUR_KEY || data == FIVE_KEY || data == SIX_KEY || data == SEVEN_KEY || data == EIGHT_KEY){
+				//if user presses one of the number keys (only towers 1 2 3 available in lv 1)
+				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY){
 					//enter tower selection function, and raise hasTowerBeenSelected flag
 					tower_selection(ps2_kb, decode_mode, data, ascii, temp_baby_attributes);
 
@@ -145,10 +145,6 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	}
 		alt_irq_disable(TIMER_0_IRQ);
 		free(game_data);
-	/*	for(i = 0; i < NUMTOW; i++){
-			game_data->towers[i]->isAlive = 0;
-		}*/
-
 
 
 }

@@ -19,4 +19,9 @@ void victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev *
 
 void gameover(alt_up_pixel_buffer_dma_dev*,alt_up_char_buffer_dev*, alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii);
 
+void level1_victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer, alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii);
+
+void level2_victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer, alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii);
+
+
 #endif /* HEADS_UP_DISPLAY_H_ */

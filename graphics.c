@@ -9,8 +9,8 @@
 #include "Colors.h"
 #include "bitmaps.h"
 //#include "cursor.h"
-extern int baby_bmp[];
-extern int infantry_bmp[];
+extern short int baby_bmp[];
+extern short int infantry_bmp[];
 
 //Function will initialize position and colour values for the baby graphics
 //void initialize_baby(Tower baby, int num, int health, int bullet, int fire_rate, int grid, int colour){
@@ -119,7 +119,7 @@ void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower
 	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer));
 		printf("data = %x before huge ass array \n");
 
-	int image_to_draw[750];
+	short int image_to_draw[750];
 
 	//Check which .bmp image to draw. Depends on what the tower on this grid's type is
 	switch (tower_type){

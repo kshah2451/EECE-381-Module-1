@@ -17,26 +17,15 @@
 #include "heads_up_display.h"
 #include "keyboard_codes.h"
 #include "game_over.h"
-
-
-/*
-#define PS2_NAME "/dev/ps2"
-#define PS2_TYPE "altera_up_avalon_ps2"
-#define PS2_BASE 0x00004030
-#define PS2_SPAN 8
-#define PS2_IRQ 0
-#define PS2_HDL_PARAMETERS ""
-#define ALT_MODULE_CLASS_ps2 altera_up_avalon_ps2
-*/
-
+#include "main_game.h"
 
 
 
 //GLOBAL VARIABLES
 alt_up_pixel_buffer_dma_dev* pixel_buffer;
+
 int gameOverFlag = 0;
 int victoryFlag = 0;
-
 
 
 
@@ -47,29 +36,21 @@ int main()
 	alt_u8 data;
 	char ascii;
 	char *p;
-	int temp_baby_attributes[10] = {0};
 	int start = 0;		//i dont think im actually using this... will have to check
 	int num_babies = 0; //i dont think im actually using this... will have to check
 	int i;
-	dataPtr game_data = (dataPtr)malloc(sizeof(gameData));
+/*	dataPtr game_data = (dataPtr)malloc(sizeof(gameData));
 	for(i = 0; i < NUMROW; i++){
 		game_data->eneHead[i] = NULL;
-	}
-
-	//set starting grid position to be grid 6, which is the top left-most grid
-	int grid_pos = 6;
-	int hasTowerBeenSelected = 0;   //flag that checks if user has selected a tower for placement
-	int hasTowerBeenPlaced = 0;		// flag that checks when a tower has been placed
-	int towerCanBePlaced = 0;		// flag that checks whether a tower can be placed	(
-	int hasCursorMoved = 0;			//flag that checks if the cursor is being told to move (helps fix sensitivity)
+	}*/
 
 
 				/* HAL INITIALIZATIONS*/
 
 
 
-	// set positions of baby towers
-	set_baby_positions(game_data->towers);
+/*	// set positions of baby towers
+	set_baby_positions(game_data->towers);*/
 
 	//bunch of keyboard initializations
 	alt_up_ps2_dev *ps2_kb;
@@ -111,120 +92,58 @@ int main()
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 
 
+	while(1){
+
+						/* TITLE SCREEN*/
+					// display the title screen
+		data = 0;
+		title_screen(pixel_buffer, char_buffer, start, ps2_kb, decode_mode, data, ascii); //wait here until "ENTER"
+
+		alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 
 
-					/* TITLE SCREEN*/
-				// display the title screen
-	title_screen(pixel_buffer, char_buffer, start, ps2_kb, decode_mode, data, ascii); //wait here until "ENTER"
+		mainGame_level1(ps2_kb, decode_mode, data, ascii);
 
-	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
+		if(gameOverFlag == 1){
+			gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
+			gameOverFlag = 0;
+			victoryFlag = 0;
+		}
+		else if(victoryFlag >= 5){
+			gameOverFlag = 0;
+			victoryFlag = 0;
+		    victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+			//replace this with level 2
+			mainGame_level1(ps2_kb, decode_mode, data, ascii);
+			if(gameOverFlag == 1){
+				gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
+				gameOverFlag = 0;
+				victoryFlag = 0;
+			}
 
+			else if(victoryFlag >= 5){
+				gameOverFlag = 0;
+				victoryFlag = 0;
+			    victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+				//replace this with level 3
+				mainGame_level1(ps2_kb, decode_mode, data, ascii);
 
-	//set background image
-	draw_sky(pixel_buffer);
-
-	draw_ocean(pixel_buffer);
-
-	draw_grids(pixel_buffer);
-	heads_up_display_static();
-
-
-
-
-	//set default cursor position to be grid 6
-	set_cursor(grid_pos, CURSOR_COLOUR);
-	draw_cursor(cur.pos,cur.colour, pixel_buffer);
-	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
-	while(gameOverFlag == 0 && victoryFlag < 1000)
-//	while(1)
-	{
-
-		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0)
-		{
-
-				printf("What was pressed: %x \n", data);
-				//if user presses one of the number keys (1 and 2 and 3 for now)
-				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY){
-					//enter tower selection function, and raise hasTowerBeenSelected flag
-					tower_selection(ps2_kb, decode_mode, data, ascii, temp_baby_attributes);
-
-					hasTowerBeenSelected++;
+				if(gameOverFlag == 1){
+					gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
+					gameOverFlag = 0;
+					victoryFlag = 0;
 				}
-
-				// first check if a tower can be placed (i.e. a user has already selected a tower) and if there is
-				// already an existing tower in that grid (in that case, don't place anything)
-				// draw the baby on the current grid position, raise hasTowerBeenPlaced flag and reset
-				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
-				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)){ // user presses A
-					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
-					printf("data = %x when it goes in else if \n", data);
-					draw_baby(game_data->towers[grid_pos], pixel_buffer, game_data->towers[grid_pos]->bulletType);
-					game_data->towers[grid_pos]->isAlive = 1;
-
-					hasTowerBeenPlaced++;
-					hasTowerBeenSelected = 0;
-					towerCanBePlaced = 0;
-
+				else if(victoryFlag >= 5){
+					victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+					gameOverFlag = 0;
+					victoryFlag = 0;
 				}
-
-				else if(data == ESC) {
-				//	switch_to_menu(pixel_buffer, char_buffer, ps2_kb, decode_mode);
-				}
-
-				//If player presses B while cursor highlights a tower, the tower is removed
-				else if(data == B_KEY && (game_data->towers[grid_pos]->isAlive == 1)){
-
-					remove_baby(game_data->towers[grid_pos], grid_pos, pixel_buffer);
-				}
-
-				//check if user has pressed any of the directional keys, update the cursor moved flag
-				else if(data == UP || data == DOWN || data == LEFT || data == RIGHT){
-					hasCursorMoved++;
-				}
-
-				else{
-
-					printf("data = %x when incorrect key pressed \n", data);
-
-				}
-
-					//only when cursor moved >= 2 (because of keyboard sensitivity, move the cursor
-					if(hasCursorMoved >= 2){
-						//move the cursor and update the grid position
-						grid_pos = move_cursor(grid_pos, ps2_kb, decode_mode, data, ascii, pixel_buffer);
-						//reset hasCursorMoved flag
-						hasCursorMoved = 0;
-
-						}
-
-
-
 
 			}
 
-		// Check if player has chosen a tower to spawn
-		if(hasTowerBeenSelected >= 2){
-			towerCanBePlaced = 1;
 		}
 
-		// Check if player has just placed a new tower
-		if(hasTowerBeenPlaced >= 2){
-
-			num_babies = (num_babies + 1)% 14;
-			hasTowerBeenPlaced = 0;
-
-		}
-
-	}
-	alt_irq_disable(TIMER_0_IRQ);
-
-
-	if(gameOverFlag == 1){
-	gameover(pixel_buffer,char_buffer);
-	}
-	else if(victoryFlag >= 10){
-		victory(pixel_buffer, char_buffer);
-	}
+	} //closes while
 
 
   return 0;

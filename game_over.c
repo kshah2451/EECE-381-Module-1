@@ -67,6 +67,7 @@ void victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev *
 
 	alt_up_char_buffer_clear(char_buffer);
 	alt_up_char_buffer_string(char_buffer, "YOU WIN!", 34, 30);
+	alt_up_char_buffer_string(char_buffer, "PRESS A TO CONTINUE", 32, 42);
 
 	while(data != A_KEY){
 
@@ -144,8 +145,9 @@ void gameover(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev 
 	/****/
 
 	alt_up_char_buffer_clear(char_buffer);
-	alt_up_char_buffer_string(char_buffer, "GAME OVER (LOSER)!", 22, 8);
+	alt_up_char_buffer_string(char_buffer, "GAME OVER!", 22, 8);
 	alt_up_char_buffer_string(char_buffer, "ALL YOUR BASE ARE BELONG TO US", 18, 34);
+	alt_up_char_buffer_string(char_buffer, "PRESS A TO RETURN TO MAIN MENU", 18, 38);
 	while(enter_check < 2){
 
 		decode_scancode(ps2_kb, &decode_mode, &data, &ascii);

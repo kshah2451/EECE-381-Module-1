@@ -37,7 +37,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 			temp_baby[0] = 0x000F; //7
 			temp_baby[1] = 15; //health
 			temp_baby[2] = 2;  //bullet type
-			temp_baby[3] = 20;  //toAttack/baseAttack
+			temp_baby[3] = 10;  //toAttack/baseAttack
 			tower = 2;
 
 
@@ -100,7 +100,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 			temp_baby[0] = 0x00FF; //15
 			temp_baby[1] = 22;
-			temp_baby[2] = 2;
+			temp_baby[2] = 8;
 			temp_baby[3] = 30;
 			tower = 7;
 

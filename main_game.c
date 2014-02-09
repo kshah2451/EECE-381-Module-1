@@ -38,7 +38,7 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	int hasCursorMoved = 0;			//flag that checks if the cursor is being told to move (helps fix sensitivity)
 
 
-	dataPtr game_data = (dataPtr)malloc(sizeof(gameData));
+	dataPtr game_data = malloc(sizeof(gameData));
 	for(i = 0; i < NUMROW; i++){
 		game_data->eneHead[i] = NULL;
 	}
@@ -74,7 +74,7 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 				printf("What was pressed: %x \n", data);
 				//if user presses one of the number keys (1 and 2 and 3 for now)
-				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY){
+				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY || data == FOUR_KEY || data == FIVE_KEY || data == SIX_KEY || data == SEVEN_KEY || data == EIGHT_KEY){
 					//enter tower selection function, and raise hasTowerBeenSelected flag
 					tower_selection(ps2_kb, decode_mode, data, ascii, temp_baby_attributes);
 

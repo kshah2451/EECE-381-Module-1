@@ -348,6 +348,7 @@ void moveEnemy(enePtr ene){
 				gameOverFlag = 1;
 
 				ene-> moveBlocked = 1;
+
 				free(ene);
 
 				return;

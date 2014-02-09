@@ -5,7 +5,6 @@
 #include "title_screen.h"
 #include "graphics.h"
 #include "game_structs.h"
-#include "keyboard_codes.h"
 
 
 /*Title Screen code*/
@@ -14,6 +13,7 @@ void title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_
 //ps2_kb, &decode_mode, &data, &ascii
 {
 	int j,k;
+	int enter_pressed = 0;
 	//alt_up_pixel_buffer_dma_dev* pixel_buffer;
 	alt_up_char_buffer_clear(char_buffer);
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
@@ -82,7 +82,7 @@ void title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_
 	alt_up_char_buffer_string(char_buffer, "Options", 36, 40);
 	alt_up_char_buffer_string(char_buffer, "Help", 38, 42);*/
 
-	while(data != ENTER){ //wait for user to press start
+	while(data != 0x5a){ //wait for user to press start
 
 		alt_up_char_buffer_string(char_buffer, "Press ENTER to start", 30, 40);
 
@@ -99,6 +99,10 @@ void title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_
 		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 160, 90, 168, 96, 0x0099, 0);
 		for(k = 0; k < 550000; k++);
 		decode_scancode(ps2_kb, &decode_mode, &data, &ascii);
+		if(data == 0x1c){
+			printf("fuck \n");
+		}
+
 
 	}
 

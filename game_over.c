@@ -6,7 +6,7 @@ void display_score(int score){
 }
 
 
-void victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer){
+void victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer, alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii){
 	int color_inc = 0x0100;
 	int x0_pos = 0;
 	int x1_pos = 320;
@@ -67,19 +67,25 @@ void victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev *
 
 	alt_up_char_buffer_clear(char_buffer);
 	alt_up_char_buffer_string(char_buffer, "YOU WIN!", 34, 30);
-	alt_up_char_buffer_string(char_buffer, "SHARK FIN SOUP FOR EVERYONE!", 34, 32);
+
+	while(data != A_KEY){
+
+		decode_scancode(ps2_kb, &decode_mode, &data, &ascii);
+	}
+
 	//alt_up_char_buffer_string(char_buffer, "PRESS A TO RETURN TO MAIN MENU", 32, 42);
 
 }
 
 
 
-void gameover(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer){
+void gameover(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer, alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii){
 	int color_inc = 0x0100;
 	int x0_pos = 0;
 	int x1_pos = 320;
 	int change = 4;
 	int y_pos;
+	int enter_check = 0;
 
 	// Draws sky
 	for(y_pos = 0; y_pos < 45; y_pos++) {
@@ -140,6 +146,13 @@ void gameover(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev 
 	alt_up_char_buffer_clear(char_buffer);
 	alt_up_char_buffer_string(char_buffer, "GAME OVER (LOSER)!", 22, 8);
 	alt_up_char_buffer_string(char_buffer, "ALL YOUR BASE ARE BELONG TO US", 18, 34);
+	while(enter_check < 2){
+
+		decode_scancode(ps2_kb, &decode_mode, &data, &ascii);
+		if(data == A_KEY){
+			enter_check++;
+		}
+	}
 	//alt_up_char_buffer_string(char_buffer, "PRESS A TO RETURN TO MAIN MENU", 32, 42);
 
 }

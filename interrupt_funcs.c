@@ -349,6 +349,8 @@ void moveEnemy(enePtr ene){
 
 				ene-> moveBlocked = 1;
 
+				free(ene);
+
 				return;
 			}
 			ene->toMove = ene->baseMove;
@@ -623,6 +625,5 @@ void detectCollision(dataPtr data, towPtr tow, bulPtr bul){
 
 
 }
-
 
 

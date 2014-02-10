@@ -15,38 +15,98 @@ extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii, int temp_baby[]){
 	int tower;
 
+
+	//temp_baby[0] = colour WILL BE COST IN FUTURE
+	//temp_baby[1] = health
+	//temp_baby[2] = bullet type
+	//temp_baby[3] = to/baseAttack
+
 		if(data == ONE_KEY){  //if user presses 1 : Dairy Cow (Resource Generator)
 
-			temp_baby[0] = 0xF000; //black
-			temp_baby[1] = 50;
-			temp_baby[2] = 0;
-			temp_baby[3] = 50;
-			tower = 0;
-
-
-		}
-
-		else if(data == TWO_KEY){  //if user presses 2 : Infant-ry
-
-			temp_baby[0] = 0xFE99;
-			temp_baby[1] = 100; //health
-			temp_baby[2] = 1;  //bullet type
-			temp_baby[3] = 30;  //toAttack/baseAttack
+			temp_baby[0] = 0x0000; //5
+			temp_baby[1] = 9;
+			temp_baby[2] = 1;
+			temp_baby[3] = 400;
 			tower = 1;
 
 
 		}
 
-		else if(data == THREE_KEY){  //if user presses 3 : Rapid-fire Rugrat
+		else if(data == TWO_KEY){  //if user presses 2 : Infant-ry (Normal Tower)
 
-			temp_baby[0] = 0xFFE0;
-			temp_baby[1] = 50;
-			temp_baby[2] = 2;
-			temp_baby[3] = 200;
+			temp_baby[0] = 0x000F; //7
+			temp_baby[1] = 15; //health
+			temp_baby[2] = 2;  //bullet type
+			temp_baby[3] = 10;  //toAttack/baseAttack
+			tower = 2;
+
+
+		}
+
+		else if(data == THREE_KEY){  //if user presses 3 : Rapid-fire Rugrat (Rapid-Fire Tower)
+
+			temp_baby[0] = 0x00F0;  //10
+			temp_baby[1] = 15;
+			temp_baby[2] = 3;
+			temp_baby[3] = 10;
 			tower = 2;
 
 		}
-		tower_indicator(tower, pixel_buffer);
+
+		else if(data == FOUR_KEY){  //if user presses 4 :  (Defensive Tower)
+
+			temp_baby[0] = 0x0F00;  //10
+			temp_baby[1] = 30;
+			temp_baby[2] = 4;
+			temp_baby[3] = 0;
+			tower = 3;
+
+		}
+
+
+		else if(data == FIVE_KEY){  //if user presses 5 : (Mine Tower)
+
+			temp_baby[0] = 0xF000;  //7
+			temp_baby[1] = 5;
+			temp_baby[2] = 5;
+			temp_baby[3] = 700;
+			tower = 4;
+
+		}
+
+
+		else if(data == SIX_KEY){  //if user presses 6 : (Ice Tower)
+
+			temp_baby[0] = 0xFF00;  //13
+			temp_baby[1] = 11;
+			temp_baby[2] = 6;
+			temp_baby[3] = 30;
+			tower = 5;
+
+		}
+
+
+		else if(data == SEVEN_KEY){  //if user presses 7 :  (Poison Tower)
+
+			temp_baby[0] = 0x0FF0;  //13
+			temp_baby[1] = 11;
+			temp_baby[2] = 7;
+			temp_baby[3] = 20;
+			tower = 6;
+
+		}
+
+		else if(data == EIGHT_KEY){  //if user presses 8 : (Rocket Tower)
+
+			temp_baby[0] = 0x00FF; //15
+			temp_baby[1] = 22;
+			temp_baby[2] = 8;
+			temp_baby[3] = 30;
+			tower = 7;
+
+		}
+
+		//tower_indicator(tower, pixel_buffer);
 
 }
 
@@ -73,4 +133,3 @@ void remove_baby(Tower* baby, int grid, alt_up_pixel_buffer_dma_dev* pixel_buffe
 
 
 }
-

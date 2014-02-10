@@ -50,7 +50,7 @@ void switch_to_menu(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffe
 		}
 	}
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
-	clear_menu_text(char_buffer);
+	clear_in_game_menu_text(char_buffer);
 	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
 	alt_irq_enable(TIMER_0_IRQ);
 }
@@ -65,7 +65,7 @@ void draw_in_game_menu(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_bu
 	alt_up_char_buffer_string(char_buffer, "QUIT", 38, 30);
 }
 
-void clear_menu_text(alt_up_char_buffer_dev* char_buffer) {
+void clear_in_game_menu_text(alt_up_char_buffer_dev* char_buffer) {
 	alt_up_char_buffer_string(char_buffer, "      ", 37, 5);
 	alt_up_char_buffer_string(char_buffer, "      ", 37, 15);
 	alt_up_char_buffer_string(char_buffer, "          ", 35, 20);
@@ -107,17 +107,4 @@ void clear_rectangle(alt_up_pixel_buffer_dma_dev* pixel_buffer, int text_positio
 	}
 }
 
-void draw_help_menu(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev* char_buffer, alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE  decode_mode) {
-	alt_u8 data;
-	char ascii;
-	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
-	clear_menu_text(char_buffer);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 5, 20, 90, 30, RED, 0);
-	while(1) {
-		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii) == 0) {
-			if(data == ESC) break;
-		}
-	}
-	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
-}
 

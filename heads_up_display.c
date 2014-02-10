@@ -4,15 +4,15 @@ void tower_indicator(int tower_type, alt_up_pixel_buffer_dma_dev* pixel_buffer){
 	//Orange is the colouring hi-lighting an unselected tower, Yellow is the colour for a selected tower
 	switch(tower_type){//Highlights a tower yellow depending on the type passed in as a parameter
 	//Changes hi-lighting back to orange for unselected towers
-	case 0: alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer,0,119,12,134,RED,0);//highlights tower 1
+	case 1: alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer,0,119,12,134,RED,0);//highlights tower 1
 			alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer,0,149,12,164,ORANGE,0);
 			alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer,0,179,12,194,ORANGE,0);
 			break;
-	case 1: alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer,0,149,12,164,RED,0);//highlights tower 2
+	case 2: alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer,0,149,12,164,RED,0);//highlights tower 2
 			alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer,0,179,12,194,ORANGE,0);
 			alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer,0,119,12,134,ORANGE,0);
 			break;
-	case 2: alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer,0,179,12,194,RED,0);//highlights tower 3
+	case 3: alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer,0,179,12,194,RED,0);//highlights tower 3
 			alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer,0,119,12,134,ORANGE,0);
 			alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer,0,149,12,164,ORANGE,0);
 			break;

@@ -10,6 +10,7 @@
 #include "graphics.h"
 #include "keyboard_codes.h"
 #include "Colors.h"
+#include "help_menu.h"
 
 #define RESUME 0
 #define SAVE_GAME 1
@@ -20,12 +21,10 @@ void switch_to_menu(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffe
 
 void draw_in_game_menu(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev* char_buffer);
 
-void clear_menu_text(alt_up_char_buffer_dev* char_buffer);
+void clear_in_game_menu_text(alt_up_char_buffer_dev* char_buffer);
 
 void clear_rectangle(alt_up_pixel_buffer_dma_dev* pixel_buffer, int text_position);
 
 void draw_rectangle(alt_up_pixel_buffer_dma_dev* pixel_buffer, int text_position);
-
-void draw_help_menu(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev* char_buffer, alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE  decode_mode);
 
 #endif

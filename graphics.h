@@ -33,9 +33,9 @@ void draw_background_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_sta
 //void initialize_sharks(int, int , int, int, int , int , int );
 void set_cursor(int, int);
 //void draw_baby(int*, int*, int , alt_up_pixel_buffer_dma_dev*);
-void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev*);
 
-void draw_baby_bmp(Tower* baby, alt_up_pixel_buffer_dma_dev*);
+void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev*, int sel);
+
 //void draw_baby(Tower baby[] , int, alt_up_pixel_buffer_dma_dev*);
 
 //void draw_shark(int ,int , alt_up_pixel_buffer_dma_dev* );

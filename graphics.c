@@ -9,8 +9,8 @@
 #include "Colors.h"
 #include "bitmaps.h"
 //#include "cursor.h"
-extern int baby_bmp[];
-extern int infantry_bmp[];
+extern short int baby_bmp[];
+extern short int infantry_bmp[];
 
 //Function will initialize position and colour values for the baby graphics
 //void initialize_baby(Tower baby, int num, int health, int bullet, int fire_rate, int grid, int colour){
@@ -114,27 +114,70 @@ void set_cursor(int grid, int colour){
 void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower_type){
 
 	int i,j,k;
+	int col_swap = 0;
 	int pixel_el = 0;
 	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
 	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer));
 		printf("data = %x before huge ass array \n");
 
-	int image_to_draw[750];
+	short int image_to_draw[750];
 
 	//Check which .bmp image to draw. Depends on what the tower on this grid's type is
 	switch (tower_type){
 	case 1:
+		for(k = 0; k < 750; k++){
+		image_to_draw[k] = baby_bmp[k];
+		}
+		col_swap = 0x0F00;
+		break;
+	case 2:
 
 		for(k = 0; k < 750; k++){
 		image_to_draw[k] = baby_bmp[k];
 		}
 		break;
-	case 2:
+	case 3:
 
 		for(k = 0; k < 750; k++){
 		image_to_draw[k] = infantry_bmp[k];
 		}
 		break;
+
+	case 4:
+		for(k = 0; k < 750; k++){
+		image_to_draw[k] = baby_bmp[k];
+		}
+		col_swap = 0xF81F;
+		break;
+
+	case 5:
+		for(k = 0; k < 750; k++){
+		image_to_draw[k] = baby_bmp[k];
+		}
+		col_swap = 0xFBE0;
+		break;
+
+	case 6:
+		for(k = 0; k < 750; k++){
+		image_to_draw[k] = baby_bmp[k];
+		}
+		col_swap = 0xFFF0;
+		break;
+
+	case 7:
+		for(k = 0; k < 750; k++){
+		image_to_draw[k] = baby_bmp[k];
+		}
+		col_swap = 0x0FFF;
+		break;
+
+	case 8:
+		for(k = 0; k < 750; k++){
+		image_to_draw[k] = baby_bmp[k];
+		}
+		col_swap = 0xF0F0;
+		break;
+
 	}
 
 	printf("data = %x after array \n");
@@ -144,8 +187,14 @@ void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower
 		for(j = 0; j < 25; j++){
 
 			if(image_to_draw[pixel_el]!= BLACK){
+				if(tower_type == 1 || tower_type == 4 || tower_type == 5 || tower_type == 6 || tower_type == 7 || tower_type == 8){
+					alt_up_pixel_buffer_dma_draw(pixel_buffer, col_swap, baby->body_pos[0]+j, baby->body_pos[1]+i);
+				}
+				else{
 				alt_up_pixel_buffer_dma_draw(pixel_buffer, image_to_draw[pixel_el], baby->body_pos[0]+j, baby->body_pos[1]+i);
+				}
 			}
+
 			pixel_el++;
 		}
 

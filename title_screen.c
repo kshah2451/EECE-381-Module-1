@@ -5,16 +5,21 @@
 #include "title_screen.h"
 #include "graphics.h"
 #include "game_structs.h"
+#include "keyboard_codes.h"
+extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 
-
+int move_title_cursor(int cursor_x, int cursor_y, alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii);
 /*Title Screen code*/
-void title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer, int start, alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii)
+int title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer, int start, alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii)
 
-//ps2_kb, &decode_mode, &data, &ascii
+
 {
 	int j,k;
 	int enter_pressed = 0;
-	//alt_up_pixel_buffer_dma_dev* pixel_buffer;
+	int cursor_x = 130;
+	int cursor_y = 140;
+	int move_cursor = 0;
+
 	alt_up_char_buffer_clear(char_buffer);
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 
@@ -72,49 +77,95 @@ void title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_
 	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 255, 95, 265, 105, 0xCEFD, 0);
 	/****/
 
-	// Clear the screen
-	//alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
-
 	// Write some text
 	alt_up_char_buffer_string(char_buffer, "Sharks VS Babies", 32, 32);
-	alt_up_char_buffer_string(char_buffer, "Press ENTER to start", 30, 40);
-	/*alt_up_char_buffer_string(char_buffer, "Load Game", 35, 38);
-	alt_up_char_buffer_string(char_buffer, "Options", 36, 40);
-	alt_up_char_buffer_string(char_buffer, "Help", 38, 42);*/
+	alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, cursor_x, cursor_y, cursor_x+60, cursor_y + 10, 0x0FFF, 0);
 
-	while(data != 0x5a){ //wait for user to press start
+	while(enter_pressed < 2){ //wait for user to press start
 
-		alt_up_char_buffer_string(char_buffer, "Press ENTER to start", 30, 40);
+		alt_up_char_buffer_string(char_buffer, "New Game", 35, 36);
+		alt_up_char_buffer_string(char_buffer, "Load Game", 35, 39);
+		alt_up_char_buffer_string(char_buffer, "How to Play", 34, 42);
 
-		//Default Shark image
-		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 160, 80, 176, 84, 0x0099, 0);
-		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 160, 99, 176, 103, 0x0099, 0);
-		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 160, 84, 176, 99, 0xCEFD, 0);
 
-		//Shark opens mouth
-		for(j = 0; j < 500000; j++);
-		alt_up_char_buffer_string(char_buffer, "                      ", 30, 40);
 
-		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 160, 84, 172, 100, 0xCEFD, 0);
-		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 160, 90, 168, 96, 0x0099, 0);
-		for(k = 0; k < 550000; k++);
-		decode_scancode(ps2_kb, &decode_mode, &data, &ascii);
-		if(data == 0x1c){
-			printf("fuck \n");
+		alt_up_char_buffer_string(char_buffer, "ALL RIGHTS RESERVED", 30, 48);
+		alt_up_char_buffer_string(char_buffer, "COPYRIGHT 2013    FACULTY OF ARTS SOFTWARE", 20, 50);
+		alt_up_char_buffer_string(char_buffer, "LICENSED BY EECE 381", 30, 52);
+
+
+		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0){
+
+			if(data == DOWN || data == UP){
+				move_cursor++;
+			}
+
+			else if (data == ENTER){
+				enter_pressed++;
+			}
+
+
+			if(move_cursor >= 2){
+				cursor_y = move_title_cursor(cursor_x, cursor_y, ps2_kb, decode_mode, data, ascii);
+				move_cursor = 0;
+			}
+
+
 		}
-
 
 	}
 
 
-
-
-
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 	alt_up_char_buffer_clear(char_buffer);
-	//wave_scroll(pixel_buffer);
 
 
+		if (cursor_y == NEWGAME)
+			return 1;
+		else if (cursor_y == LOADGAME){
+			return 2;
+		}
+		else if(cursor_y == HOWTOPLAY){
+			return 3;
+		}
+
+
+
+}
+
+int move_title_cursor(int cursor_x, int cursor_y,alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii){
+
+		if(cursor_y == 140){
+			if(data == DOWN){
+				alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, cursor_x, cursor_y, cursor_x+60, cursor_y + 10, 0x0000, 0);
+				cursor_y += 12;
+				alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, cursor_x, cursor_y, cursor_x+60, cursor_y + 10, 0x0FFF, 0);
+			}
+		}
+		else if (cursor_y == 152){
+			if(data == UP){
+						alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, cursor_x, cursor_y, cursor_x+60, cursor_y + 10, 0x0000, 0);
+						cursor_y -= 12;
+						alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, cursor_x, cursor_y, cursor_x+60, cursor_y + 10, 0x0FFF, 0);
+					}
+			else if(data == DOWN){
+				alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, cursor_x, cursor_y, cursor_x+60, cursor_y + 10, 0x0000, 0);
+				cursor_y += 12;
+				alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, cursor_x, cursor_y, cursor_x+60, cursor_y + 10, 0x0FFF, 0);
+			}
+
+		}
+
+		else if (cursor_y == 164){
+			if(data == UP){
+						alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, cursor_x, cursor_y, cursor_x+60, cursor_y + 10, 0x0000, 0);
+						cursor_y -= 12;
+						alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, cursor_x, cursor_y, cursor_x+60, cursor_y + 10, 0x0FFF, 0);
+					}
+		}
+
+
+	return cursor_y;
 
 
 }

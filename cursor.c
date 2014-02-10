@@ -7,7 +7,7 @@
 #include "game_structs.h"
 #include "tower_select.h"
 #include "cursor.h"
-#include "keyboard_keys.h"
+#include "keyboard_codes.h"
 
 int move_cursor(int grid_pos, alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii, alt_up_pixel_buffer_dma_dev* pixel_buffer){
 	//if the cursor can't go left or up

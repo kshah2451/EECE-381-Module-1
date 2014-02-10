@@ -81,7 +81,7 @@ void draw_background_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_
 	int c = 1;
 	int color_inc = 0x0001;
 	switch(y_start) {
-	case 45:
+	case (BG_UPPER_Y):
 		for(y = y_start; y < y_start + 24; y++) {
 			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start + c, y, BLACK + color_inc, 0);
 			x_start--;
@@ -91,7 +91,7 @@ void draw_background_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_
 			}
 		}
 		break;
-	case 85:
+	case (BG_UPPER_Y + 40):
 		color_inc = 6;
 		for(y = y_start; y < y_start + 24; y++) {
 			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start + c, y, BLACK + color_inc, 0);
@@ -102,7 +102,39 @@ void draw_background_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_
 			}
 		}
 		break;
+
+	case (BG_UPPER_Y + 80):
+		color_inc = 10;
+		for(y = y_start; y < y_start + 24; y++) {
+			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start + c, y, BLACK + color_inc, 0);
+			x_start--;
+			c++;
+			if(y % 8 == 0) {
+				color_inc++;
+			}
+		}
+		break;
+
+	case (BG_UPPER_Y + 120):
+		color_inc = 16;
+		for(y = y_start; y < y_start + 24; y++) {
+			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start + c, y, BLACK + color_inc, 0);
+			x_start--;
+			c++;
+			if(y % 8 == 0) {
+				color_inc++;
+			}
+		}
+		break;
+
 	}
+
+
+
+
+
+
+
 }
 
 /* Draws grids for tower placement */

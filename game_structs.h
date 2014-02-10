@@ -88,7 +88,6 @@ typedef struct Enemy
         // vga info like the boxes that make up the image and colour
         int colour;
 
-
         //Status effect, 0 for none, 1 for slow, 2 for poison
         int status;
 

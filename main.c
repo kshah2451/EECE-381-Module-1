@@ -1,19 +1,3 @@
-/*
- * "Hello World" example.
- *
- * This example prints 'Hello from Nios II' to the STDOUT stream. It runs on
- * the Nios II 'standard', 'full_featured', 'fast', and 'low_cost' example
- * designs. It runs with or without the MicroC/OS-II RTOS and requires a STDOUT
- * device in your system's hardware.
- * The memory footprint of this hosted application is ~69 kbytes by default
- * using the standard reference design.
- *
- * For a reduced footprint version of this template, and an explanation of how
- * to reduce the memory footprint for a given application, see the
- * "small_hello_world" template.
- *
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "altera_up_ps2_keyboard.h"
@@ -33,26 +17,17 @@
 #include "heads_up_display.h"
 #include "keyboard_codes.h"
 #include "game_over.h"
-
-
-/*
-#define PS2_NAME "/dev/ps2"
-#define PS2_TYPE "altera_up_avalon_ps2"
-#define PS2_BASE 0x00004030
-#define PS2_SPAN 8
-#define PS2_IRQ 0
-#define PS2_HDL_PARAMETERS ""
-#define ALT_MODULE_CLASS_ps2 altera_up_avalon_ps2
-*/
-
+#include "level_one.h"
+#include "level_two.h"
+#include "story_seq.h"
 
 
 
 //GLOBAL VARIABLES
 alt_up_pixel_buffer_dma_dev* pixel_buffer;
+
 int gameOverFlag = 0;
 int victoryFlag = 0;
-
 
 
 
@@ -63,29 +38,22 @@ int main()
 	alt_u8 data;
 	char ascii;
 	char *p;
-	int temp_baby_attributes[10] = {0};
 	int start = 0;		//i dont think im actually using this... will have to check
 	int num_babies = 0; //i dont think im actually using this... will have to check
 	int i;
-	dataPtr game_data = malloc(sizeof(gameData));
+	int menu_selection; // 1: New Game   2:Load Game   3: How to Play
+/*	dataPtr game_data = (dataPtr)malloc(sizeof(gameData));
 	for(i = 0; i < NUMROW; i++){
 		game_data->eneHead[i] = NULL;
-	}
-
-	//set starting grid position to be grid 6, which is the top left-most grid
-	int grid_pos = 6;
-	int hasTowerBeenSelected = 0;   //flag that checks if user has selected a tower for placement
-	int hasTowerBeenPlaced = 0;		// flag that checks when a tower has been placed
-	int towerCanBePlaced = 0;		// flag that checks whether a tower can be placed	(
-	int hasCursorMoved = 0;			//flag that checks if the cursor is being told to move (helps fix sensitivity)
+	}*/
 
 
 				/* HAL INITIALIZATIONS*/
 
 
 
-	// set positions of baby towers
-	set_baby_positions(game_data->towers);
+/*	// set positions of baby towers
+	set_baby_positions(game_data->towers);*/
 
 	//bunch of keyboard initializations
 	alt_up_ps2_dev *ps2_kb;
@@ -95,22 +63,28 @@ int main()
 
 	//pixel buffer initializations
 
-	pixel_buffer =
-	  alt_up_pixel_buffer_dma_open_dev("/dev/pixel_buffer_dma");
+	// Use the name of your pixel buffer DMA core
+	pixel_buffer = alt_up_pixel_buffer_dma_open_dev("/dev/pixel_buffer_dma");
 
-	// Set the background buffer address – Although we don’t use the
-	//background, // they only provide a function to change the background
-	//buffer address, so
-	// we must set that, and then swap it to the foreground.
+	unsigned int pixel_buffer_addr1 = PIXEL_BUFFER_BASE;
+	unsigned int pixel_buffer_addr2 = PIXEL_BUFFER_BASE + (320 * 240 * 2);
+	// Set the 1st buffer address
 	alt_up_pixel_buffer_dma_change_back_buffer_address(pixel_buffer,
-	PIXEL_BUFFER_BASE);
+	 pixel_buffer_addr1);
 
-	// Swap background and foreground buffers
+	// Swap buffers  we have to swap because there is only an API function
+	// to set the address of the background buffer.
 	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
+	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer))
+	 ;
 
-	// Wait for the swap to complete
-	while
-	(alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer));
+	// Set the 2nd buffer address
+	alt_up_pixel_buffer_dma_change_back_buffer_address(pixel_buffer,
+	 pixel_buffer_addr2);
+
+	// Clear both buffers (this makes all pixels black)
+	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
+	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 1);
 
 	// Initialize the character buffer
 	alt_up_char_buffer_dev *char_buffer;
@@ -120,109 +94,74 @@ int main()
 	//clear pixel buffer memory
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 
+						/*MAIN GAME*/
+	while(1){
 
+						/* TITLE SCREEN*/
+					// display the title screen
+		data = 0;
+		menu_selection = title_screen(pixel_buffer, char_buffer, start, ps2_kb, decode_mode, data, ascii); //wait here until "ENTER"
+		alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 
+		if(menu_selection == 2){ //Load Game
+			victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+		}
+		else if(menu_selection == 3){ // How to Play
+			victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+		}
+		else if (menu_selection == 1){ // New Game
+			/*LEVEL ONE*/
+			pre_level_story_1(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+			mainGame_level1(ps2_kb, decode_mode, data, ascii);
 
+			if(gameOverFlag == 1){  //Lv1 Game Over
+				gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
+				gameOverFlag = 0;
+				victoryFlag = 0;
+			}
+			else if(victoryFlag >= 5){ // Level 1 Victory
+				gameOverFlag = 0;
+				victoryFlag = 0;
+				level1_victory(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+				alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 
-				/* TITLE SCREEN*/
-	// display the title screen
-	title_screen(pixel_buffer, char_buffer, start, ps2_kb, decode_mode, data, ascii);
-
-
-
-				/* MAIN GAME*/
-
-	//set background image
-	draw_sky(pixel_buffer);
-
-	draw_ocean(pixel_buffer);
-
-	draw_grids(pixel_buffer);
-	heads_up_display_static();
-
-
-
-
-	//set default cursor position to be grid 6
-	set_cursor(grid_pos, CURSOR_COLOUR);
-	draw_cursor(cur.pos,cur.colour, pixel_buffer);
-	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
-	while(gameOverFlag == 0 && victoryFlag < 1000)
-//	while(1)
-	{
-
-		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0)
-		{
-
-				//if user presses one of the number keys (1 and 2 and 3 for now)
-				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY){
-					//enter tower selection function, and raise hasTowerBeenSelected flag
-					tower_selection(ps2_kb, decode_mode, data, ascii, temp_baby_attributes);
-
-					hasTowerBeenSelected++;
+				/*LEVEL TWO*/
+				//replace this with level 2
+				pre_level_story_2(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+				mainGame_level2(ps2_kb, decode_mode, data, ascii);
+				if(gameOverFlag == 1){  //Lv2 Game Over
+					gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
+					gameOverFlag = 0;
+					victoryFlag = 0;
 				}
 
-				// first check if a tower can be placed (i.e. a user has already selected a tower) and if there is
-				// already an existing tower in that grid (in that case, don't place anything)
-				// draw the baby on the current grid position, raise hasTowerBeenPlaced flag and reset
-				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
-				if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)){ // user presses A
-					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
-					draw_baby(game_data->towers[grid_pos], pixel_buffer);
-					game_data->towers[grid_pos]->isAlive = 1;
+				else if(victoryFlag >= 10){ //Lv2 Victory
+					gameOverFlag = 0;
+					victoryFlag = 0;
+					level2_victory(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+					alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
+					/*LEVEL THREE*/
+					//replace this with level 3
+					pre_level_story_3(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+					mainGame_level2(ps2_kb, decode_mode, data, ascii);
 
-					hasTowerBeenPlaced++;
-					hasTowerBeenSelected = 0;
-					towerCanBePlaced = 0;
-
-				}
-
-				//If player presses B while cursor highlights a tower, the tower is removed
-				if(data == B_KEY && (game_data->towers[grid_pos]->isAlive == 1)){
-
-					remove_baby(game_data->towers[grid_pos], grid_pos, pixel_buffer);
-				}
-
-				//check if user has pressed any of the directional keys, update the cursor moved flag
-				if(data == UP || data == DOWN || data == LEFT || data == RIGHT){
-					hasCursorMoved++;
-				}
-
-				//only when cursormoved >= 2 (because of keyboard sensitivity, move the cursor
-				if(hasCursorMoved >= 2){
-					//move the cursor and update the grid position
-					grid_pos = move_cursor(grid_pos, ps2_kb, decode_mode, data, ascii, pixel_buffer);
-					printf("%i \n", grid_pos);
-					//reset hasCursorMoved flag
-					hasCursorMoved = 0;
-
+					if(gameOverFlag == 1){ //Lv 3 Game Over
+						gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
+						gameOverFlag = 0;
+						victoryFlag = 0;
+					}
+					else if(victoryFlag >= 10){ // Lv 3 Victory
+						victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+						gameOverFlag = 0;
+						victoryFlag = 0;
 					}
 
+				}
+
 			}
-
-		// Check if player has chosen a tower to spawn
-		if(hasTowerBeenSelected >= 2){
-			towerCanBePlaced = 1;
 		}
 
-		// Check if player has just placed a new tower
-		if(hasTowerBeenPlaced >= 2){
-
-			num_babies = (num_babies + 1)% 14;
-			hasTowerBeenPlaced = 0;
-
-		}
-
-	}
-	alt_irq_disable(TIMER_0_IRQ);
-
-
-	if(gameOverFlag == 1){
-	gameover(pixel_buffer,char_buffer);
-	}
-	else if(victoryFlag >= 10){
-		victory(pixel_buffer, char_buffer);
-	}
+	} //closes while
 
 
   return 0;

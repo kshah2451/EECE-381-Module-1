@@ -127,7 +127,7 @@ int isNewEnemy(void){
 	//
 	//
 
-	int q = rand() % 100;
+	int q = rand() % 500;
 
 	if(q == 1)return 1;
 	else return 0;
@@ -138,7 +138,10 @@ int isNewEnemy(void){
 enePtr createEnemy(enePtr prevEne, int row){
 
 
-	int randType = rand() % NUMENETYPES;
+	//int randType = rand() % NUMENETYPES;
+
+	int randType = 3;
+
 
 	//Malloc some space for the enemy
 	enePtr ene = malloc(sizeof(Enemy));
@@ -290,7 +293,8 @@ void sharkAttack(enePtr ene, towPtr tow, dataPtr data){
 
 	if((ene->body_pos[0] - 24) <= (tow->body_pos[2]) ){
 
-		if(ene->type == 3){
+		//If kamikaze shark
+		if(ene->type == 3 && tow->bulletType != 9){
 			tow->health -= ene->damage;
 			killEnemy(ene, data, tow->lane);
 
@@ -303,6 +307,35 @@ void sharkAttack(enePtr ene, towPtr tow, dataPtr data){
 				//
 				tow->isAlive = 0;
 			}
+			return;
+		}
+		//If armed mine tower
+		else if(ene->type != 3 && tow->bulletType == 9){
+
+			//MINE DAMAGE HERE
+					ene->health -= 30;
+					//
+					//
+					//REMOV BABY HERE REMOVE BELOW ISALIVE
+					//
+					//
+					tow->isAlive = 0;
+					if(ene->health <= 0){
+						killEnemy(ene, data, tow->lane);
+					}
+					return;
+		}
+
+		else if(ene->type == 3 && tow->bulletType == 9){
+
+			killEnemy(ene, data, tow->lane);
+			//
+			//
+			//REMOV BABY HERE REMOVE BELOW ISALIVE
+			//
+			//
+			tow->isAlive = 0;
+
 			return;
 		}
 
@@ -376,15 +409,25 @@ void moveEnemy(enePtr ene){
 //Function for bullet advancement/creation
 void goBullets(towPtr tow, dataPtr data){
 
+	//if bulflag is 1, then we've already tried making a new bullet
 	int bulFlag = 0;
 
 	//if there's no bullet for that tower, try and make one
-	if(tow->bulHead == NULL  && tow->bulletType != 2 && tow->bulletType != 4 && tow->bulletType != 5){
+	if(tow->bulHead == NULL  && tow->bulletType != 1 && tow->bulletType != 4 && tow->bulletType != 5 && tow->bulletType != 9){
 		if(isNewBullet(tow)){
 			tow->bulHead = createBullet(tow, NULL);
 			moveBullet(tow->bulHead);
 			detectCollision(data, tow, tow->bulHead);
 		}
+		bulFlag = 1;
+	}
+	//If tower is a mine, count down until arming, armed towers are type 9
+	else if(tow->bulletType == 5){
+		if(tow->toAttack > 0){
+			tow->toAttack--;
+		}
+		else tow->bulletType = 9;
+		return;
 	}
 
 	//point to the first bullet

@@ -130,7 +130,7 @@ int title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_d
 		}
 
 
-
+return 0;
 }
 
 int move_title_cursor(int cursor_x, int cursor_y,alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii){

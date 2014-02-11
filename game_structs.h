@@ -42,9 +42,10 @@ typedef struct Tower
 	//right x-coordinate = position[0], right y-coordinate = pos[1],
 	//left x-coordinate = pos[2], left y-coordinate = pos[3]
 	int body_pos[4];
-	int diaper_pos[4];
-	// vga info like the boxes that make up the image and colour
-	int colour;
+
+
+	// resource cost
+	int cost;
 
 	//if tower is dead or not placed
 	//0 for no, 1 for yes

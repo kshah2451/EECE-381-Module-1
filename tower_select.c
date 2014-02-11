@@ -9,6 +9,7 @@
 #include "background_graphics.h"
 #include "heads_up_display.h"
 #include "keyboard_codes.h"
+#include "interrupt_funcs.h"
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 
 
@@ -23,10 +24,10 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 		if(data == ONE_KEY){  //if user presses 1 : Dairy Cow (Resource Generator)
 
-			temp_baby[0] = 0x0000; //5
+			temp_baby[0] = 5; //5
 			temp_baby[1] = 9;
 			temp_baby[2] = 1;
-			temp_baby[3] = 400;
+			temp_baby[3] = 200;
 			tower = 1;
 
 
@@ -34,7 +35,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 		else if(data == TWO_KEY){  //if user presses 2 : Infant-ry (Normal Tower)
 
-			temp_baby[0] = 0x000F; //7
+			temp_baby[0] = 7; //7
 			temp_baby[1] = 15; //health
 			temp_baby[2] = 2;  //bullet type
 			temp_baby[3] = 20;  //toAttack/baseAttack
@@ -45,7 +46,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 		else if(data == THREE_KEY){  //if user presses 3 : Rapid-fire Rugrat (Rapid-Fire Tower)
 
-			temp_baby[0] = 0x00F0;  //10
+			temp_baby[0] = 10;  //10
 			temp_baby[1] = 15;
 			temp_baby[2] = 3;
 			temp_baby[3] = 10;
@@ -55,7 +56,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 		else if(data == FOUR_KEY){  //if user presses 4 :  (Defensive Tower)
 
-			temp_baby[0] = 0x0F00;  //10
+			temp_baby[0] = 10;  //10
 			temp_baby[1] = 30;
 			temp_baby[2] = 4;
 			temp_baby[3] = 0;
@@ -66,7 +67,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 		else if(data == FIVE_KEY){  //if user presses 5 : (Mine Tower)
 
-			temp_baby[0] = 0xF000;  //7
+			temp_baby[0] = 7;  //7
 			temp_baby[1] = 5;
 			temp_baby[2] = 5;
 			temp_baby[3] = 200;
@@ -77,7 +78,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 		else if(data == SIX_KEY){  //if user presses 6 : (Ice Tower)
 
-			temp_baby[0] = 0xFF00;  //13
+			temp_baby[0] = 13;  //13
 			temp_baby[1] = 11;
 			temp_baby[2] = 6;
 			temp_baby[3] = 30;
@@ -88,7 +89,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 		else if(data == SEVEN_KEY){  //if user presses 7 :  (Poison Tower)
 
-			temp_baby[0] = 0x0FF0;  //13
+			temp_baby[0] = 13;  //13
 			temp_baby[1] = 11;
 			temp_baby[2] = 7;
 			temp_baby[3] = 30;
@@ -98,7 +99,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 		else if(data == EIGHT_KEY){  //if user presses 8 : (Rocket Tower)
 
-			temp_baby[0] = 0x00FF; //15
+			temp_baby[0] = 15; //15
 			temp_baby[1] = 22;
 			temp_baby[2] = 8;
 			temp_baby[3] = 30;
@@ -114,6 +115,12 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 void remove_baby(Tower* baby, int grid, alt_up_pixel_buffer_dma_dev* pixel_buffer){
 	int i;
 	int color_inc = 0x0001;
+
+
+	while(baby->bulHead != NULL){
+
+		killBullet(baby->bulHead, baby);
+	}
 
 	baby->isAlive = 0;
 

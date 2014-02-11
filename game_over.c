@@ -228,7 +228,7 @@ void freeEverything(dataPtr data){
 			eneTemp = data->eneHead[i];
 		}
 	}
-/*
+
 	//free bullets, then the tower
 	for(i = 0; i < NUMTOW; i++){
 
@@ -240,10 +240,10 @@ void freeEverything(dataPtr data){
 			killBullet(bulTemp, tow);
 			bulTemp = tow->bulHead;
 		}
-		//free(tow);
+		free(tow);
 	}
 
-*/
+
 
 }
 

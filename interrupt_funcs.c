@@ -96,9 +96,29 @@ void goEnemies(dataPtr data){
 
 		//Go through enemies until we hit the end of the list
 		while(ene != NULL){
+
+
+			//If poisoned, do some damage
+			if(ene->status == 2){
+				if((ene->statusCountdown % 15) == 0){
+
+					ene->health -= 1;
+					if(ene->health <= 0){
+						killEnemy(ene, data, (tow->lane));
+						return;
+					}
+
+					ene->statusCountdown--;
+					if(ene->statusCountdown <= 0) ene->status = 0;
+				}
+				else ene->statusCountdown--;
+			}
+
 			//try to attack then move
 			sharkAttack(ene, tow, data);
 			moveEnemy(ene);
+
+
 
 			//if at the end of the enemies, try and make a new one
 			if(ene->next == NULL){
@@ -140,7 +160,7 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	//int randType = rand() % NUMENETYPES;
 
-	int randType = 3;
+	int randType = 0;
 
 
 	//Malloc some space for the enemy
@@ -369,6 +389,7 @@ void moveEnemy(enePtr ene){
 	if (ene->moveBlocked == 0){
 		if(ene->toMove <= 0){
 
+
 			if((ene->body_pos[0] - 24) <= 16){
 
 
@@ -386,11 +407,22 @@ void moveEnemy(enePtr ene){
 
 				return;
 			}
-			ene->toMove = ene->baseMove;
 
 			draw_background_sharkfin(pixel_buffer, ene->body_pos[0], ene->body_pos[1]);
 
-			ene->body_pos[0] -= ene->speed;
+			//IF NOT FROZEN
+			if(ene->status != 1){
+				ene->body_pos[0] -= ene->speed;
+				ene->toMove = ene->baseMove;
+			}
+			else{
+				ene->body_pos[0] -= (ene->speed - 2);
+				ene->toMove = (ene->baseMove + 3);
+				ene->statusCountdown--;
+				if(ene->statusCountdown <= 0) ene->status = 0;
+			}
+
+
 			draw_sharkfin(pixel_buffer, ene->body_pos[0], ene->body_pos[1], ene -> colour);
 
 
@@ -653,6 +685,17 @@ void detectCollision(dataPtr data, towPtr tow, bulPtr bul){
 
 	while(ene != NULL){
 		if((ene->body_pos[0] - 24) <= (bul->body_pos[0]) ){
+
+			//SLOW
+			if(bul->type == 6){
+				ene->status = 1;
+				ene->statusCountdown = 20;
+			}
+			//POISON
+			if(bul->type == 7){
+				ene->status = 2;
+				ene->statusCountdown = 300;
+			}
 
 			ene->health -= bul->damage;
 			killBullet(bul,tow);

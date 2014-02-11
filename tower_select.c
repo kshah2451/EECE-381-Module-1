@@ -91,7 +91,7 @@ void tower_selection(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 			temp_baby[0] = 0x0FF0;  //13
 			temp_baby[1] = 11;
 			temp_baby[2] = 7;
-			temp_baby[3] = 20;
+			temp_baby[3] = 30;
 			tower = 6;
 
 		}

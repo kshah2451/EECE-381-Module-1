@@ -21,11 +21,13 @@
 #include "graphics.h"
 #include "interrupt_funcs.h"
 #include "tower_select.h"
-
+#include "game_over.h"
 
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 extern int gameOverFlag;
 extern int victoryFlag;
+extern int maxEnemy;
+extern int numEnemy;
 void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii){
 
 	//set starting grid position to be grid 6, which is the top left-most grid
@@ -36,7 +38,8 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	int hasTowerBeenPlaced = 0;		// flag that checks when a tower has been placed
 	int towerCanBePlaced = 0;		// flag that checks whether a tower can be placed	(
 	int hasCursorMoved = 0;			//flag that checks if the cursor is being told to move (helps fix sensitivity)
-
+	maxEnemy = 10;
+	numEnemy = 0;
 
 	dataPtr game_data = malloc(sizeof(gameData));
 	for(i = 0; i < NUMROW; i++){
@@ -67,12 +70,10 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
 	while(gameOverFlag == 0 && victoryFlag < 5)
 	{
-		printf("sharks killed: %i \n",victoryFlag);
 
 		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0)
 		{
 
-				printf("What was pressed: %x \n", data);
 				//if user presses one of the number keys (only towers 1 2 3 available in lv 1)
 				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY){
 					//enter tower selection function, and raise hasTowerBeenSelected flag
@@ -87,7 +88,6 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
 				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)){ // user presses A
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
-					printf("data = %x when it goes in else if \n", data);
 					draw_baby(game_data->towers[grid_pos], pixel_buffer, game_data->towers[grid_pos]->bulletType);
 					game_data->towers[grid_pos]->isAlive = 1;
 
@@ -114,7 +114,7 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 				else{
 
-					printf("data = %x when incorrect key pressed \n", data);
+
 
 				}
 
@@ -143,8 +143,9 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 		}
 
 	}
-		alt_irq_disable(TIMER_0_IRQ);
-		free(game_data);
+	alt_irq_disable(TIMER_0_IRQ);
+	freeEverything(game_data);
+	free(game_data);
 
 
 }

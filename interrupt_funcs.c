@@ -6,7 +6,8 @@
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 extern int gameOverFlag;
 extern int victoryFlag;
-
+extern int maxEnemy;
+int numEnemy = 0;
 
 //Interrupt function
 void timerroutine(void* context, alt_u32 id){
@@ -66,7 +67,7 @@ void goEnemies(dataPtr data){
 
 
 		//if there's no enemies in that row, try and make one
-		if(data->eneHead[i] == NULL){
+		if(data->eneHead[i] == NULL && numEnemy <= maxEnemy){
 			if(isNewEnemy()){
 				data->eneHead[i] = createEnemy(NULL, i);
 				moveEnemy(data->eneHead[i]);
@@ -121,7 +122,7 @@ void goEnemies(dataPtr data){
 
 
 			//if at the end of the enemies, try and make a new one
-			if(ene->next == NULL){
+			if(ene->next == NULL && numEnemy <= maxEnemy){
 				if(isNewEnemy()){
 					ene = createEnemy(ene, i);
 					moveEnemy(ene);
@@ -141,16 +142,10 @@ void goEnemies(dataPtr data){
 //Checks if we should make a new enemy
 int isNewEnemy(void){
 
-	//
-	//
-	//INCOMPLETE, THIS IS JUST FOR TEST
-	//
-	//
+		int q = rand() % 100;
 
-	int q = rand() % 500;
-
-	if(q == 1)return 1;
-	else return 0;
+		if(q == 1)return 1;
+		else return 0;
 
 }
 
@@ -160,6 +155,7 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	//int randType = rand() % NUMENETYPES;
 
+	numEnemy++;
 	int randType = 0;
 
 
@@ -401,9 +397,7 @@ void moveEnemy(enePtr ene){
 
 				gameOverFlag = 1;
 
-				ene-> moveBlocked = 1;
-
-				free(ene);
+				numEnemy = 0;
 
 				return;
 			}
@@ -655,6 +649,7 @@ void killEnemy(enePtr ene, dataPtr data, int i){
 	//DRAW OVER THE SHARK WITH BACKGROUND
 	//
 	//
+
 	draw_background_sharkfin(pixel_buffer, ene->body_pos[0], ene->body_pos[1]);
 
 	if(ene->prev != NULL){
@@ -670,6 +665,7 @@ void killEnemy(enePtr ene, dataPtr data, int i){
 	ene->prev = NULL;
 	free(ene);
 
+	numEnemy--;
 	victoryFlag++;
 
 }

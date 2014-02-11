@@ -1,4 +1,5 @@
 #include "game_over.h"
+#include "interrupt_funcs.h"
 
 void display_score(int score){
 
@@ -208,7 +209,43 @@ void level2_victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffe
 }
 
 
+void freeEverything(dataPtr data){
 
+	int i = 0;
+	enePtr ene;
+	enePtr eneTemp;
+	towPtr tow;
+	bulPtr bul;
+	bulPtr bulTemp;
+
+	//free enemies
+	for(i = 0; i < NUMROW; i++){
+
+		eneTemp = data->eneHead[i];
+
+		while(eneTemp != NULL){
+			killEnemy(eneTemp, data, i);
+			eneTemp = data->eneHead[i];
+		}
+	}
+/*
+	//free bullets, then the tower
+	for(i = 0; i < NUMTOW; i++){
+
+		tow = data->towers[i];
+		bulTemp = tow->bulHead;
+
+
+		while(bulTemp != NULL){
+			killBullet(bulTemp, tow);
+			bulTemp = tow->bulHead;
+		}
+		//free(tow);
+	}
+
+*/
+
+}
 
 
 

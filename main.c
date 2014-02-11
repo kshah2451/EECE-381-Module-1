@@ -28,6 +28,7 @@ alt_up_pixel_buffer_dma_dev* pixel_buffer;
 
 int gameOverFlag = 0;
 int victoryFlag = 0;
+int maxEnemy = 0;
 
 
 

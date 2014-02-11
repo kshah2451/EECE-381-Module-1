@@ -118,7 +118,7 @@ void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower
 	int pixel_el = 0;
 	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
 	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer));
-		printf("data = %x before huge ass array \n");
+		//printf("data = %x before huge ass array \n");
 
 	short int image_to_draw[750];
 
@@ -180,7 +180,7 @@ void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower
 
 	}
 
-	printf("data = %x after array \n");
+	//printf("data = %x after array \n");
 	// go through the bmp array, and draw image pixel by pixel, skipping transparent pixels.
 	for(i = 0; i < 30; i++)
 	{
@@ -200,7 +200,7 @@ void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower
 
 	}
 	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
-	printf("data = %x after drawing \n");
+	//printf("data = %x after drawing \n");
 
 
 

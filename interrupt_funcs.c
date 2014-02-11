@@ -6,7 +6,8 @@
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 extern int gameOverFlag;
 extern int victoryFlag;
-
+extern int maxEnemy;
+int numEnemy = 0;
 
 //Interrupt function
 void timerroutine(void* context, alt_u32 id){
@@ -66,7 +67,7 @@ void goEnemies(dataPtr data){
 
 
 		//if there's no enemies in that row, try and make one
-		if(data->eneHead[i] == NULL){
+		if(data->eneHead[i] == NULL && numEnemy <= maxEnemy){
 			if(isNewEnemy()){
 				data->eneHead[i] = createEnemy(NULL, i);
 				moveEnemy(data->eneHead[i]);
@@ -96,12 +97,32 @@ void goEnemies(dataPtr data){
 
 		//Go through enemies until we hit the end of the list
 		while(ene != NULL){
+
+
+			//If poisoned, do some damage
+			if(ene->status == 2){
+				if((ene->statusCountdown % 15) == 0){
+
+					ene->health -= 1;
+					if(ene->health <= 0){
+						killEnemy(ene, data, (tow->lane));
+						return;
+					}
+
+					ene->statusCountdown--;
+					if(ene->statusCountdown <= 0) ene->status = 0;
+				}
+				else ene->statusCountdown--;
+			}
+
 			//try to attack then move
 			sharkAttack(ene, tow, data);
 			moveEnemy(ene);
 
+
+
 			//if at the end of the enemies, try and make a new one
-			if(ene->next == NULL){
+			if(ene->next == NULL && numEnemy <= maxEnemy){
 				if(isNewEnemy()){
 					ene = createEnemy(ene, i);
 					moveEnemy(ene);
@@ -121,16 +142,10 @@ void goEnemies(dataPtr data){
 //Checks if we should make a new enemy
 int isNewEnemy(void){
 
-	//
-	//
-	//INCOMPLETE, THIS IS JUST FOR TEST
-	//
-	//
+		int q = rand() % 100;
 
-	int q = rand() % 100;
-
-	if(q == 1)return 1;
-	else return 0;
+		if(q == 1)return 1;
+		else return 0;
 
 }
 
@@ -138,7 +153,11 @@ int isNewEnemy(void){
 enePtr createEnemy(enePtr prevEne, int row){
 
 
-	int randType = rand() % NUMENETYPES;
+	//int randType = rand() % NUMENETYPES;
+
+	numEnemy++;
+	int randType = 0;
+
 
 	//Malloc some space for the enemy
 	enePtr ene = malloc(sizeof(Enemy));
@@ -290,7 +309,8 @@ void sharkAttack(enePtr ene, towPtr tow, dataPtr data){
 
 	if((ene->body_pos[0] - 24) <= (tow->body_pos[2]) ){
 
-		if(ene->type == 3){
+		//If kamikaze shark
+		if(ene->type == 3 && tow->bulletType != 9){
 			tow->health -= ene->damage;
 			killEnemy(ene, data, tow->lane);
 
@@ -303,6 +323,35 @@ void sharkAttack(enePtr ene, towPtr tow, dataPtr data){
 				//
 				tow->isAlive = 0;
 			}
+			return;
+		}
+		//If armed mine tower
+		else if(ene->type != 3 && tow->bulletType == 9){
+
+			//MINE DAMAGE HERE
+					ene->health -= 30;
+					//
+					//
+					//REMOV BABY HERE REMOVE BELOW ISALIVE
+					//
+					//
+					tow->isAlive = 0;
+					if(ene->health <= 0){
+						killEnemy(ene, data, tow->lane);
+					}
+					return;
+		}
+
+		else if(ene->type == 3 && tow->bulletType == 9){
+
+			killEnemy(ene, data, tow->lane);
+			//
+			//
+			//REMOV BABY HERE REMOVE BELOW ISALIVE
+			//
+			//
+			tow->isAlive = 0;
+
 			return;
 		}
 
@@ -336,6 +385,7 @@ void moveEnemy(enePtr ene){
 	if (ene->moveBlocked == 0){
 		if(ene->toMove <= 0){
 
+
 			if((ene->body_pos[0] - 24) <= 16){
 
 
@@ -347,17 +397,26 @@ void moveEnemy(enePtr ene){
 
 				gameOverFlag = 1;
 
-				ene-> moveBlocked = 1;
-
-				free(ene);
+				numEnemy = 0;
 
 				return;
 			}
-			ene->toMove = ene->baseMove;
 
 			draw_background_sharkfin(pixel_buffer, ene->body_pos[0], ene->body_pos[1]);
 
-			ene->body_pos[0] -= ene->speed;
+			//IF NOT FROZEN
+			if(ene->status != 1){
+				ene->body_pos[0] -= ene->speed;
+				ene->toMove = ene->baseMove;
+			}
+			else{
+				ene->body_pos[0] -= (ene->speed - 2);
+				ene->toMove = (ene->baseMove + 3);
+				ene->statusCountdown--;
+				if(ene->statusCountdown <= 0) ene->status = 0;
+			}
+
+
 			draw_sharkfin(pixel_buffer, ene->body_pos[0], ene->body_pos[1], ene -> colour);
 
 
@@ -376,15 +435,25 @@ void moveEnemy(enePtr ene){
 //Function for bullet advancement/creation
 void goBullets(towPtr tow, dataPtr data){
 
+	//if bulflag is 1, then we've already tried making a new bullet
 	int bulFlag = 0;
 
 	//if there's no bullet for that tower, try and make one
-	if(tow->bulHead == NULL  && tow->bulletType != 2 && tow->bulletType != 4 && tow->bulletType != 5){
+	if(tow->bulHead == NULL  && tow->bulletType != 1 && tow->bulletType != 4 && tow->bulletType != 5 && tow->bulletType != 9){
 		if(isNewBullet(tow)){
 			tow->bulHead = createBullet(tow, NULL);
 			moveBullet(tow->bulHead);
 			detectCollision(data, tow, tow->bulHead);
 		}
+		bulFlag = 1;
+	}
+	//If tower is a mine, count down until arming, armed towers are type 9
+	else if(tow->bulletType == 5){
+		if(tow->toAttack > 0){
+			tow->toAttack--;
+		}
+		else tow->bulletType = 9;
+		return;
 	}
 
 	//point to the first bullet
@@ -580,6 +649,7 @@ void killEnemy(enePtr ene, dataPtr data, int i){
 	//DRAW OVER THE SHARK WITH BACKGROUND
 	//
 	//
+
 	draw_background_sharkfin(pixel_buffer, ene->body_pos[0], ene->body_pos[1]);
 
 	if(ene->prev != NULL){
@@ -595,6 +665,7 @@ void killEnemy(enePtr ene, dataPtr data, int i){
 	ene->prev = NULL;
 	free(ene);
 
+	numEnemy--;
 	victoryFlag++;
 
 }
@@ -610,6 +681,17 @@ void detectCollision(dataPtr data, towPtr tow, bulPtr bul){
 
 	while(ene != NULL){
 		if((ene->body_pos[0] - 24) <= (bul->body_pos[0]) ){
+
+			//SLOW
+			if(bul->type == 6){
+				ene->status = 1;
+				ene->statusCountdown = 20;
+			}
+			//POISON
+			if(bul->type == 7){
+				ene->status = 2;
+				ene->statusCountdown = 300;
+			}
 
 			ene->health -= bul->damage;
 			killBullet(bul,tow);

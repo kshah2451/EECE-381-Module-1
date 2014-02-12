@@ -19,6 +19,7 @@
 #include "game_over.h"
 #include "level_one.h"
 #include "level_two.h"
+#include "level_three.h"
 #include "story_seq.h"
 
 
@@ -30,6 +31,8 @@ int gameOverFlag = 0;
 int victoryFlag = 0;
 int maxEnemy = 0;
 int resources = 0;
+int levelThreeFlag = 0;
+
 
 
 /*main gameplay cursor logic, with some title screen features .. will have to seperate*/
@@ -144,17 +147,22 @@ int main()
 					/*LEVEL THREE*/
 					//replace this with level 3
 					pre_level_story_3(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+					levelThreeFlag = 1;
 					mainGame_level3(ps2_kb, decode_mode, data, ascii);
 
 					if(gameOverFlag == 1){ //Lv 3 Game Over
 						gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
 						gameOverFlag = 0;
 						victoryFlag = 0;
+						levelThreeFlag = 0;
+
 					}
 					else if(victoryFlag >= 10){ // Lv 3 Victory
 						victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
 						gameOverFlag = 0;
 						victoryFlag = 0;
+						levelThreeFlag = 0;
+
 					}
 
 				}

@@ -95,7 +95,7 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 				// draw the baby on the current grid position, raise hasTowerBeenPlaced flag and reset
 				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
 				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0) && temp_baby_attributes[0] <= resources){ // user presses SPACEBAR
-					resources -= temp_baby_attributes[0];
+					//resources -= temp_baby_attributes[0];
 
 					//TOREMOVE
 					printf("resources after spend: %i", resources);

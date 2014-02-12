@@ -8,9 +8,11 @@
 #include "tower_select.h"
 #include "Colors.h"
 #include "bitmaps.h"
+#include "background_graphics.h"
 //#include "cursor.h"
 extern short int baby_bmp[];
 extern short int infantry_bmp[];
+extern int levelThreeFlag;
 
 //Function will initialize position and colour values for the baby graphics
 //void initialize_baby(Tower baby, int num, int health, int bullet, int fire_rate, int grid, int colour){
@@ -216,7 +218,15 @@ void draw_cursor(int pos[],int colour, alt_up_pixel_buffer_dma_dev* pixel_buffer
 
 /* Draws bullet */
 void draw_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start, int color) {
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, x_start, y_start, x_start + 2, y_start + 2, color, 0);
+	if(!levelThreeFlag){
+		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, x_start, y_start, x_start + 2, y_start + 2, color, 0);
+	}
+	else if(levelThreeFlag){
+		if((x_start+2) < FOG){
+			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, x_start, y_start, x_start + 2, y_start + 2, color, 0);
+
+		}
+	}
 }
 /* Draws bullet with background color */
 void draw_background_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start) {

@@ -22,6 +22,7 @@
 #include "interrupt_funcs.h"
 #include "tower_select.h"
 #include "game_over.h"
+#include "in_game_menu.h"
 
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 extern int gameOverFlag;
@@ -62,9 +63,12 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	//clear pixel buffer memory
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 1);
 	//set background image
-	draw_sky(pixel_buffer);
+/*	draw_sky(pixel_buffer);
 
 	draw_ocean(pixel_buffer);
+*/
+	draw_sky_lv_1( pixel_buffer);
+	draw_ocean_lv_1(pixel_buffer);
 
 	draw_grids(pixel_buffer);
 	heads_up_display_static();
@@ -95,7 +99,7 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 				// draw the baby on the current grid position, raise hasTowerBeenPlaced flag and reset
 				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
 				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0) && temp_baby_attributes[0] <= resources){ // user presses SPACEBAR
-					resources -= temp_baby_attributes[0];
+					//resources -= temp_baby_attributes[0];
 
 					//TOREMOVE
 					printf("resources after spend: %i", resources);
@@ -159,7 +163,7 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	}
 	alt_irq_disable(TIMER_0_IRQ);
 	freeEverything(game_data);
-	free(game_data);
+	//free(game_data);
 
 
 }

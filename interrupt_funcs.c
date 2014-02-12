@@ -903,7 +903,7 @@ void detectCollision(dataPtr data, towPtr tow, bulPtr bul){
 
 
 	while(ene != NULL){
-		if((ene->body_pos[0] - 24) <= (bul->body_pos[0]) ){
+		if((ene->body_pos[0] - 25) <= (bul->body_pos[0])  && (ene->body_pos[0] - 25) >= tow->body_pos[2] ){
 
 			//SLOW
 			if(bul->type == 6){

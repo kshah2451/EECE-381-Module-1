@@ -465,6 +465,9 @@ void goBullets(towPtr tow, dataPtr data){
 			}
 			else {
 				resources++;
+
+				//TOREMOVE
+				printf("resources increment: %i", resources);
 				tow->toAttack = tow->baseAttack;
 			}
 			return;

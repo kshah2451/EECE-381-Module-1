@@ -144,7 +144,7 @@ int main()
 					/*LEVEL THREE*/
 					//replace this with level 3
 					pre_level_story_3(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
-					mainGame_level2(ps2_kb, decode_mode, data, ascii);
+					mainGame_level3(ps2_kb, decode_mode, data, ascii);
 
 					if(gameOverFlag == 1){ //Lv 3 Game Over
 						gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);

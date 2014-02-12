@@ -105,10 +105,6 @@ void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 					resources -= temp_baby_attributes[0];
 
-					//TOREMOVE
-					printf("resources after spend: %i", resources);
-
-
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
 
 

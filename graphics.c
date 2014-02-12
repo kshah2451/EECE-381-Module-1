@@ -188,7 +188,7 @@ void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower
 
 			if(image_to_draw[pixel_el]!= BLACK){
 				if(tower_type == 1 || tower_type == 4 || tower_type == 5 || tower_type == 6 || tower_type == 7 || tower_type == 8){
-					alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby->body_pos[0]+j, baby->body_pos[1]+i,baby->body_pos[0]+j, baby->body_pos[1]+i, image_to_draw[pixel_el], 0);
+					alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby->body_pos[0]+j, baby->body_pos[1]+i,baby->body_pos[0]+j, baby->body_pos[1]+i, col_swap, 0);
 				}
 				else{
 					alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby->body_pos[0]+j, baby->body_pos[1]+i,baby->body_pos[0]+j, baby->body_pos[1]+i, image_to_draw[pixel_el], 0);

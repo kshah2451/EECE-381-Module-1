@@ -89,8 +89,8 @@ void mainGame_level2(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 		{
 
 
-				//if user presses one of the number keys (1 and 2 and 3 for now)
-				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY || data == FOUR_KEY || data == FIVE_KEY || data == SIX_KEY || data == SEVEN_KEY || data == EIGHT_KEY){
+				//if user presses one of the number keys (1 -6 for level 2)
+				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY || data == FOUR_KEY || data == FIVE_KEY || data == SIX_KEY){
 					//enter tower selection function, and raise hasTowerBeenSelected flag
 					tower_selection(ps2_kb, decode_mode, data, ascii, temp_baby_attributes);
 
@@ -101,7 +101,13 @@ void mainGame_level2(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 				// already an existing tower in that grid (in that case, don't place anything)
 				// draw the baby on the current grid position, raise hasTowerBeenPlaced flag and reset
 				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
-				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0 && grid_pos!= 1 && grid_pos!= 3 && grid_pos!= 9 && grid_pos!= 11 && grid_pos!= 15 && grid_pos!= 17 && grid_pos!= 23 && grid_pos!= 25)){ // user presses A
+				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0 && grid_pos!= 1 && grid_pos!= 3 && grid_pos!= 9 && grid_pos!= 11 && grid_pos!= 15 && grid_pos!= 17 && grid_pos!= 23 && grid_pos!= 25)&& temp_baby_attributes[0] <= resources){ // user presses SPACEBAR
+					resources -= temp_baby_attributes[0];
+
+
+					//TOREMOVE
+					printf("resources after spend: %i", resources);
+
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
 
 					draw_baby(game_data->towers[grid_pos], pixel_buffer, game_data->towers[grid_pos]->bulletType);

@@ -445,8 +445,8 @@ void goBullets(towPtr tow, dataPtr data){
 	if(tow->bulHead == NULL  && tow->bulletType != 1 && tow->bulletType != 4 && tow->bulletType != 5 && tow->bulletType != 9){
 		if(isNewBullet(tow)){
 			tow->bulHead = createBullet(tow, NULL);
-			moveBullet(tow->bulHead);
-			detectCollision(data, tow, tow->bulHead);
+			//moveBullet(tow->bulHead);
+			//detectCollision(data, tow, tow->bulHead);
 		}
 		bulFlag = 1;
 	}
@@ -465,9 +465,6 @@ void goBullets(towPtr tow, dataPtr data){
 			}
 			else {
 				resources++;
-
-				//TOREMOVE
-				printf("resources increment: %i", resources);
 				tow->toAttack = tow->baseAttack;
 			}
 			return;
@@ -481,15 +478,20 @@ void goBullets(towPtr tow, dataPtr data){
 	//Go through bullets until we hit the end of the list
 	while(bul != NULL){
 
-		//if at the end of the bullets, try and make a new one
-		if(bul->next == NULL)
-			if(isNewBullet(tow) && bulFlag == 0){
-				bul = createBullet(tow, bul);
-			}
-		bulFlag = 1;
-		//move then detect collisions
 		moveBullet(bul);
 		detectCollision(data, tow, bul);
+		//if at the end of the bullets, try and make a new one
+		if(bul->next == NULL && bulFlag == 0){
+			if(isNewBullet(tow)){
+				bul = createBullet(tow, bul);
+				moveBullet(bul);
+				detectCollision(data, tow, bul);
+			}
+			bulFlag = 1;
+		}
+
+		//move then detect collisions
+
 		if(bul->body_pos[0] >= 320)
 			killBullet(bul, tow);
 

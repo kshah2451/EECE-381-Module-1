@@ -104,10 +104,6 @@ void mainGame_level2(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0 && grid_pos!= 1 && grid_pos!= 3 && grid_pos!= 9 && grid_pos!= 11 && grid_pos!= 15 && grid_pos!= 17 && grid_pos!= 23 && grid_pos!= 25)&& temp_baby_attributes[0] <= resources){ // user presses SPACEBAR
 					resources -= temp_baby_attributes[0];
 
-
-					//TOREMOVE
-					printf("resources after spend: %i", resources);
-
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
 
 					draw_baby(game_data->towers[grid_pos], pixel_buffer, game_data->towers[grid_pos]->bulletType);

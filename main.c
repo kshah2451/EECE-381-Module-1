@@ -34,7 +34,9 @@ int maxEnemy = 0;
 int resources = 0;
 int levelThreeFlag = 0;
 int levelFlag = 1;
-
+int finalBossFlag = 0;
+int finalBossKilled = 0;
+int stopEnemies = 0;
 
 /*main gameplay cursor logic, with some title screen features .. will have to seperate*/
 int main()
@@ -160,13 +162,17 @@ int main()
 						gameOverFlag = 0;
 						victoryFlag = 0;
 						levelThreeFlag = 0;
+						finalBossKilled = 0;
+						finalBossFlag = 0;
 
 					}
-					else if(victoryFlag >= 10){ // Lv 3 Victory
+					else if(finalBossKilled){ // Lv 3 Victory
 						victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
 						gameOverFlag = 0;
 						victoryFlag = 0;
 						levelThreeFlag = 0;
+						finalBossKilled = 0;
+						finalBossFlag = 0;
 
 					}
 

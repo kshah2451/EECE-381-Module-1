@@ -5,17 +5,38 @@
 #include "Colors.h"
 #include "graphics.h"
 
+#define JELLYGRID1 3
+#define JELLYGRID2 5
+#define JELLYGRID3 2
+#define JELLYGRID4 4
+
+#define FOG 160
+
 void draw_sky(alt_up_pixel_buffer_dma_dev*);
 
 void draw_ocean(alt_up_pixel_buffer_dma_dev*);
 
 void draw_boardwalk(alt_up_pixel_buffer_dma_dev*);
 
+void draw_sky_lv_1(alt_up_pixel_buffer_dma_dev*);
+
+void draw_sky_lv_2(alt_up_pixel_buffer_dma_dev*);
+
+void draw_sky_lv_3(alt_up_pixel_buffer_dma_dev*);
+
+void draw_ocean_lv_1(alt_up_pixel_buffer_dma_dev*);
+
+void draw_ocean_lv_2(alt_up_pixel_buffer_dma_dev*);
+
+void draw_ocean_lv_3(alt_up_pixel_buffer_dma_dev*);
+
+
 void draw_grids(alt_up_pixel_buffer_dma_dev*);
 
 void draw_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int y_start, int color);
 void draw_background_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int y_start);
-
+void set_jellyfish();
+void draw_jellyfish(int jelly_x, int jelly_y);
 #endif
 
 

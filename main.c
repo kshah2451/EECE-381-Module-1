@@ -36,6 +36,8 @@ int finalBossFlag = 0;
 int finalBossKilled = 0;
 int stopEnemies = 0;
 
+int levelThreeFlag = 0;
+
 
 /*main gameplay cursor logic, with some title screen features .. will have to seperate*/
 int main()
@@ -132,6 +134,7 @@ int main()
 				alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 
 				/*LEVEL TWO*/
+
 				//replace this with level 2
 				pre_level_story_2(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
 				mainGame_level2(ps2_kb, decode_mode, data, ascii);
@@ -149,6 +152,7 @@ int main()
 					/*LEVEL THREE*/
 					//replace this with level 3
 					pre_level_story_3(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+					levelThreeFlag = 1;
 					mainGame_level3(ps2_kb, decode_mode, data, ascii);
 
 					if(gameOverFlag == 1){ //Lv 3 Game Over
@@ -157,6 +161,7 @@ int main()
 						finalBossKilled = 0;
 						finalBossFlag = 0;
 						gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
+						levelThreeFlag = 0;
 
 					}
 					else if(finalBossKilled){ // Lv 3 Victory
@@ -165,6 +170,7 @@ int main()
 						finalBossKilled = 0;
 						finalBossFlag = 0;
 						victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+						levelThreeFlag = 0;
 
 					}
 

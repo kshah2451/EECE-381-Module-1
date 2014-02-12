@@ -89,12 +89,13 @@ typedef struct Enemy
         // vga info like the boxes that make up the image and colour
         int colour;
 
-        //Status effect, 0 for none, 1 for slow, 2 for poison
-        int status;
+        //Status effect, 0 for none, 1 for yes
+        int poison;
+        int slow;
 
         //Status effect countdown, when hit with ice or slow, set at a value, counts down until effect is gone
-        int statusCountdown;
-
+        int poisonCountdown;
+        int slowCountdown;
 
         //pointer to the next and previous enemies
         struct Enemy* next;

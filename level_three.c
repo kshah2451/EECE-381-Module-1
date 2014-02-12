@@ -21,19 +21,22 @@
 #include "graphics.h"
 #include "interrupt_funcs.h"
 #include "tower_select.h"
-#include "game_over.h"
-#include "in_game_menu.h"
+#include "level_three.h"
+
 
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 extern int gameOverFlag;
 extern int victoryFlag;
+
 
 //Level dependent values for use in interrupts
 extern int maxEnemy;
 extern int numEnemy;
 extern int resources;
 
-void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii){
+
+
+void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii){
 
 	//set starting grid position to be grid 6, which is the top left-most grid
 	int i;
@@ -44,11 +47,12 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	int towerCanBePlaced = 0;		// flag that checks whether a tower can be placed	(
 	int hasCursorMoved = 0;			//flag that checks if the cursor is being told to move (helps fix sensitivity)
 
-
 	//Level dependent values for use in interrupts
-	maxEnemy = 10;
+	maxEnemy = 15;
 	numEnemy = 0;
-	resources = 30;
+	resources = 50;
+
+
 
 	dataPtr game_data = malloc(sizeof(gameData));
 	for(i = 0; i < NUMROW; i++){
@@ -67,9 +71,8 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 	draw_ocean(pixel_buffer);
 */
-	draw_sky_lv_1( pixel_buffer);
-	draw_ocean_lv_1(pixel_buffer);
-
+	draw_sky_lv_3( pixel_buffer);
+	draw_ocean_lv_3(pixel_buffer);
 	draw_grids(pixel_buffer);
 	heads_up_display_static();
 
@@ -80,14 +83,16 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	set_cursor(grid_pos, CURSOR_COLOUR);
 	draw_cursor(cur.pos,cur.colour, pixel_buffer);
 	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
-	while(gameOverFlag == 0 && victoryFlag < 5)
+	while(gameOverFlag == 0 && victoryFlag < 10)
 	{
+		printf("sharks killed: %i \n",victoryFlag);
 
 		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0)
 		{
 
-				//if user presses one of the number keys (only towers 1 2 3 4 available in lv 1)
-				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY || data == FOUR_KEY){
+				printf("What was pressed: %x \n", data);
+				//if user presses one of the number keys (only towers 1 2 3 available in lv 1)
+				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY || data == FOUR_KEY || data == FIVE_KEY|| data == SIX_KEY|| data == SEVEN_KEY|| data == EIGHT_KEY){
 					//enter tower selection function, and raise hasTowerBeenSelected flag
 					tower_selection(ps2_kb, decode_mode, data, ascii, temp_baby_attributes);
 
@@ -98,15 +103,23 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 				// already an existing tower in that grid (in that case, don't place anything)
 				// draw the baby on the current grid position, raise hasTowerBeenPlaced flag and reset
 				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
-				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0) && temp_baby_attributes[0] <= resources){ // user presses SPACEBAR
-					//resources -= temp_baby_attributes[0];
+				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)&& temp_baby_attributes[0] <= resources){ // user presses A
+
+				//	resources -= temp_baby_attributes[0];
 
 					//TOREMOVE
 					printf("resources after spend: %i", resources);
 
 
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
-					draw_baby(game_data->towers[grid_pos], pixel_buffer, game_data->towers[grid_pos]->bulletType);
+
+
+
+					if((grid_pos%(NUMTOW/NUMROW) >= 3)){
+						draw_baby(game_data->towers[grid_pos], pixel_buffer, game_data->towers[grid_pos]->bulletType);
+
+					}
+
 					game_data->towers[grid_pos]->isAlive = 1;
 
 					hasTowerBeenPlaced++;
@@ -132,7 +145,7 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 				else{
 
-
+					printf("data = %x when incorrect key pressed \n", data);
 
 				}
 
@@ -161,9 +174,9 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 		}
 
 	}
-	alt_irq_disable(TIMER_0_IRQ);
-	freeEverything(game_data);
-	//free(game_data);
+		alt_irq_disable(TIMER_0_IRQ);
+		freeEverything(game_data);
+	//	free(game_data);
 
 
 }

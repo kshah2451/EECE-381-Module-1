@@ -172,7 +172,7 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	//Normal Shark
 	case 0:
-		ene -> damage = 3;
+		ene -> damage = 0;
 		ene -> health = 15;
 		ene -> speed = 5;
 		ene -> toAttack = 5;
@@ -465,6 +465,9 @@ void goBullets(towPtr tow, dataPtr data){
 			}
 			else {
 				resources++;
+
+				//TOREMOVE
+				printf("resources increment: %i", resources);
 				tow->toAttack = tow->baseAttack;
 			}
 			return;

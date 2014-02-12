@@ -15,10 +15,10 @@
 #define MAX_GRIDS 28
 #define CURSOR_COLOUR 0x7FF
 #define SEA_COLOUR 0x0099
-#define BG_UPPER_X 14
-#define BG_LOWER_X 294
-#define BG_UPPER_Y 45
-#define BG_LOWER_Y 205
+#define BG_UPPER_X 21
+#define BG_LOWER_X 301
+#define BG_UPPER_Y 53
+#define BG_LOWER_Y 213
 #define SPACE_INCREMENT 40
 
 //void initialize_baby(Tower*, int, int, int, int , int);

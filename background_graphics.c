@@ -1,5 +1,13 @@
 #include <stdio.h>
 #include "background_graphics.h"
+#include "bitmaps.h"
+
+extern short int bg_1[];
+//extern short int jellyfish[];
+extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
+//extern short int shark_bmp[];
+
+extern int levelThreeFlag;
 
 /* Draws sky with sun background */
 void draw_sky(alt_up_pixel_buffer_dma_dev* pixel_buffer){
@@ -38,7 +46,8 @@ void draw_boardwalk(alt_up_pixel_buffer_dma_dev* pixel_buffer) {
 
 /* Draws ocean and planks background */
 void draw_ocean(alt_up_pixel_buffer_dma_dev* pixel_buffer){
-	int i;
+	int i,j;
+	int pixel_el = 0;
 	int color_inc = 0x0001;
 
 	// Draws planks
@@ -60,24 +69,126 @@ void draw_ocean(alt_up_pixel_buffer_dma_dev* pixel_buffer){
 
 	}
 
-
-
-
-
-
 }
-void draw_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int y_start, int color) {
-	int c = 1;
-	int y;
-	for(y = y_start; y < y_start + 24; y++) {
-		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start + c , y, color , 0);
-		x_start--;
-		c++;
+
+void draw_sky_lv_1(alt_up_pixel_buffer_dma_dev* pixel_buffer){
+	int pos = 0;
+	int i, j;
+
+	for(i = 0; i < 53; i++) {
+		for(j = 0; j < 320; j++) {
+			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, sky_lv_1_bmp[pos], 0);
+			pos++;
+		}
 	}
 }
 
-void draw_background_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int y_start) {
+void draw_sky_lv_2(alt_up_pixel_buffer_dma_dev* pixel_buffer) {
+	int pos = 0;
+	int i, j;
+
+	for(i = 0; i < 53; i++) {
+		for(j = 0; j < 320; j++) {
+			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, sky_lv_2_bmp[pos], 0);
+			pos++;
+		}
+	}
+}
+
+void draw_sky_lv_3(alt_up_pixel_buffer_dma_dev* pixel_buffer) {
+	int pos = 0;
+	int i, j;
+
+	for(i = 0; i < 53; i++) {
+		for(j = 0; j < 320; j++) {
+			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, sky_lv_3_bmp[pos], 0);
+			pos++;
+		}
+	}
+}
+
+void draw_ocean_lv_1(alt_up_pixel_buffer_dma_dev* pixel_buffer){
+	int pos = 0;
+	int i, j;
+
+	for(i = 53; i < 240; i++) {
+		for(j = 0; j < 320; j++) {
+			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, ocean_lv_1_bmp[pos], 0);
+			pos++;
+		}
+	}
+}
+void draw_ocean_lv_2(alt_up_pixel_buffer_dma_dev* pixel_buffer){
+	int pos = 0;
+	int i, j;
+
+	for(i = 53; i < 240; i++) {
+		for(j = 0; j < 320; j++) {
+			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, ocean_lv_2_bmp[pos], 0);
+			pos++;
+		}
+	}
+}
+
+
+void draw_ocean_lv_3(alt_up_pixel_buffer_dma_dev* pixel_buffer){
+	int pos = 0;
+	int i, j;
+
+	for(i = 53; i < 240; i++) {
+		for(j = 0; j < 320; j++) {
+			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, ocean_lv_3_bmp[pos], 0);
+			pos++;
+		}
+	}
+}
+
+
+
+void draw_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int y_start, int color) {
+	int c = 1;
 	int y;
+	int i,j;
+	int pixel_el = 0;
+/*	for(y = y_start; y < y_start + 24; y++) {
+		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start + c , y, color , 0);
+		x_start--;
+		c++;
+	}*/
+
+	for(i = y_start; i < y_start+30; i++)
+	{
+
+		for(j = x_start; j < x_start+25; j++){
+
+
+			if(shark_bmp[pixel_el]!= 0x2589){
+
+				if(levelThreeFlag == 0){
+					alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, shark_bmp[pixel_el], 0);
+				}
+				else if(levelThreeFlag == 1){
+					if(x_start < (FOG)){
+						alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, shark_bmp[pixel_el], 0);
+					}
+				}
+			}
+
+			pixel_el++;
+
+		}
+
+	}
+
+
+
+
+
+
+}
+
+void draw_background_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int y_start) {
+/*	int y;
 	int c = 1;
 	int color_inc = 0x0001;
 	switch(y_start) {
@@ -131,7 +242,7 @@ void draw_background_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_
 
 
 
-
+*/
 
 
 
@@ -155,4 +266,58 @@ void draw_grids(alt_up_pixel_buffer_dma_dev* pixel_buffer){
 
 
 
+}
+
+
+void set_jellyfish(){
+	int i,j;
+	int jelly_count = 0;
+	int increment = 40;
+	int jelly_per_row = 2;
+	int x1 = BG_UPPER_X;
+	int y1 = BG_UPPER_Y;
+	int x2 = BG_UPPER_X + increment;
+	int y2 = BG_LOWER_Y - ((NUMROW-1)*increment);
+
+	for(i = 0; i < (NUMTOW/NUMROW); i++){
+		for(j = 0; j < NUMROW; j++){
+			if((j%2)==0){
+				if(((i%7)== JELLYGRID1 || (i%7) == JELLYGRID2)){
+					//draw jelly
+					draw_jellyfish(x1 + (i*increment),y1 +(j*increment));
+
+					jelly_count++;
+				}
+			}
+		else if ((j%2)==1){
+				if(((i%7)== JELLYGRID3 || (i%7) == JELLYGRID4)){
+					//draw jelly
+					draw_jellyfish(x1 + (i*increment) ,y1 + (j*increment));
+					jelly_count++;
+				}
+			}
+		}
+	}
+
+}
+
+
+void draw_jellyfish(int jelly_x, int jelly_y){
+
+	int i = jelly_x;
+	int j = jelly_y;
+	int pixel_el = 0;
+	for(i = jelly_x; i < jelly_x+40; i++)
+		{
+			for(j = jelly_y; j < jelly_y+40; j++){
+
+				if(jellyfish[pixel_el]!= 0x051D){
+					alt_up_pixel_buffer_dma_draw_box(pixel_buffer, i, j, i+1, j+1, jellyfish[pixel_el], 0);
+
+				}
+
+				pixel_el++;
+			}
+
+		}
 }

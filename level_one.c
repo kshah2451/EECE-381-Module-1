@@ -26,8 +26,12 @@
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 extern int gameOverFlag;
 extern int victoryFlag;
+
+//Level dependent values for use in interrupts
 extern int maxEnemy;
 extern int numEnemy;
+extern int resources;
+
 void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii){
 
 	//set starting grid position to be grid 6, which is the top left-most grid
@@ -38,8 +42,12 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	int hasTowerBeenPlaced = 0;		// flag that checks when a tower has been placed
 	int towerCanBePlaced = 0;		// flag that checks whether a tower can be placed	(
 	int hasCursorMoved = 0;			//flag that checks if the cursor is being told to move (helps fix sensitivity)
+
+
+	//Level dependent values for use in interrupts
 	maxEnemy = 10;
 	numEnemy = 0;
+	resources = 30;
 
 	dataPtr game_data = malloc(sizeof(gameData));
 	for(i = 0; i < NUMROW; i++){

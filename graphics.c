@@ -118,9 +118,7 @@ void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower
 	int i,j,k;
 	int col_swap = 0;
 	int pixel_el = 0;
-	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
-	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer));
-		//printf("data = %x before huge ass array \n");
+
 
 	short int image_to_draw[750];
 
@@ -190,10 +188,10 @@ void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower
 
 			if(image_to_draw[pixel_el]!= BLACK){
 				if(tower_type == 1 || tower_type == 4 || tower_type == 5 || tower_type == 6 || tower_type == 7 || tower_type == 8){
-					alt_up_pixel_buffer_dma_draw(pixel_buffer, col_swap, baby->body_pos[0]+j, baby->body_pos[1]+i);
+					alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby->body_pos[0]+j, baby->body_pos[1]+i,baby->body_pos[0]+j, baby->body_pos[1]+i, image_to_draw[pixel_el], 0);
 				}
 				else{
-				alt_up_pixel_buffer_dma_draw(pixel_buffer, image_to_draw[pixel_el], baby->body_pos[0]+j, baby->body_pos[1]+i);
+					alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby->body_pos[0]+j, baby->body_pos[1]+i,baby->body_pos[0]+j, baby->body_pos[1]+i, image_to_draw[pixel_el], 0);
 				}
 			}
 
@@ -201,8 +199,7 @@ void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower
 		}
 
 	}
-	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
-	//printf("data = %x after drawing \n");
+
 
 
 

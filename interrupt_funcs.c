@@ -6,8 +6,11 @@
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 extern int gameOverFlag;
 extern int victoryFlag;
+
+//Level dependent values for use in interrupts
 extern int maxEnemy;
 int numEnemy = 0;
+extern int resources;
 
 //Interrupt function
 void timerroutine(void* context, alt_u32 id){
@@ -455,6 +458,17 @@ void goBullets(towPtr tow, dataPtr data){
 		else tow->bulletType = 9;
 		return;
 	}
+	//If tower is resource, countdown until gives next resource
+	else if(tow->bulletType == 1){
+			if(tow->toAttack > 0){
+				tow->toAttack--;
+			}
+			else {
+				resources++;
+				tow->toAttack = tow->baseAttack;
+			}
+			return;
+		}
 
 	//point to the first bullet
 	bulPtr bul = tow->bulHead;

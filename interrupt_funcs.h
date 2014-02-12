@@ -23,6 +23,12 @@ void timerroutine(void* context, alt_u32 id);
 //Functions for enemy advancement
 void goEnemies(dataPtr data);
 
+//Create final boss
+void createFinalBoss(dataPtr data);
+
+//Function for final boss logic
+void goFinalBoss(dataPtr data);
+
 //Function that determines if it's time for a new enemy to be made
 int isNewEnemy(void);
 
@@ -31,6 +37,9 @@ enePtr createEnemy(enePtr prevEne, int row);
 
 //Function to detect shark attacks
 void sharkAttack(enePtr ene, towPtr tow, dataPtr data);
+
+//boss shark attack
+void bossSharkAttack(enePtr ene, towPtr tow, dataPtr data);
 
 //More enemy functions
 void moveEnemy(enePtr ene);
@@ -51,8 +60,14 @@ int isNewBullet(towPtr tow);
 bulPtr createBullet(towPtr ownerTow, bulPtr prevBul);
 void moveBullet(bulPtr bul);
 void killBullet(bulPtr bul, towPtr ownerTow);
-void killEnemy(enePtr ene, dataPtr data, int i);
 
+//killing enemies
+void killEnemy(enePtr ene, dataPtr data, int i);
+void killFinalBoss(enePtr ene, dataPtr data);
+
+
+//moves final boss
+void moveFinalBoss(enePtr ene);
 
 
 

@@ -23,7 +23,9 @@ void timerroutine(void* context, alt_u32 id){
 
 	int i;
 
-	if(finalBossFlag == 0) goEnemies(data);
+	if(finalBossFlag == 0){
+		goEnemies(data);
+	}
 	else if(finalBossFlag == 1){
 		if(finalBossMade == 0){
 			createFinalBoss(data);

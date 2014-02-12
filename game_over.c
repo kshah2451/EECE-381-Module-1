@@ -168,7 +168,7 @@ void level1_victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffe
 
 	alt_up_char_buffer_clear(char_buffer);
 	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 0, 0, 320, 240, 0x0A00, 0);
-
+	save_level('2');
 	while(spacebar_detected < 2){
 		// display graphic
 		alt_up_char_buffer_string(char_buffer, "CONGRATULATIONS!", 20, 20);
@@ -191,6 +191,7 @@ void level2_victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffe
 
 	alt_up_char_buffer_clear(char_buffer);
 	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 0, 0, 320, 240, 0x0A00, 0);
+	save_level('3');
 
 	while(spacebar_detected < 2){
 		// display graphic

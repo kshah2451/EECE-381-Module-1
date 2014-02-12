@@ -56,7 +56,7 @@ void pre_level_story_3(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_bu
 
 	while(spacebar_detected < 2){
 		// display graphic
-		alt_up_char_buffer_string(char_buffer, "8==========D", 15, 32);
+		alt_up_char_buffer_string(char_buffer, ":D", 15, 32);
 
 		alt_up_char_buffer_string(char_buffer, "Press SPACEBAR to continue", 40, 50);
 		if(decode_scancode(ps2_kb, &decode_mode, &data, &ascii)== 0){

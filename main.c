@@ -22,6 +22,7 @@
 #include "level_three.h"
 #include "story_seq.h"
 #include "help_menu.h"
+#include "save_game.h"
 
 
 
@@ -30,6 +31,7 @@ alt_up_pixel_buffer_dma_dev* pixel_buffer;
 
 int gameOverFlag = 0;
 int victoryFlag = 0;
+int numEnemy = 0;
 int maxEnemy = 0;
 int resources = 0;
 int levelThreeFlag = 0;
@@ -37,6 +39,10 @@ int levelFlag = 1;
 int finalBossFlag = 0;
 int finalBossKilled = 0;
 int stopEnemies = 0;
+
+int loadedLevel = 0;
+int skipLevel1 = 0;
+int skipLevel2 = 0;
 
 /*main gameplay cursor logic, with some title screen features .. will have to seperate*/
 int main()
@@ -49,18 +55,10 @@ int main()
 	int num_babies = 0; //i dont think im actually using this... will have to check
 	int i;
 	int menu_selection; // 1: New Game   2:Load Game   3: How to Play
-/*	dataPtr game_data = (dataPtr)malloc(sizeof(gameData));
-	for(i = 0; i < NUMROW; i++){
-		game_data->eneHead[i] = NULL;
-	}*/
-
 
 				/* HAL INITIALIZATIONS*/
 
 
-
-/*	// set positions of baby towers
-	set_baby_positions(game_data->towers);*/
 
 	//bunch of keyboard initializations
 	alt_up_ps2_dev *ps2_kb;
@@ -111,19 +109,49 @@ int main()
 		alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 
 		if(menu_selection == 2){ //Load Game
-			victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+
+			//read SD Card and check what level has been saved
+			loadedLevel = load_save() - '0';
+			printf("%i \n", loadedLevel);
+
+			//get saved level value
+			if(loadedLevel == 2){		//if level 2, player can skip level 1
+				skipLevel1 = 1;
+				menu_selection = 4;
+			}
+			else if (loadedLevel == 3){		//if level 3, player can skip level 1 and 2
+				skipLevel1 = 1;
+				skipLevel2 = 1;
+				menu_selection = 4;
+			}
+			else{
+
+				loading_error_message(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+
+			}
+
+
 		}
 		else if(menu_selection == 3){ // How to Play
 
 			draw_help_menu(pixel_buffer, char_buffer,ps2_kb, decode_mode );
 
 		}
-		else if (menu_selection == 1){ // New Game
+		if (menu_selection == 1 || menu_selection == 4){ // New Game or Play Loaded Game
 			/*LEVEL ONE*/
-			pre_level_story_1(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
-			levelFlag = 2;
-			mainGame_level2(ps2_kb, decode_mode, data, ascii);
 
+			/*loaded game check*/
+			if(skipLevel1 == 0){
+				pre_level_story_1(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+				levelFlag = 1;
+				mainGame_level1(ps2_kb, decode_mode, data, ascii);
+			}
+			else if(skipLevel1 == 1){
+				victoryFlag = 5;
+				gameOverFlag = 0;
+			}
+
+			/*Level 1 Results check*/
 			if(gameOverFlag == 1){  //Lv1 Game Over
 				gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
 				gameOverFlag = 0;
@@ -132,31 +160,46 @@ int main()
 			else if(victoryFlag >= 5){ // Level 1 Victory
 				gameOverFlag = 0;
 				victoryFlag = 0;
-				level1_victory(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+				if(skipLevel1 == 0){
+					level1_victory(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+				}
 				alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 
 				/*LEVEL TWO*/
-				//replace this with level 2
-				pre_level_story_2(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
-				levelFlag = 2;
-				mainGame_level2(ps2_kb, decode_mode, data, ascii);
+
+				/*Loaded Game Check*/
+				if(skipLevel2 == 0){
+					pre_level_story_2(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+					levelFlag = 2;
+					mainGame_level2(ps2_kb, decode_mode, data, ascii);
+				}
+				else if(skipLevel2 == 1){
+					victoryFlag =10;
+					gameOverFlag = 0;
+				}
+				/*Level 2 Results Check*/
 				if(gameOverFlag == 1){  //Lv2 Game Over
 					gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
 					gameOverFlag = 0;
 					victoryFlag = 0;
+
+
 				}
 
 				else if(victoryFlag >= 10){ //Lv2 Victory
 					gameOverFlag = 0;
 					victoryFlag = 0;
-					level2_victory(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+					if(skipLevel2 == 0){
+						level2_victory(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+					}
 					alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
+
 					/*LEVEL THREE*/
-					//replace this with level 3
 					pre_level_story_3(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
 					levelThreeFlag = 1;
 					mainGame_level3(ps2_kb, decode_mode, data, ascii);
 
+					/*Level 3 Result Check*/
 					if(gameOverFlag == 1){ //Lv 3 Game Over
 						gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
 						gameOverFlag = 0;
@@ -180,6 +223,9 @@ int main()
 
 			}
 		}
+		//reset load flags
+		skipLevel1 = 0;
+		skipLevel2 = 0;
 
 	} //closes while
 

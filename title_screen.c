@@ -169,3 +169,25 @@ int move_title_cursor(int cursor_x, int cursor_y,alt_up_ps2_dev * ps2_kb, KB_COD
 
 
 }
+
+
+
+void loading_error_message(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer, alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii){
+	int spacebar_detected = 0;
+	alt_up_char_buffer_clear(char_buffer);
+
+	while(spacebar_detected < 2){
+			// display error message
+		alt_up_char_buffer_string(char_buffer, "Failed To Load -- no saved data found", 15, 20);
+			alt_up_char_buffer_string(char_buffer, "Press SPACEBAR to return", 35, 50);
+			if(decode_scancode(ps2_kb, &decode_mode, &data, &ascii)== 0){
+				if(data == SPACEBAR){
+					spacebar_detected++;
+				}
+			}
+		}
+
+
+
+
+}

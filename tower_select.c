@@ -130,11 +130,27 @@ void remove_baby(Tower* baby, int grid, alt_up_pixel_buffer_dma_dev* pixel_buffe
 			if(i % 8 == 0) color_inc++;
 		}
 	}
-	else if(grid > 6){
+	else if(grid > 6 && grid <= 13){
 		for(i = 86; i < 124; i++) {
 			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 15+((13-grid)*40), 53+((13 - grid)*40), i, BLACK + (38+color_inc), 0);
 			if(i % 8 == 0) color_inc++;
 		}
+
+	}
+	else if(grid > 13 && grid <= 20 ){
+		for(i = 126; i < 164; i++) {
+			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 15+((20-grid)*40), 53+((20 - grid)*40), i, BLACK + (76+color_inc), 0);
+			if(i % 8 == 0) color_inc++;
+		}
+
+	}
+
+	else if(grid > 20 && grid <= 27){
+		for(i = 166; i < 204; i++) {
+			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 15+((27-grid)*40), 53+((27 - grid)*40), i, BLACK + (114+color_inc), 0);
+			if(i % 8 == 0) color_inc++;
+		}
+
 
 	}
 

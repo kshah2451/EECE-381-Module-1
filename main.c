@@ -19,7 +19,9 @@
 #include "game_over.h"
 #include "level_one.h"
 #include "level_two.h"
+#include "level_three.h"
 #include "story_seq.h"
+#include "help_menu.h"
 
 
 
@@ -30,6 +32,8 @@ int gameOverFlag = 0;
 int victoryFlag = 0;
 int maxEnemy = 0;
 int resources = 0;
+int levelThreeFlag = 0;
+int levelFlag = 1;
 
 
 /*main gameplay cursor logic, with some title screen features .. will have to seperate*/
@@ -108,12 +112,15 @@ int main()
 			victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
 		}
 		else if(menu_selection == 3){ // How to Play
-			victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+
+			draw_help_menu(pixel_buffer, char_buffer,ps2_kb, decode_mode );
+
 		}
 		else if (menu_selection == 1){ // New Game
 			/*LEVEL ONE*/
 			pre_level_story_1(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
-			mainGame_level1(ps2_kb, decode_mode, data, ascii);
+			levelFlag = 2;
+			mainGame_level2(ps2_kb, decode_mode, data, ascii);
 
 			if(gameOverFlag == 1){  //Lv1 Game Over
 				gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
@@ -129,6 +136,7 @@ int main()
 				/*LEVEL TWO*/
 				//replace this with level 2
 				pre_level_story_2(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+				levelFlag = 2;
 				mainGame_level2(ps2_kb, decode_mode, data, ascii);
 				if(gameOverFlag == 1){  //Lv2 Game Over
 					gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
@@ -144,17 +152,22 @@ int main()
 					/*LEVEL THREE*/
 					//replace this with level 3
 					pre_level_story_3(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
-					mainGame_level2(ps2_kb, decode_mode, data, ascii);
+					levelThreeFlag = 1;
+					mainGame_level3(ps2_kb, decode_mode, data, ascii);
 
 					if(gameOverFlag == 1){ //Lv 3 Game Over
 						gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
 						gameOverFlag = 0;
 						victoryFlag = 0;
+						levelThreeFlag = 0;
+
 					}
 					else if(victoryFlag >= 10){ // Lv 3 Victory
 						victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
 						gameOverFlag = 0;
 						victoryFlag = 0;
+						levelThreeFlag = 0;
+
 					}
 
 				}

@@ -22,6 +22,7 @@
 #include "interrupt_funcs.h"
 #include "tower_select.h"
 #include "level_three.h"
+#include "game_over.h"
 
 
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
@@ -33,7 +34,9 @@ extern int victoryFlag;
 extern int maxEnemy;
 extern int numEnemy;
 extern int resources;
-
+extern int finalBossFlag;
+extern int finalBossKilled;
+extern int stopEnemies;
 
 
 void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii){
@@ -81,14 +84,16 @@ void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	set_cursor(grid_pos, CURSOR_COLOUR);
 	draw_cursor(cur.pos,cur.colour, pixel_buffer);
 	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
-	while(gameOverFlag == 0 && victoryFlag < 10)
+	while(gameOverFlag == 0 && finalBossKilled == 0)
 	{
-		printf("sharks killed: %i \n",victoryFlag);
+
+		if(victoryFlag >= 10) stopEnemies = 1;
+		if(stopEnemies == 1 && numEnemy <= 0) finalBossFlag = 1;
 
 		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0)
 		{
 
-				printf("What was pressed: %x \n", data);
+
 				//if user presses one of the number keys (only towers 1 2 3 available in lv 1)
 				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY || data == FOUR_KEY || data == FIVE_KEY|| data == SIX_KEY|| data == SEVEN_KEY|| data == EIGHT_KEY){
 					//enter tower selection function, and raise hasTowerBeenSelected flag
@@ -103,7 +108,7 @@ void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
 				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)&& temp_baby_attributes[0] <= resources){ // user presses A
 
-					resources -= temp_baby_attributes[0];
+					//resources -= temp_baby_attributes[0];
 
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
 
@@ -169,7 +174,7 @@ void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 	}
 		alt_irq_disable(TIMER_0_IRQ);
+		freeEverything(game_data);
 		free(game_data);
-
 
 }

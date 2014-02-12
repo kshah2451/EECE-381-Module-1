@@ -212,10 +212,8 @@ void level2_victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffe
 void freeEverything(dataPtr data){
 
 	int i = 0;
-	enePtr ene;
 	enePtr eneTemp;
 	towPtr tow;
-	bulPtr bul;
 	bulPtr bulTemp;
 
 	//free enemies

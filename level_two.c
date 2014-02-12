@@ -81,7 +81,7 @@ void mainGame_level2(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	set_cursor(grid_pos, CURSOR_COLOUR);
 	draw_cursor(cur.pos,cur.colour, pixel_buffer);
 	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
-	while(gameOverFlag == 0 && victoryFlag < 1000)
+	while(gameOverFlag == 0 && victoryFlag < 10)
 	{
 
 
@@ -102,7 +102,7 @@ void mainGame_level2(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 				// draw the baby on the current grid position, raise hasTowerBeenPlaced flag and reset
 				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
 				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0 && grid_pos!= 1 && grid_pos!= 3 && grid_pos!= 9 && grid_pos!= 11 && grid_pos!= 15 && grid_pos!= 17 && grid_pos!= 23 && grid_pos!= 25)&& temp_baby_attributes[0] <= resources){ // user presses SPACEBAR
-					resources -= temp_baby_attributes[0];
+					//resources -= temp_baby_attributes[0];
 
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
 

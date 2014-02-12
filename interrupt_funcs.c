@@ -103,8 +103,8 @@ void goEnemies(dataPtr data){
 
 
 			//If poisoned, do some damage
-			if(ene->status == 2){
-				if((ene->statusCountdown % 15) == 0){
+			if(ene->poison == 1){
+				if((ene->poisonCountdown % 15) == 0){
 
 					ene->health -= 1;
 					if(ene->health <= 0){
@@ -112,10 +112,10 @@ void goEnemies(dataPtr data){
 						return;
 					}
 
-					ene->statusCountdown--;
-					if(ene->statusCountdown <= 0) ene->status = 0;
+					ene->poisonCountdown--;
+					if(ene->poisonCountdown <= 0) ene->poison = 0;
 				}
-				else ene->statusCountdown--;
+				else ene->poisonCountdown--;
 			}
 
 			//try to attack then move
@@ -180,8 +180,10 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 7;
 		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
-		ene -> status = 0;
-		ene -> statusCountdown = 0;
+		ene -> poison = 0;
+		ene -> poisonCountdown = 0;
+		ene -> slow = 0;
+		ene -> slowCountdown = 0;
 		ene -> colour = 0x7bef;
 		break;
 
@@ -195,8 +197,10 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 4;
 		ene -> baseMove = 4;
 		ene -> moveBlocked = 0;
-		ene -> status = 0;
-		ene -> statusCountdown = 0;
+		ene -> poison = 0;
+		ene -> poisonCountdown = 0;
+		ene -> slow = 0;
+		ene -> slowCountdown = 0;
 		ene -> colour = 0xffff;
 		break;
 
@@ -210,8 +214,10 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 7;
 		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
-		ene -> status = 0;
-		ene -> statusCountdown = 0;
+		ene -> poison = 0;
+		ene -> poisonCountdown = 0;
+		ene -> slow = 0;
+		ene -> slowCountdown = 0;
 		ene -> colour = 0x0000;
 		break;
 
@@ -226,8 +232,10 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 7;
 		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
-		ene -> status = 0;
-		ene -> statusCountdown = 0;
+		ene -> poison = 0;
+		ene -> poisonCountdown = 0;
+		ene -> slow = 0;
+		ene -> slowCountdown = 0;
 		ene -> colour = 0x00ff;
 		break;
 
@@ -242,8 +250,10 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 7;
 		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
-		ene -> status = 0;
-		ene -> statusCountdown = 0;
+		ene -> poison = 0;
+		ene -> poisonCountdown = 0;
+		ene -> slow = 0;
+		ene -> slowCountdown = 0;
 		ene -> colour = 0x0ff0;
 		break;
 
@@ -258,8 +268,10 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 10;
 		ene -> baseMove = 10;
 		ene -> moveBlocked = 0;
-		ene -> status = 0;
-		ene -> statusCountdown = 0;
+		ene -> poison = 0;
+		ene -> poisonCountdown = 0;
+		ene -> slow = 0;
+		ene -> slowCountdown = 0;
 		ene -> colour = 0x9955;
 		break;
 
@@ -407,16 +419,16 @@ void moveEnemy(enePtr ene){
 
 			draw_background_sharkfin(pixel_buffer, ene->body_pos[0], ene->body_pos[1]);
 
-			//IF NOT FROZEN
-			if(ene->status != 1){
+			//IF NOT SLOWED
+			if(ene->slow != 1){
 				ene->body_pos[0] -= ene->speed;
 				ene->toMove = ene->baseMove;
 			}
 			else{
 				ene->body_pos[0] -= (ene->speed - 2);
 				ene->toMove = (ene->baseMove + 3);
-				ene->statusCountdown--;
-				if(ene->statusCountdown <= 0) ene->status = 0;
+				ene->slowCountdown--;
+				if(ene->slowCountdown <= 0) ene->slow = 0;
 			}
 
 
@@ -703,13 +715,13 @@ void detectCollision(dataPtr data, towPtr tow, bulPtr bul){
 
 			//SLOW
 			if(bul->type == 6){
-				ene->status = 1;
-				ene->statusCountdown = 20;
+				ene->slow = 1;
+				ene->slowCountdown = 20;
 			}
 			//POISON
 			if(bul->type == 7){
-				ene->status = 2;
-				ene->statusCountdown = 300;
+				ene->poison = 1;
+				ene->poisonCountdown = 300;
 			}
 
 			ene->health -= bul->damage;

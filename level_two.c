@@ -81,7 +81,7 @@ void mainGame_level2(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	set_cursor(grid_pos, CURSOR_COLOUR);
 	draw_cursor(cur.pos,cur.colour, pixel_buffer);
 	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
-	while(gameOverFlag == 0 && victoryFlag < 1000)
+	while(gameOverFlag == 0 && victoryFlag < 10)
 	{
 
 

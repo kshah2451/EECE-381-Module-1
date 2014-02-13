@@ -83,12 +83,12 @@ void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
 	while(gameOverFlag == 0 && victoryFlag < 10)
 	{
-		printf("sharks killed: %i \n",victoryFlag);
+
 
 		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0)
 		{
 
-				printf("What was pressed: %x \n", data);
+
 				//if user presses one of the number keys (only towers 1 2 3 available in lv 1)
 				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY || data == FOUR_KEY || data == FIVE_KEY|| data == SIX_KEY|| data == SEVEN_KEY|| data == EIGHT_KEY){
 					//enter tower selection function, and raise hasTowerBeenSelected flag

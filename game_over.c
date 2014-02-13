@@ -212,10 +212,9 @@ void level2_victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffe
 void freeEverything(dataPtr data){
 
 	int i = 0;
-	enePtr ene;
 	enePtr eneTemp;
+
 	towPtr tow;
-	bulPtr bul;
 	bulPtr bulTemp;
 
 	//free enemies
@@ -224,7 +223,10 @@ void freeEverything(dataPtr data){
 		eneTemp = data->eneHead[i];
 
 		while(eneTemp != NULL){
-			killEnemy(eneTemp, data, i);
+			data->eneHead[i] = eneTemp->next;
+			eneTemp->next = NULL;
+			eneTemp->prev = NULL;
+			free(eneTemp);
 			eneTemp = data->eneHead[i];
 		}
 	}
@@ -237,7 +239,11 @@ void freeEverything(dataPtr data){
 
 
 		while(bulTemp != NULL){
-			killBullet(bulTemp, tow);
+
+			tow->bulHead = bulTemp->next;
+			bulTemp->next = NULL;
+			bulTemp->prev = NULL;
+			free(bulTemp);
 			bulTemp = tow->bulHead;
 		}
 		free(tow);

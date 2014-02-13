@@ -224,8 +224,6 @@ void freeEverything(dataPtr data){
 
 		while(eneTemp != NULL){
 			data->eneHead[i] = eneTemp->next;
-			eneTemp->next = NULL;
-			eneTemp->prev = NULL;
 			free(eneTemp);
 			eneTemp = data->eneHead[i];
 		}
@@ -241,8 +239,6 @@ void freeEverything(dataPtr data){
 		while(bulTemp != NULL){
 
 			tow->bulHead = bulTemp->next;
-			bulTemp->next = NULL;
-			bulTemp->prev = NULL;
 			free(bulTemp);
 			bulTemp = tow->bulHead;
 		}

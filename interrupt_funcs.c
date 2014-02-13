@@ -9,7 +9,7 @@ extern int victoryFlag;
 
 //Level dependent values for use in interrupts
 extern int maxEnemy;
-int numEnemy = 0;
+extern int numEnemy;
 extern int resources;
 
 //Interrupt function

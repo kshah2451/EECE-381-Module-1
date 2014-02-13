@@ -18,19 +18,6 @@ void draw_ocean(alt_up_pixel_buffer_dma_dev*);
 
 void draw_boardwalk(alt_up_pixel_buffer_dma_dev*);
 
-void draw_sky_lv_1(alt_up_pixel_buffer_dma_dev*);
-
-void draw_sky_lv_2(alt_up_pixel_buffer_dma_dev*);
-
-void draw_sky_lv_3(alt_up_pixel_buffer_dma_dev*);
-
-void draw_ocean_lv_1(alt_up_pixel_buffer_dma_dev*);
-
-void draw_ocean_lv_2(alt_up_pixel_buffer_dma_dev*);
-
-void draw_ocean_lv_3(alt_up_pixel_buffer_dma_dev*);
-
-
 void draw_grids(alt_up_pixel_buffer_dma_dev*);
 
 void draw_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int y_start, int color);

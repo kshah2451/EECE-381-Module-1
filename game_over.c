@@ -1,5 +1,6 @@
 #include "game_over.h"
 #include "interrupt_funcs.h"
+#include "audio.h"
 
 void display_score(int score){
 
@@ -13,6 +14,10 @@ void victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev *
 	int x1_pos = 320;
 	int change = 4;
 	int y_pos;
+
+	alt_up_audio_dev *audio;
+	audio = alt_up_audio_open_dev("/dev/audio_0");
+	unsigned int* audio_buffer_victory;
 
 	// Draws sky
 	for(y_pos = 0; y_pos < 45; y_pos++) {
@@ -66,10 +71,19 @@ void victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev *
 	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 90, 106, 100, 114, 0xFE99, 0);
 	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 115, 106, 125, 114, 0xFE99, 0);
 
+
+
+
 	alt_up_char_buffer_clear(char_buffer);
+	audio_buffer_victory = load_audio(99);
+
+	tracker_l=22;
+	tracker_r=22;
+	play_once(audio_buffer_victory,audio,99);
 	alt_up_char_buffer_string(char_buffer, "YOU WIN!", 34, 30);
 	alt_up_char_buffer_string(char_buffer, "PRESS A TO CONTINUE", 32, 42);
 
+	free(audio_buffer_victory);
 	while(data != A_KEY){
 
 		decode_scancode(ps2_kb, &decode_mode, &data, &ascii);
@@ -88,6 +102,11 @@ void gameover(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev 
 	int change = 4;
 	int y_pos;
 	int enter_check = 0;
+
+
+	alt_up_audio_dev *audio;
+	audio = alt_up_audio_open_dev("/dev/audio_0");
+	unsigned int* audio_buffer_gameover;
 
 	// Draws sky
 	for(y_pos = 0; y_pos < 45; y_pos++) {
@@ -146,9 +165,17 @@ void gameover(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev 
 	/****/
 
 	alt_up_char_buffer_clear(char_buffer);
+
+	audio_buffer_gameover = load_audio(9);
+
+	tracker_l=22;
+	tracker_r=22;
+	play_once(audio_buffer_gameover,audio,9);
 	alt_up_char_buffer_string(char_buffer, "GAME OVER!", 22, 8);
 	alt_up_char_buffer_string(char_buffer, "ALL YOUR BASE ARE BELONG TO US", 18, 34);
 	alt_up_char_buffer_string(char_buffer, "PRESS A TO RETURN TO MAIN MENU", 18, 38);
+
+
 	while(enter_check < 2){
 
 		decode_scancode(ps2_kb, &decode_mode, &data, &ascii);
@@ -156,6 +183,8 @@ void gameover(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev 
 			enter_check++;
 		}
 	}
+
+	free(audio_buffer_gameover);
 	//alt_up_char_buffer_string(char_buffer, "PRESS A TO RETURN TO MAIN MENU", 32, 42);
 
 }
@@ -212,8 +241,10 @@ void level2_victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffe
 void freeEverything(dataPtr data){
 
 	int i = 0;
+	enePtr ene;
 	enePtr eneTemp;
 	towPtr tow;
+	bulPtr bul;
 	bulPtr bulTemp;
 
 	//free enemies

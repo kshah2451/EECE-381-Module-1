@@ -6,7 +6,11 @@
 #include "graphics.h"
 #include "game_structs.h"
 #include "keyboard_codes.h"
+#include "audio.h"
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
+
+extern alt_up_audio_dev* audio;
+extern unsigned int *audio_buffer_title;
 
 int move_title_cursor(int cursor_x, int cursor_y, alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii);
 /*Title Screen code*/
@@ -81,7 +85,11 @@ int title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_d
 	alt_up_char_buffer_string(char_buffer, "Sharks VS Babies", 32, 32);
 	alt_up_pixel_buffer_dma_draw_rectangle(pixel_buffer, cursor_x, cursor_y, cursor_x+60, cursor_y + 10, 0x0FFF, 0);
 
+	audio = alt_up_audio_open_dev("/dev/audio_0");
 	while(enter_pressed < 2){ //wait for user to press start
+
+		//PLAY MUSIC HERE=
+		play_loop(audio_buffer_title,audio,0);
 
 		alt_up_char_buffer_string(char_buffer, "New Game", 35, 36);
 		alt_up_char_buffer_string(char_buffer, "Load Game", 35, 39);
@@ -114,7 +122,7 @@ int title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_d
 		}
 
 	}
-
+	free(audio_buffer_title);
 
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 	alt_up_char_buffer_clear(char_buffer);

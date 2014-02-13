@@ -5,6 +5,11 @@
  *      Author: Cyril
  */
 #include "story_seq.h"
+#include "audio.h"
+
+unsigned int *audio_buffer_first;
+unsigned int *audio_buffer_second;
+unsigned int *audio_buffer_third;
 
 void pre_level_story_1(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer, alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii){
 
@@ -21,8 +26,16 @@ void pre_level_story_1(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_bu
 				spacebar_detected++;
 			}
 		}
+
+
+
 	}
 
+	alt_up_char_buffer_string(char_buffer, "Loading....                      ", 40, 50);
+	//LOAD HERE
+	audio_buffer_first = load_audio(1);
+	tracker_l=22;
+	tracker_r=22;
 }
 
 
@@ -46,6 +59,11 @@ void pre_level_story_2(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_bu
 		}
 	}
 
+	alt_up_char_buffer_string(char_buffer, "Loading Level 2....                      ", 40, 50);
+	//LOAD HERE
+	audio_buffer_second = load_audio(2);
+	tracker_l=22;
+	tracker_r=22;
 }
 
 void pre_level_story_3(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev * char_buffer, alt_up_ps2_dev * ps2_kb, KB_CODE_TYPE decode_mode,alt_u8 data, char ascii){
@@ -65,6 +83,12 @@ void pre_level_story_3(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_bu
 			}
 		}
 	}
+
+	alt_up_char_buffer_string(char_buffer, "Loading Final Level....                      ", 40, 50);
+	//LOAD HERE
+	audio_buffer_third = load_audio(3);
+	tracker_l=22;
+	tracker_r=22;
 
 }
 

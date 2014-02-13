@@ -22,7 +22,7 @@
 #include "interrupt_funcs.h"
 #include "tower_select.h"
 #include "level_three.h"
-
+#include "audio.h"
 
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 extern int gameOverFlag;
@@ -33,9 +33,7 @@ extern int victoryFlag;
 extern int maxEnemy;
 extern int numEnemy;
 extern int resources;
-extern int finalBossFlag;
-extern int finalBossKilled;
-extern int stopEnemies;
+extern unsigned int *audio_buffer_third;
 
 
 void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii){
@@ -54,6 +52,8 @@ void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	numEnemy = 0;
 	resources = 50;
 
+	alt_up_audio_dev *audio;
+	audio = alt_up_audio_open_dev("/dev/audio_0");
 
 
 	dataPtr game_data = malloc(sizeof(gameData));
@@ -69,12 +69,10 @@ void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	//clear pixel buffer memory
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 1);
 	//set background image
-/*	draw_sky(pixel_buffer);
+	draw_sky(pixel_buffer);
 
 	draw_ocean(pixel_buffer);
-*/
-	draw_sky_lv_3( pixel_buffer);
-	draw_ocean_lv_3(pixel_buffer);
+
 	draw_grids(pixel_buffer);
 	heads_up_display_static();
 
@@ -85,15 +83,14 @@ void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	set_cursor(grid_pos, CURSOR_COLOUR);
 	draw_cursor(cur.pos,cur.colour, pixel_buffer);
 	alt_irq_register(TIMER_0_IRQ, game_data, &timerroutine);
-	while(gameOverFlag == 0 && finalBossKilled == 0)
+	while(gameOverFlag == 0 && victoryFlag < 10)
 	{
-
-		if(victoryFlag >= 10) stopEnemies = 1;
-		if(stopEnemies == 1 && numEnemy <= 0) finalBossFlag = 1;
-
+		//printf("sharks killed: %i \n",victoryFlag);
+		play_loop(audio_buffer_third,audio,3);
 		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0)
 		{
 
+				printf("What was pressed: %x \n", data);
 				//if user presses one of the number keys (only towers 1 2 3 available in lv 1)
 				if(data == ONE_KEY || data == TWO_KEY || data == THREE_KEY || data == FOUR_KEY || data == FIVE_KEY|| data == SIX_KEY|| data == SEVEN_KEY|| data == EIGHT_KEY){
 					//enter tower selection function, and raise hasTowerBeenSelected flag
@@ -109,8 +106,6 @@ void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0)&& temp_baby_attributes[0] <= resources){ // user presses A
 
 				//	resources -= temp_baby_attributes[0];
-
-
 
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
 
@@ -176,8 +171,7 @@ void mainGame_level3(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 
 	}
 		alt_irq_disable(TIMER_0_IRQ);
-		freeEverything(game_data);
-	//	free(game_data);
-
+		free(game_data);
+		free(audio_buffer_third);
 
 }

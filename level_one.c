@@ -22,7 +22,7 @@
 #include "interrupt_funcs.h"
 #include "tower_select.h"
 #include "game_over.h"
-#include "in_game_menu.h"
+#include "audio.h"
 
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 extern int gameOverFlag;
@@ -32,6 +32,8 @@ extern int victoryFlag;
 extern int maxEnemy;
 extern int numEnemy;
 extern int resources;
+extern unsigned int *audio_buffer_first;
+
 
 void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 data, char ascii){
 
@@ -50,6 +52,9 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	numEnemy = 0;
 	resources = 30;
 
+	alt_up_audio_dev *audio;
+	audio = alt_up_audio_open_dev("/dev/audio_0");
+
 	dataPtr game_data = malloc(sizeof(gameData));
 	for(i = 0; i < NUMROW; i++){
 		game_data->eneHead[i] = NULL;
@@ -63,12 +68,9 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	//clear pixel buffer memory
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 1);
 	//set background image
-/*	draw_sky(pixel_buffer);
+	draw_sky(pixel_buffer);
 
 	draw_ocean(pixel_buffer);
-*/
-	draw_sky_lv_1( pixel_buffer);
-	draw_ocean_lv_1(pixel_buffer);
 
 	draw_grids(pixel_buffer);
 	heads_up_display_static();
@@ -83,6 +85,7 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	while(gameOverFlag == 0 && victoryFlag < 5)
 	{
 
+		play_loop(audio_buffer_first,audio,1);
 		if (decode_scancode(ps2_kb, &decode_mode, &data, &ascii)==0)
 		{
 
@@ -100,9 +103,6 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 				// hasTowerBeenSelected + towerCanBePlaced flags, set tower isAlive status to 1
 				else if(data == SPACEBAR && towerCanBePlaced == 1 && (game_data->towers[grid_pos]->isAlive == 0) && temp_baby_attributes[0] <= resources){ // user presses SPACEBAR
 					//resources -= temp_baby_attributes[0];
-
-
-
 
 					set_baby_attributes(game_data->towers, grid_pos, temp_baby_attributes);
 					draw_baby(game_data->towers[grid_pos], pixel_buffer, game_data->towers[grid_pos]->bulletType);
@@ -162,7 +162,7 @@ void mainGame_level1(alt_up_ps2_dev *ps2_kb, KB_CODE_TYPE decode_mode, alt_u8 da
 	}
 	alt_irq_disable(TIMER_0_IRQ);
 	freeEverything(game_data);
-	//free(game_data);
-
+	free(game_data);
+	free(audio_buffer_first);
 
 }

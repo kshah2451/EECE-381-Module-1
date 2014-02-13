@@ -71,77 +71,7 @@ void draw_ocean(alt_up_pixel_buffer_dma_dev* pixel_buffer){
 
 }
 
-void draw_sky_lv_1(alt_up_pixel_buffer_dma_dev* pixel_buffer){
-	int pos = 0;
-	int i, j;
 
-	for(i = 0; i < 53; i++) {
-		for(j = 0; j < 320; j++) {
-			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, sky_lv_1_bmp[pos], 0);
-			pos++;
-		}
-	}
-}
-
-void draw_sky_lv_2(alt_up_pixel_buffer_dma_dev* pixel_buffer) {
-	int pos = 0;
-	int i, j;
-
-	for(i = 0; i < 53; i++) {
-		for(j = 0; j < 320; j++) {
-			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, sky_lv_2_bmp[pos], 0);
-			pos++;
-		}
-	}
-}
-
-void draw_sky_lv_3(alt_up_pixel_buffer_dma_dev* pixel_buffer) {
-	int pos = 0;
-	int i, j;
-
-	for(i = 0; i < 53; i++) {
-		for(j = 0; j < 320; j++) {
-			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, sky_lv_3_bmp[pos], 0);
-			pos++;
-		}
-	}
-}
-
-void draw_ocean_lv_1(alt_up_pixel_buffer_dma_dev* pixel_buffer){
-	int pos = 0;
-	int i, j;
-
-	for(i = 53; i < 240; i++) {
-		for(j = 0; j < 320; j++) {
-			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, ocean_lv_1_bmp[pos], 0);
-			pos++;
-		}
-	}
-}
-void draw_ocean_lv_2(alt_up_pixel_buffer_dma_dev* pixel_buffer){
-	int pos = 0;
-	int i, j;
-
-	for(i = 53; i < 240; i++) {
-		for(j = 0; j < 320; j++) {
-			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, ocean_lv_2_bmp[pos], 0);
-			pos++;
-		}
-	}
-}
-
-
-void draw_ocean_lv_3(alt_up_pixel_buffer_dma_dev* pixel_buffer){
-	int pos = 0;
-	int i, j;
-
-	for(i = 53; i < 240; i++) {
-		for(j = 0; j < 320; j++) {
-			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, ocean_lv_3_bmp[pos], 0);
-			pos++;
-		}
-	}
-}
 
 
 

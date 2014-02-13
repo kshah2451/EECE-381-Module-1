@@ -13,7 +13,6 @@
 extern short int baby_bmp[];
 extern short int infantry_bmp[];
 extern int levelThreeFlag;
-extern int levelFlag;
 
 //Function will initialize position and colour values for the baby graphics
 //void initialize_baby(Tower baby, int num, int health, int bullet, int fire_rate, int grid, int colour){
@@ -233,37 +232,7 @@ void draw_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_s
 void draw_background_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start) {
 	int color_inc = 1;
 	int i;
-	int pixel_el = x_start + 1740;//1652;//1848;
-	printf("%i \n", levelFlag);
-	if(levelFlag == 1){
-		if(y_start < 61){
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+2, y_start, level1_row0[pixel_el], 0);
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+2, y_start+1, level1_row0[pixel_el+320], 0);
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+2, y_start+2, level1_row0[pixel_el+640], 0);
-		}
-		else{
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+2, y_start, level1_row1[pixel_el], 0);
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+2, y_start+1, level1_row1[pixel_el+320], 0);
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+2, y_start+2, level1_row1[pixel_el+640], 0);
-
-		}
-	}
-	else if(levelFlag == 2){
-		if(y_start < 61){
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+2, y_start, level2_row0[pixel_el], 0);
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+2, y_start+1, level2_row0[pixel_el+320], 0);
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+2, y_start+2, level2_row0[pixel_el+640], 0);
-		}
-
-		else if(y_start < 101){
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+2, y_start, level2_row1[pixel_el], 0);
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+2, y_start+1, level2_row1[pixel_el+320], 0);
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+2, y_start+2, level2_row1[pixel_el+640], 0);
-
-		}
-	}
-
-/*	for(i = 45; i < y_start; i++) {
+	for(i = 45; i < y_start; i++) {
 		if(i%8 == 0) color_inc++;
 	}
 	for(i = y_start; i <= y_start + 2; i++) {
@@ -271,6 +240,6 @@ void draw_background_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_sta
 		if(i % 8 == 0) {
 			color_inc++;
 		}
-	}*/
+	}
 }
 

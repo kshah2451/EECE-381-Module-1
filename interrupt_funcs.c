@@ -9,12 +9,8 @@ extern int victoryFlag;
 
 //Level dependent values for use in interrupts
 extern int maxEnemy;
-extern int numEnemy;
+int numEnemy = 0;
 extern int resources;
-extern int finalBossFlag;
-extern int finalBossKilled;
-extern int stopEnemies;
-int finalBossMade = 0;
 
 //Interrupt function
 void timerroutine(void* context, alt_u32 id){
@@ -23,24 +19,31 @@ void timerroutine(void* context, alt_u32 id){
 
 	int i;
 
-	if(finalBossFlag == 0) goEnemies(data);
-	else if(finalBossFlag == 1){
-		if(finalBossMade == 0){
-			createFinalBoss(data);
-			finalBossMade = 1;
-		}
-		goFinalBoss(data);
-	}
+
+	//Advance/create enemies
+	goEnemies(data);
+	//	draw_grids(pixel_buffer);
+	//	draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
+
 
 
 	//Advance/create bullets by tower
 	for(i = 0; i < NUMTOW; i++){
 
+
 		//if the tower exists
 		if(data->towers[i]->isAlive){
+
 			//then advance/create its bullets
 			goBullets(data->towers[i], data);
+			//draw_grids(pixel_buffer);
+			//draw_cursor(cur.pos, CURSOR_COLOUR, pixel_buffer);
+
+
 		}
+
+
+
 	}
 
 
@@ -48,128 +51,26 @@ void timerroutine(void* context, alt_u32 id){
 	IOWR_ALTERA_AVALON_TIMER_STATUS(TIMER_0_BASE, 0);
 }
 
-//creates final boss
-void createFinalBoss(dataPtr data){
-
-	int i = 0;
-	//Malloc some space for the boss
-		enePtr ene = malloc(sizeof(Enemy));
-
-		//just filling this in to differentiate
-		ene->type = 5;
 
 
-		//FINARU BOSSU SHAKKU  !!!!SPECIAL EVERYTHING!!!!
-
-		ene -> damage = 50;
-		ene -> health = 1000;//300;
-		ene -> speed = 3;
-		ene -> toAttack = 5;
-		ene -> baseAttack = 5;
-		ene -> toMove = 10;
-		ene -> baseMove = 10;
-		ene -> moveBlocked = 0;
-		ene -> poison = 0;
-		ene -> poisonCountdown = 0;
-		ene -> slow = 0;
-		ene -> slowCountdown = 0;
-		ene -> colour = 0x9955;
-
-		//Top left point of shark
-		ene -> body_pos[0] = 300;
-		ene -> body_pos[1] = 53;
-
-
-		ene -> next = NULL;
-		ene -> prev = NULL;
-
-		//make every eneHead point to final boss
-		for(i = 0; i < NUMROW; i++) data->eneHead[i] = ene;
-}
-
-
-
-//final boss logic
-void goFinalBoss(dataPtr data){
-	int i;
-	int q;
-	int whatTow;
-
-
-
-	//point to the first enemy in the row
-	enePtr ene = data->eneHead[0];
-
-
-	//If poisoned, do some damage
-	if(ene->poison == 1){
-		if((ene->poisonCountdown % 15) == 0){
-
-			ene->health -= 1;
-			if(ene->health <= 0){
-				killFinalBoss(ene, data);
-				return;
-			}
-
-			ene->poisonCountdown--;
-			if(ene->poisonCountdown <= 0) ene->poison = 0;
-		}
-		else ene->poisonCountdown--;
-	}
-
-	//NEEDS LOGIC TO TOUCH ALL TOWERS IN A COLUMN
-
-	//try to attack then move
-	if(ene->body_pos[0] <= 54 ){
-		q = 6;
-	}
-	else if(ene->body_pos[0] <= 94 ){
-		q = 5;
-	}
-	else if(ene->body_pos[0] <= 134 ){
-		q = 4;
-	}
-	else if(ene->body_pos[0] <= 174 ){
-		q = 3;
-	}
-	else if(ene->body_pos[0] <= 214 ){
-		q = 2;
-	}
-	else if(ene->body_pos[0] <= 254 ){
-		q = 1;
-	}
-	else if(ene->body_pos[0] <= 294 ){
-		q = 0;
-	}
-
-	for(i = 0; i < NUMROW; i++){
-		whatTow = q + NUMTOW/NUMROW*i;
-		bossSharkAttack(ene, data->towers[whatTow], data);
-	}
-
-		moveFinalBoss(ene);
-
-}
 
 //Function for enemy advancement
 void goEnemies(dataPtr data){
 
 	int i;
-	int q;
-	int whatTow;
-	//towPtr tow = NULL;
+	towPtr tow = NULL;
 
 	//row by row
 	for(i = 0; i < NUMROW; i++){
 
 		//find the first tower in a row
-		//int firstTow = (NUMTOW/NUMROW)*i;
+		int firstTow = (NUMTOW/NUMROW)*i;
 
 
 
 
 		//if there's no enemies in that row, try and make one
-		if(data->eneHead[i] == NULL && numEnemy <= maxEnemy && stopEnemies == 0){
+		if(data->eneHead[i] == NULL && numEnemy <= maxEnemy){
 			if(isNewEnemy()){
 				data->eneHead[i] = createEnemy(NULL, i);
 				moveEnemy(data->eneHead[i]);
@@ -181,7 +82,7 @@ void goEnemies(dataPtr data){
 		enePtr ene = data->eneHead[i];
 
 
-/*
+
 		//check if we even need to do this check
 		if (ene != NULL){
 			//point to the first living tower in the row, or to NULL if no towers alive
@@ -196,58 +97,35 @@ void goEnemies(dataPtr data){
 
 			}
 		}
-*/
+
 		//Go through enemies until we hit the end of the list
 		while(ene != NULL){
 
 
 			//If poisoned, do some damage
-			if(ene->poison == 1){
-				if((ene->poisonCountdown % 15) == 0){
+			if(ene->status == 2){
+				if((ene->statusCountdown % 15) == 0){
 
 					ene->health -= 1;
 					if(ene->health <= 0){
-						killEnemy(ene, data, i);
+						killEnemy(ene, data, (tow->lane));
 						return;
 					}
 
-					ene->poisonCountdown--;
-					if(ene->poisonCountdown <= 0) ene->poison = 0;
+					ene->statusCountdown--;
+					if(ene->statusCountdown <= 0) ene->status = 0;
 				}
-				else ene->poisonCountdown--;
+				else ene->statusCountdown--;
 			}
 
-			//find which tower we're at
-			if(ene->body_pos[0] <= 54 ){
-				q = 6;
-			}
-			else if(ene->body_pos[0] <= 94 ){
-				q = 5;
-			}
-			else if(ene->body_pos[0] <= 134 ){
-				q = 4;
-			}
-			else if(ene->body_pos[0] <= 174 ){
-				q = 3;
-			}
-			else if(ene->body_pos[0] <= 214 ){
-				q = 2;
-			}
-			else if(ene->body_pos[0] <= 254 ){
-				q = 1;
-			}
-			else if(ene->body_pos[0] <= 294 ){
-				q = 0;
-			}
-			whatTow = q + NUMTOW/NUMROW*i;
-
-			//attack then move
-			sharkAttack(ene, data->towers[whatTow], data);
+			//try to attack then move
+			sharkAttack(ene, tow, data);
 			moveEnemy(ene);
 
 
+
 			//if at the end of the enemies, try and make a new one
-			if(ene->next == NULL && numEnemy <= maxEnemy && stopEnemies == 0){
+			if(ene->next == NULL && numEnemy <= maxEnemy){
 				if(isNewEnemy()){
 					ene = createEnemy(ene, i);
 					moveEnemy(ene);
@@ -294,7 +172,7 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	//Normal Shark
 	case 0:
-		ene -> damage = 3;
+		ene -> damage = 0;
 		ene -> health = 15;
 		ene -> speed = 5;
 		ene -> toAttack = 5;
@@ -302,10 +180,8 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 7;
 		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
-		ene -> poison = 0;
-		ene -> poisonCountdown = 0;
-		ene -> slow = 0;
-		ene -> slowCountdown = 0;
+		ene -> status = 0;
+		ene -> statusCountdown = 0;
 		ene -> colour = 0x7bef;
 		break;
 
@@ -319,10 +195,8 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 4;
 		ene -> baseMove = 4;
 		ene -> moveBlocked = 0;
-		ene -> poison = 0;
-		ene -> poisonCountdown = 0;
-		ene -> slow = 0;
-		ene -> slowCountdown = 0;
+		ene -> status = 0;
+		ene -> statusCountdown = 0;
 		ene -> colour = 0xffff;
 		break;
 
@@ -336,10 +210,8 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 7;
 		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
-		ene -> poison = 0;
-		ene -> poisonCountdown = 0;
-		ene -> slow = 0;
-		ene -> slowCountdown = 0;
+		ene -> status = 0;
+		ene -> statusCountdown = 0;
 		ene -> colour = 0x0000;
 		break;
 
@@ -354,10 +226,8 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 7;
 		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
-		ene -> poison = 0;
-		ene -> poisonCountdown = 0;
-		ene -> slow = 0;
-		ene -> slowCountdown = 0;
+		ene -> status = 0;
+		ene -> statusCountdown = 0;
 		ene -> colour = 0x00ff;
 		break;
 
@@ -372,12 +242,27 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 7;
 		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
-		ene -> poison = 0;
-		ene -> poisonCountdown = 0;
-		ene -> slow = 0;
-		ene -> slowCountdown = 0;
+		ene -> status = 0;
+		ene -> statusCountdown = 0;
 		ene -> colour = 0x0ff0;
 		break;
+
+
+	//FINARU BOSSU SHAKKU  !!!!SPECIAL EVERYTHING, MAY REMOVE FROM HERE!!!!
+	case 5:
+		ene -> damage = 50;
+		ene -> health = 60;//300;
+		ene -> speed = 3;
+		ene -> toAttack = 5;
+		ene -> baseAttack = 5;
+		ene -> toMove = 10;
+		ene -> baseMove = 10;
+		ene -> moveBlocked = 0;
+		ene -> status = 0;
+		ene -> statusCountdown = 0;
+		ene -> colour = 0x9955;
+		break;
+
 	}
 
 	//row determines their y-pos
@@ -413,43 +298,6 @@ enePtr createEnemy(enePtr prevEne, int row){
 	return ene;
 
 }
-
-
-
-void bossSharkAttack(enePtr ene, towPtr tow, dataPtr data){
-
-	if(tow->isAlive == 0 || tow == NULL){
-		return;
-	}
-
-
-	//If armed mine tower
-	if(tow->bulletType == 9){
-
-		//MINE DAMAGE HERE
-		ene->health -= 30;
-		//
-		//
-		//REMOV BABY HERE REMOVE BELOW ISALIVE
-		//
-		//
-		tow->isAlive = 0;
-		if(ene->health <= 0){
-			killFinalBoss(ene, data);
-		}
-		return;
-	}
-
-	//
-	//
-	//REMOV BABY HERE REMOVE BELOW ISALIVE
-	//
-	//
-	tow->isAlive = 0;
-}
-
-
-
 
 //Function to detect shark attacks
 void sharkAttack(enePtr ene, towPtr tow, dataPtr data){
@@ -541,23 +389,34 @@ void moveEnemy(enePtr ene){
 		if(ene->toMove <= 0){
 
 
-			if((ene->body_pos[0] - 24) <= 20){
+			if((ene->body_pos[0] - 24) <= 16){
+
+
+				//
+				//
+				//GAME OVER GOES HERE, REMEMBER TO FREE ALL MEM EITHER HERE OR OUTSIDE
+				//
+				//
+
 				gameOverFlag = 1;
+
+				numEnemy = 0;
+
 				return;
 			}
 
 			draw_background_sharkfin(pixel_buffer, ene->body_pos[0], ene->body_pos[1]);
 
-			//IF NOT SLOWED
-			if(ene->slow != 1){
+			//IF NOT FROZEN
+			if(ene->status != 1){
 				ene->body_pos[0] -= ene->speed;
 				ene->toMove = ene->baseMove;
 			}
 			else{
 				ene->body_pos[0] -= (ene->speed - 2);
 				ene->toMove = (ene->baseMove + 3);
-				ene->slowCountdown--;
-				if(ene->slowCountdown <= 0) ene->slow = 0;
+				ene->statusCountdown--;
+				if(ene->statusCountdown <= 0) ene->status = 0;
 			}
 
 
@@ -573,54 +432,6 @@ void moveEnemy(enePtr ene){
 }
 
 
-
-//moving final boss
-void moveFinalBoss(enePtr ene){
-
-	if (ene->moveBlocked == 0){
-		if(ene->toMove <= 0){
-
-
-			if((ene->body_pos[0] - 24) <= 20){
-				gameOverFlag = 1;
-				return;
-			}
-
-			//
-			//
-			//draw_background_finalboss
-			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, ene->body_pos[0], ene->body_pos[1], ene->body_pos[0] + 20, ene->body_pos[1] + 160, 0x0000, 0);
-
-			//
-			//
-
-			//IF NOT SLOWED
-			if(ene->slow != 1){
-				ene->body_pos[0] -= ene->speed;
-				ene->toMove = ene->baseMove;
-			}
-			else{
-				ene->body_pos[0] -= (ene->speed - 2);
-				ene->toMove = (ene->baseMove + 3);
-				ene->slowCountdown--;
-				if(ene->slowCountdown <= 0) ene->slow = 0;
-			}
-
-			//
-			//
-			//draw_final_boss
-			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, ene->body_pos[0], ene->body_pos[1], ene->body_pos[0] + 20, ene->body_pos[1] + 160, ene->colour, 0);
-
-			//
-			//
-
-
-		}
-		else ene->toMove--;
-	}
-
-
-}
 
 
 
@@ -852,6 +663,11 @@ void killBullet(bulPtr bul, towPtr ownerTow){
 }
 
 void killEnemy(enePtr ene, dataPtr data, int i){
+	//
+	//
+	//DRAW OVER THE SHARK WITH BACKGROUND
+	//
+	//
 
 	draw_background_sharkfin(pixel_buffer, ene->body_pos[0], ene->body_pos[1]);
 
@@ -874,26 +690,6 @@ void killEnemy(enePtr ene, dataPtr data, int i){
 }
 
 
-void killFinalBoss(enePtr ene, dataPtr data){
-
-
-	int i = 0;
-	//
-	//
-	//DRAW OVER FINAL BOSS OR GIVE SOME COOL DYING ANIMATION
-	//
-	//
-
-	for(i = 0; i < NUMROW; i++) data->eneHead[i] = NULL;
-
-
-	free(ene);
-
-	finalBossKilled = 1;
-}
-
-
-
 //Function to detect collision, will call the kill functions
 void detectCollision(dataPtr data, towPtr tow, bulPtr bul){
 
@@ -903,28 +699,23 @@ void detectCollision(dataPtr data, towPtr tow, bulPtr bul){
 
 
 	while(ene != NULL){
-		if((ene->body_pos[0] - 25) <= (bul->body_pos[0])  && (ene->body_pos[0] - 25) >= tow->body_pos[2] ){
+		if((ene->body_pos[0] - 24) <= (bul->body_pos[0]) ){
 
 			//SLOW
 			if(bul->type == 6){
-				ene->slow = 1;
-				ene->slowCountdown = 20;
+				ene->status = 1;
+				ene->statusCountdown = 20;
 			}
 			//POISON
 			if(bul->type == 7){
-				ene->poison = 1;
-				ene->poisonCountdown = 300;
+				ene->status = 2;
+				ene->statusCountdown = 300;
 			}
 
 			ene->health -= bul->damage;
 			killBullet(bul,tow);
 
-			if(ene->type != 5){
-				if(ene->health <= 0) killEnemy(ene, data, (tow->lane));
-			}
-			else {
-				if(ene->health <= 0) killFinalBoss(ene, data);
-			}
+			if(ene->health <= 0) killEnemy(ene, data, (tow->lane));
 			return;
 
 		}

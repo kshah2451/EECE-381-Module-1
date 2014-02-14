@@ -72,8 +72,8 @@ void play_loop(unsigned int* audio_buffer,alt_up_audio_dev* audio, int file_to_l
 	char* file_name;
 	number_read_l=0;
 	number_read_r=0;
-	samples_write_l=15;
-	samples_write_r=15;
+	samples_write_l=45;
+	samples_write_r=45;
 
 	switch(file_to_loop){
 	case 0: file_size = FILESIZEOF_TITLE;

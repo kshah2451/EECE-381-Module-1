@@ -10,8 +10,6 @@
 #include "bitmaps.h"
 #include "background_graphics.h"
 //#include "cursor.h"
-extern short int baby_bmp[];
-extern short int infantry_bmp[];
 extern int levelThreeFlag;
 
 //Function will initialize position and colour values for the baby graphics
@@ -31,15 +29,20 @@ void set_baby_positions(Tower* baby[]){
 		for(j = 0; j < NUMROW; j++){
 			for(i = 0; i < (NUMTOW/NUMROW); i++){
 				baby[grid] = malloc(sizeof(Tower));
-				//starting at grid 1 all the way to grid 7, give the towers their permanent positions
-				baby[grid]->body_pos[0] = body_x1 - ((i)*increment); //0
-				baby[grid]->body_pos[1] = body_y1 + ((j)*increment) ; // 60
-				baby[grid]->body_pos[2] = body_x2 - ((i)*increment); // 40
-				baby[grid]->body_pos[3] = body_y2 + ((j)*increment); // 100
-				baby[grid]->lane = j;
-				baby[grid]->isAlive = 0;
-				baby[grid]->bulHead = NULL;
-				grid++;
+				if(baby[grid] != NULL){
+					//starting at grid 1 all the way to grid 7, give the towers their permanent positions
+					baby[grid]->body_pos[0] = body_x1 - ((i)*increment); //0
+					baby[grid]->body_pos[1] = body_y1 + ((j)*increment) ; // 60
+					baby[grid]->body_pos[2] = body_x2 - ((i)*increment); // 40
+					baby[grid]->body_pos[3] = body_y2 + ((j)*increment); // 100
+					baby[grid]->lane = j;
+					baby[grid]->isAlive = 0;
+					baby[grid]->bulHead = NULL;
+					grid++;
+				}
+				else{
+					printf("ERROR in baby malloc \n");
+				}
 
 			}
 		}
@@ -118,79 +121,101 @@ void set_cursor(int grid, int colour){
 void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower_type){
 
 	int i,j,k;
-	int col_swap = 0;
+	int col_swap1 = 0;
+	int col_swap2 = 0;
 	int pixel_el = 0;
 
 
-	short int image_to_draw[750];
+	unsigned short int image_to_draw[750];
 
 	//Check which .bmp image to draw. Depends on what the tower on this grid's type is
 	switch (tower_type){
-	case 1:
+	case 1:						//Cow
 		for(k = 0; k < 750; k++){
-		image_to_draw[k] = baby_bmp[k];
+		image_to_draw[k] = cow_bmp[k];
 		}
-		col_swap = 0x0F00;
+		col_swap1= 0x02000;
+		col_swap2 =0xBDF7;
 		break;
-	case 2:
+	case 2:						// Normal
 
 		for(k = 0; k < 750; k++){
 		image_to_draw[k] = baby_bmp[k];
 		}
+		col_swap1= 0x0001;
+		col_swap2 =0xBDF7;
 		break;
-	case 3:
+	case 3:						//Rapid Fire
 
-		for(k = 0; k < 750; k++){
-		image_to_draw[k] = infantry_bmp[k];
-		}
-		break;
-
-	case 4:
 		for(k = 0; k < 750; k++){
 		image_to_draw[k] = baby_bmp[k];
 		}
-		col_swap = 0xF81F;
+		col_swap1 = 0xFFE0;
+		col_swap2 = 0xFFD0;
+
+
 		break;
 
-	case 5:
+	case 4:						//Diaper Wall
+		for(k = 0; k < 750; k++){
+		image_to_draw[k] = diaper_bmp[k];
+		}
+		col_swap1= 0x0888;
+		col_swap2 =0xBDF7;
+		break;
+
+	case 5:						//Mine tower
+		for(k = 0; k < 750; k++){
+		image_to_draw[k] = mine_bmp[k];
+		}
+		col_swap1 = 0x79E0;
+		col_swap2 = 0x89E0;
+		break;
+
+	case 6:						//Ice
 		for(k = 0; k < 750; k++){
 		image_to_draw[k] = baby_bmp[k];
 		}
-		col_swap = 0xFBE0;
-		break;
-
-	case 6:
-		for(k = 0; k < 750; k++){
-		image_to_draw[k] = baby_bmp[k];
-		}
-		col_swap = 0xFFF0;
+		col_swap1 = 0x2FF;
+		col_swap2 = 0x0E;
 		break;
 
 	case 7:
 		for(k = 0; k < 750; k++){
 		image_to_draw[k] = baby_bmp[k];
 		}
-		col_swap = 0x0FFF;
+		col_swap1 = 0xF00F;
+		col_swap2 = 0xF00A;
 		break;
 
 	case 8:
 		for(k = 0; k < 750; k++){
 		image_to_draw[k] = baby_bmp[k];
 		}
-		col_swap = 0xF0F0;
+		col_swap1= 0x0001;
+		col_swap2 =0xBDF7;
 		break;
 
 	}
 
-	//printf("data = %x after array \n");
 	// go through the bmp array, and draw image pixel by pixel, skipping transparent pixels.
 	for(i = 0; i < 30; i++)
 	{
 		for(j = 0; j < 25; j++){
 
 			if(image_to_draw[pixel_el]!= BLACK){
-				if(tower_type == 1 || tower_type == 4 || tower_type == 5 || tower_type == 6 || tower_type == 7 || tower_type == 8){
-					alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby->body_pos[0]+j, baby->body_pos[1]+i,baby->body_pos[0]+j, baby->body_pos[1]+i, col_swap, 0);
+				if(tower_type == 3 || tower_type == 6 || tower_type == 7 || tower_type == 8){
+					if(image_to_draw[pixel_el] == 0x738E){
+
+						alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby->body_pos[0]+j, baby->body_pos[1]+i,baby->body_pos[0]+j, baby->body_pos[1]+i, col_swap1, 0);
+					}
+					else if(image_to_draw[pixel_el] == 0xD2CB){
+						alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby->body_pos[0]+j, baby->body_pos[1]+i,baby->body_pos[0]+j, baby->body_pos[1]+i, col_swap2, 0);
+
+					}
+					else {
+						alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby->body_pos[0]+j, baby->body_pos[1]+i,baby->body_pos[0]+j, baby->body_pos[1]+i, image_to_draw[pixel_el], 0);
+					}
 				}
 				else{
 					alt_up_pixel_buffer_dma_draw_box(pixel_buffer, baby->body_pos[0]+j, baby->body_pos[1]+i,baby->body_pos[0]+j, baby->body_pos[1]+i, image_to_draw[pixel_el], 0);
@@ -201,9 +226,6 @@ void draw_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer, int tower
 		}
 
 	}
-
-
-
 
 
 }
@@ -219,27 +241,31 @@ void draw_cursor(int pos[],int colour, alt_up_pixel_buffer_dma_dev* pixel_buffer
 /* Draws bullet */
 void draw_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start, int color) {
 	if(!levelThreeFlag){
-		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, x_start, y_start, x_start + 2, y_start + 2, color, 0);
+		alt_up_pixel_buffer_dma_draw_box(pixel_buffer, x_start, y_start, x_start + 2, y_start, color, 0);
 	}
 	else if(levelThreeFlag){
 		if((x_start+2) < FOG){
-			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, x_start, y_start, x_start + 2, y_start + 2, color, 0);
+			alt_up_pixel_buffer_dma_draw_box(pixel_buffer, x_start, y_start, x_start + 2, y_start, color, 0);
 
 		}
 	}
 }
 /* Draws bullet with background color */
 void draw_background_bullet(alt_up_pixel_buffer_dma_dev* pixel_buffer, int x_start, int y_start) {
-	int color_inc = 1;
-	int i;
-	for(i = 45; i < y_start; i++) {
-		if(i%8 == 0) color_inc++;
-	}
-	for(i = y_start; i <= y_start + 2; i++) {
-		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start+12, i, BLACK + color_inc, 0);
-		if(i % 8 == 0) {
-			color_inc++;
+	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, x_start, y_start, x_start + 2, y_start, 0x4dba, 0);
+}
+
+/*
+void draw_background_baby(Tower* baby, alt_up_pixel_buffer_dma_dev* pixel_buffer) {
+	int i, j;
+	int pos = 0;
+	for(i = 0; i < 30; i++) {
+		for(j = 0; j < 25; j++) {
+			if([pos] != 0x2589) {
+				alt_up_pixel_buffer_dma_draw_box(pixel_buffer, x_start + j, y_start + i, x_start + j, y_start + i, 0x4dba, 0);
+			}
+			pos++;
 		}
 	}
 }
-
+*/

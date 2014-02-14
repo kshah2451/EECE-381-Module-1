@@ -7,6 +7,8 @@
 #include "game_structs.h"
 #include "keyboard_codes.h"
 #include "audio.h"
+#include "bitmaps.h"
+#include "Colors.h"
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 
 extern alt_up_audio_dev* audio;
@@ -18,11 +20,12 @@ int title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_d
 
 
 {
-	int j,k;
+	int i,j,k;
 	int enter_pressed = 0;
 	int cursor_x = 130;
 	int cursor_y = 140;
 	int move_cursor = 0;
+	int pixel_el = 0;
 
 	alt_up_char_buffer_clear(char_buffer);
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
@@ -31,55 +34,46 @@ int title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_d
 
 	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 0, 60, 320, 120, 0x0099, 0);
 
-	//Baby
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 100, 80, 115, 110, 0xFE99, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 95, 90, 120, 110, 0xFE99, 0);
+	for(i = 0; i < 30; i++)
+	{
+		for(j = 0; j < 25; j++){
 
-	//Eyes
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 104, 82, 106, 84, 0x0000, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 110, 82, 112, 84, 0x0000, 0);
+			if(cow_bmp[pixel_el]!= BLACK){
+				alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 90+j, 80+i,90+j, 80+i, cow_bmp[pixel_el], 0);
+
+			}
+			pixel_el++;
+		}
 
 
-	//Arms
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 90, 92, 100, 100, 0xFE99, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 115, 92, 125, 100, 0xFE99, 0);
+	}
 
-	//Gun
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 122, 92, 124, 98, 0xCEFD, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 125, 92, 132, 94, 0xCEFD, 0);
-	// Diapers
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 95, 102, 120, 110, 0xAFFF, 0);
+	pixel_el = 0;
+	for(i = 0; i < 30; i++)
+	{
+		for(j = 0; j < 25; j++){
 
-	//Legs
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 90, 106, 100, 114, 0xFE99, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 115, 106, 125, 114, 0xFE99, 0);
+			if(baby_bmp[pixel_el]!= BLACK){
+				alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 110+j, 80+i,110+j, 80+i, baby_bmp[pixel_el],
 
+0);
+
+			}
+			pixel_el++;
+		}
+
+
+	}
 	/**Shark Image**/
-	//Dorsal Fin
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 198, 66, 202, 68, 0xCEFD, 0); //0xFFFA
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 193, 68, 207, 73, 0xCEFD, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 190, 73, 210, 80, 0xCEFD, 0);
+	draw_sharkfin(pixel_buffer, 208, 58, 0x0ff0);
 
-	//Body
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 175, 80, 240, 95, 0xCEFD, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 175, 94, 240, 105, 0xFFFF, 0);
-	//alt_up_pixel_buffer_dma_draw(pixel_buffer, 0xC000, 160, 120);
-
-	//Head
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 160, 84, 176, 99, 0xCEFD, 0);
+	draw_sharkfin(pixel_buffer, 240, 59, 0x00ff);
+	draw_sharkfin(pixel_buffer, 224, 74, 0x0000);
+	draw_sharkfin(pixel_buffer, 240, 84, 0x7bef);
 
 
-	//Pectoral Fin
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 180, 104, 188, 109, 0xCEFD, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 184, 109, 190, 114, 0xCEFD, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 188, 114, 192, 115, 0xCEFD, 0);
-
-	// Tail
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 240, 86, 250, 97, 0xCEFD, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 250, 88, 255, 95, 0xCEFD, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 255, 80, 265, 90, 0xCEFD, 0);
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 255, 95, 265, 105, 0xCEFD, 0);
-	/****/
+	draw_sharkfin(pixel_buffer, 188, 74, 0x7bef);
+	draw_sharkfin(pixel_buffer, 208, 85, 0xffff);
 
 	// Write some text
 	alt_up_char_buffer_string(char_buffer, "Sharks VS Babies", 32, 32);

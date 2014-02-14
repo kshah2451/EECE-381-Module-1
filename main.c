@@ -19,21 +19,25 @@
 #include "game_over.h"
 #include "level_one.h"
 #include "level_two.h"
-#include "level_three.h"
 #include "story_seq.h"
 #include "save_game.h"
 #include "audio.h"
 #include "read_image.h"
+#include "help_menu.h"
 
 
 //GLOBAL VARIABLES
 alt_up_pixel_buffer_dma_dev* pixel_buffer;
+alt_up_char_buffer_dev* char_buffer;
 
 int gameOverFlag = 0;
 int victoryFlag = 0;
 int maxEnemy = 0;
 int resources = 0;
 int levelThreeFlag = 0;
+int levelFlag = 1;
+
+
 
 unsigned int tracker_l = 22;
 unsigned int tracker_r = 22;
@@ -104,7 +108,6 @@ int main()
 	alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 1);
 
 	// Initialize the character buffer
-	alt_up_char_buffer_dev *char_buffer;
 	char_buffer = alt_up_char_buffer_open_dev("/dev/char_drawer");
 	alt_up_char_buffer_init(char_buffer);
 
@@ -126,18 +129,20 @@ int main()
 		//save_level('2');
 						/* TITLE SCREEN*/
 					// display the title screen
+		level = 1;
 		data = 0;
 		menu_selection = title_screen(pixel_buffer, char_buffer, start, ps2_kb, decode_mode, data, ascii); //wait here until "ENTER"
 		alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
 
 		if(menu_selection == 2){ //Load Game
-			//victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
-			level = load_save()-'0';
+			victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+			//level = load_save()-'0';
 		}
 		else if(menu_selection == 3){ // How to Play
-			victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+			//victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
+			draw_help_menu(pixel_buffer,char_buffer,ps2_kb,decode_mode);
 		}
-		if (menu_selection == 1 || menu_selection == 2){ // New Game
+		if (menu_selection == 1){ // New Game
 			/*LEVEL ONE*/
 			pre_level_story_1(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
 			if(level == 1){
@@ -149,7 +154,7 @@ int main()
 				gameOverFlag = 0;
 				victoryFlag = 0;
 			}
-			else if(victoryFlag >= 5){ // Level 1 Victory
+			else if(victoryFlag >= LV1VICTORY){ // Level 1 Victory
 				gameOverFlag = 0;
 				victoryFlag = 0;
 				level1_victory(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
@@ -157,39 +162,22 @@ int main()
 
 				/*LEVEL TWO*/
 				//replace this with level 2
+				levelFlag = 2;
 				pre_level_story_2(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
 				mainGame_level2(ps2_kb, decode_mode, data, ascii);
 				if(gameOverFlag == 1){  //Lv2 Game Over
 					gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
 					gameOverFlag = 0;
 					victoryFlag = 0;
+					levelFlag = 1;
 				}
 
 				else if(victoryFlag >= 10){ //Lv2 Victory
 					gameOverFlag = 0;
 					victoryFlag = 0;
-					level2_victory(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
+					levelFlag = 1;
+					victory(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
 					alt_up_pixel_buffer_dma_clear_screen(pixel_buffer, 0);
-					/*LEVEL THREE*/
-					//replace this with level 3
-					pre_level_story_3(pixel_buffer, char_buffer,ps2_kb, decode_mode,data, ascii);
-					levelThreeFlag = 1;
-					mainGame_level3(ps2_kb, decode_mode, data, ascii);
-
-					if(gameOverFlag == 1){ //Lv 3 Game Over
-						gameover(pixel_buffer,char_buffer, ps2_kb, decode_mode, data, ascii);
-						gameOverFlag = 0;
-						victoryFlag = 0;
-						levelThreeFlag = 0;
-
-					}
-					else if(victoryFlag >= 10){ // Lv 3 Victory
-						victory(pixel_buffer, char_buffer, ps2_kb, decode_mode, data, ascii);
-						gameOverFlag = 0;
-						victoryFlag = 0;
-						levelThreeFlag = 0;
-
-					}
 
 				}
 

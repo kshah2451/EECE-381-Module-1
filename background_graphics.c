@@ -2,7 +2,6 @@
 #include "background_graphics.h"
 #include "bitmaps.h"
 
-extern short int bg_1[];
 //extern short int jellyfish[];
 extern alt_up_pixel_buffer_dma_dev* pixel_buffer;
 //extern short int shark_bmp[];
@@ -11,64 +10,42 @@ extern int levelThreeFlag;
 
 /* Draws sky with sun background */
 void draw_sky(alt_up_pixel_buffer_dma_dev* pixel_buffer){
-	int color_inc = 0x0001;
-	int x0_pos = 0;
-	int x1_pos = 320;
-	int change = 4;
-	int y_pos;
-
-
-	// Draws sky
-	for(y_pos = 0; y_pos < 45; y_pos++) {
-		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x0_pos, x1_pos, y_pos, 0xF800 + color_inc, 0);
-		if(y_pos % 3 == 0) color_inc++;
-	}
-
-	x0_pos = 155;
-	x1_pos = 165;
-	// Draws sun
-	for(y_pos = 37; y_pos < 45; y_pos++) {
-		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x0_pos, x1_pos, y_pos, ORANGE, 0);
-		if(y_pos == 37 || y_pos == 39) change = 4;
-		else if(y_pos == 38) change = 3;
-		else change = 1;
-		x0_pos -= change; x1_pos += change;
-	}
+	alt_up_pixel_buffer_dma_draw_box(pixel_buffer,21,0,320,39,0xAF7F,0);
 }
 
 void draw_boardwalk(alt_up_pixel_buffer_dma_dev* pixel_buffer) {
-	int i;
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 0, 45, 14, 240, 0x79E5, 0);
-	for(i = 45; i < 240; i+=4 ) {
-		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 0, 14, i, BLACK, 0);
+	int pixel_el = 0;
+	int i, j;
+
+	for(i = 0; i < 240; i++) {
+		for(j = 0; j < 21; j++) {
+			if(dock_bmp[pixel_el] == 0x4E99) {
+				alt_up_pixel_buffer_dma_draw_box(pixel_buffer,j, i, j, i, 0x4dba, 0);
+			}
+			else {
+				alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, dock_bmp[pixel_el], 0);
+			}
+			pixel_el++;
+		}
 	}
 }
 
 /* Draws ocean and planks background */
 void draw_ocean(alt_up_pixel_buffer_dma_dev* pixel_buffer){
-	int i,j;
-	int pixel_el = 0;
-	int color_inc = 0x0001;
-
-	// Draws planks
-	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 0, 45, 14, 240, 0x79E5, 0);
-	for(i = 45; i < 240; i+=4 ) {
-		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 0, 14, i, BLACK, 0);
-	}
-
-	// Draws ocean
-	for(i = 45; i < 240; i++) {
-		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 14, 320, i, BLACK + color_inc, 0);
-		if(i == 85) {
-			printf("Y = %i COLOR_inc = %X\n", i, color_inc);
-		}
-		if(i % 8 == 0) {
-			//printf("%X\n", BLACK + color_inc);
-			color_inc++;
-		}
-
-	}
-
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 40, 0x2CD6, 0);
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 41, 0x2CD6, 0);
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 42, 0x34F6, 0);
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 43, 0x34F6, 0);
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 44, 0x3D17, 0);
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 45, 0x3d17, 0);
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 46, 0x3d38, 0);
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 47, 0x3d38, 0);
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 48, 0x4578, 0);
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 49, 0x4578, 0);
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 50, 0x4599, 0);
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 51, 0x4599, 0);
+	alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, 21, 320, 52, 0x4dba, 0);
+	alt_up_pixel_buffer_dma_draw_box(pixel_buffer, 21, 53, 320, 240, 0x4dba, 0);
 }
 
 
@@ -76,15 +53,37 @@ void draw_ocean(alt_up_pixel_buffer_dma_dev* pixel_buffer){
 
 
 void draw_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int y_start, int color) {
+
 	int c = 1;
 	int y;
 	int i,j;
 	int pixel_el = 0;
+	int col_swap = 0;
 /*	for(y = y_start; y < y_start + 24; y++) {
 		alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start + c , y, color , 0);
 		x_start--;
 		c++;
 	}*/
+
+	switch (color){
+
+	case 0x7bef:
+		col_swap = 0x532F;
+		break;
+	case 0xffff:
+		col_swap = 0xffff;
+		break;
+	case 0x0000:
+		col_swap = 0x0000;
+		break;
+	case 0x00ff:
+		col_swap= 0x00ff;
+		break;
+	case 0x0ff0:
+		col_swap = 0x0ff0;
+		break;
+	}
+
 
 	for(i = y_start; i < y_start+30; i++)
 	{
@@ -95,11 +94,23 @@ void draw_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int 
 			if(shark_bmp[pixel_el]!= 0x2589){
 
 				if(levelThreeFlag == 0){
-					alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, shark_bmp[pixel_el], 0);
+					if(shark_bmp[pixel_el] == 0x532F){
+						alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, col_swap, 0);
+					}
+					else{
+						alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, shark_bmp[pixel_el], 0);
+
+					}
 				}
 				else if(levelThreeFlag == 1){
 					if(x_start < (FOG)){
-						alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, shark_bmp[pixel_el], 0);
+						if(shark_bmp[pixel_el] == 0x532F){
+							alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, col_swap, 0);
+						}
+						else{
+							alt_up_pixel_buffer_dma_draw_box(pixel_buffer, j, i, j, i, shark_bmp[pixel_el], 0);
+
+						}
 					}
 				}
 			}
@@ -114,67 +125,19 @@ void draw_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int 
 
 
 
-
 }
 
 void draw_background_sharkfin(alt_up_pixel_buffer_dma_dev * pixel_buffer, int x_start, int y_start) {
-/*	int y;
-	int c = 1;
-	int color_inc = 0x0001;
-	switch(y_start) {
-	case (BG_UPPER_Y):
-		for(y = y_start; y < y_start + 24; y++) {
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start + c, y, BLACK + color_inc, 0);
-			x_start--;
-			c++;
-			if(y % 8 == 0) {
-				color_inc++;
+	int i, j;
+	int pos = 0;
+	for(i = 0; i < 30; i++) {
+		for(j = 0; j < 25; j++) {
+			if(shark_bmp[pos] != 0x2589) {
+				alt_up_pixel_buffer_dma_draw_box(pixel_buffer, x_start + j, y_start + i, x_start + j, y_start + i, 0x4dba, 0);
 			}
+			pos++;
 		}
-		break;
-	case (BG_UPPER_Y + 40):
-		color_inc = 6;
-		for(y = y_start; y < y_start + 24; y++) {
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start + c, y, BLACK + color_inc, 0);
-			x_start--;
-			c++;
-			if(y % 8 == 0) {
-				color_inc++;
-			}
-		}
-		break;
-
-	case (BG_UPPER_Y + 80):
-		color_inc = 10;
-		for(y = y_start; y < y_start + 24; y++) {
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start + c, y, BLACK + color_inc, 0);
-			x_start--;
-			c++;
-			if(y % 8 == 0) {
-				color_inc++;
-			}
-		}
-		break;
-
-	case (BG_UPPER_Y + 120):
-		color_inc = 16;
-		for(y = y_start; y < y_start + 24; y++) {
-			alt_up_pixel_buffer_dma_draw_hline(pixel_buffer, x_start, x_start + c, y, BLACK + color_inc, 0);
-			x_start--;
-			c++;
-			if(y % 8 == 0) {
-				color_inc++;
-			}
-		}
-		break;
-
 	}
-
-
-
-*/
-
-
 
 }
 

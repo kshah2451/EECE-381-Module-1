@@ -11,6 +11,7 @@ extern int victoryFlag;
 extern int maxEnemy;
 int numEnemy = 0;
 extern int resources;
+extern int levelFlag;
 
 //Interrupt function
 void timerroutine(void* context, alt_u32 id){
@@ -54,17 +55,18 @@ void timerroutine(void* context, alt_u32 id){
 
 
 
-//Function for enemy advancement
 void goEnemies(dataPtr data){
 
 	int i;
-	towPtr tow = NULL;
+	int q;
+	int whatTow;
+	//towPtr tow = NULL;
 
 	//row by row
 	for(i = 0; i < NUMROW; i++){
 
 		//find the first tower in a row
-		int firstTow = (NUMTOW/NUMROW)*i;
+		//int firstTow = (NUMTOW/NUMROW)*i;
 
 
 
@@ -81,47 +83,53 @@ void goEnemies(dataPtr data){
 		//point to the first enemy in the row
 		enePtr ene = data->eneHead[i];
 
-
-
-		//check if we even need to do this check
-		if (ene != NULL){
-			//point to the first living tower in the row, or to NULL if no towers alive
-			tow = (data->towers[firstTow]);
-			while(tow != NULL && !tow->isAlive){
-
-				if(firstTow < ((NUMTOW/NUMROW)*(i + 1))){
-					firstTow++;
-					tow = (data->towers[firstTow]);
-				}
-				else tow = NULL;
-
-			}
-		}
-
 		//Go through enemies until we hit the end of the list
 		while(ene != NULL){
 
 
 			//If poisoned, do some damage
-			if(ene->status == 2){
-				if((ene->statusCountdown % 15) == 0){
+			if(ene->poison == 1){
+				if((ene->poisonCountdown % 15) == 0){
 
 					ene->health -= 1;
 					if(ene->health <= 0){
-						killEnemy(ene, data, (tow->lane));
+						killEnemy(ene, data, i);
 						return;
 					}
 
-					ene->statusCountdown--;
-					if(ene->statusCountdown <= 0) ene->status = 0;
+					ene->poisonCountdown--;
+					if(ene->poisonCountdown <= 0) ene->poison = 0;
 				}
-				else ene->statusCountdown--;
+				else ene->poisonCountdown--;
 			}
 
-			//try to attack then move
-			sharkAttack(ene, tow, data);
-			moveEnemy(ene);
+			//find which tower we're at
+			if(ene->body_pos[0] <= 54 ){
+				q = 6;
+			}
+			else if(ene->body_pos[0] <= 94 ){
+				q = 5;
+			}
+			else if(ene->body_pos[0] <= 134 ){
+				q = 4;
+			}
+			else if(ene->body_pos[0] <= 174 ){
+				q = 3;
+			}
+			else if(ene->body_pos[0] <= 214 ){
+				q = 2;
+			}
+			else if(ene->body_pos[0] <= 254 ){
+				q = 1;
+			}
+			else if(ene->body_pos[0] <= 294 ){
+				q = 0;
+			}
+			whatTow = q + NUMTOW/NUMROW*i;
 
+			//attack then move
+			sharkAttack(ene, data->towers[whatTow], data);
+			moveEnemy(ene);
 
 
 			//if at the end of the enemies, try and make a new one
@@ -155,24 +163,31 @@ int isNewEnemy(void){
 //Creates a new enemy
 enePtr createEnemy(enePtr prevEne, int row){
 
-
-	//int randType = rand() % NUMENETYPES;
+	//int randType;
+	int randType = rand() % 5;
 
 	numEnemy++;
-	int randType = 0;
 
 
+
+/*	if(levelFlag == 1){
+		randType = rand() % 3;
+	}
+	else if(levelFlag == 2){
+			randType = rand() % 6;
+	}*/
 	//Malloc some space for the enemy
 	enePtr ene = malloc(sizeof(Enemy));
 
-	//Enemies type is random, and determines their stats
+	if(ene != NULL){
+		//Enemies type is random, and determines their stats
 	ene->type = randType;
 
 	switch(randType){
 
 	//Normal Shark
 	case 0:
-		ene -> damage = 0;
+		ene -> damage = 3;
 		ene -> health = 15;
 		ene -> speed = 5;
 		ene -> toAttack = 5;
@@ -180,8 +195,10 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 7;
 		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
-		ene -> status = 0;
-		ene -> statusCountdown = 0;
+		ene -> poison = 0;
+		ene -> poisonCountdown = 0;
+		ene -> slow = 0;
+		ene -> slowCountdown = 0;
 		ene -> colour = 0x7bef;
 		break;
 
@@ -195,8 +212,10 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 4;
 		ene -> baseMove = 4;
 		ene -> moveBlocked = 0;
-		ene -> status = 0;
-		ene -> statusCountdown = 0;
+		ene -> poison = 0;
+		ene -> poisonCountdown = 0;
+		ene -> slow = 0;
+		ene -> slowCountdown = 0;
 		ene -> colour = 0xffff;
 		break;
 
@@ -210,8 +229,10 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 7;
 		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
-		ene -> status = 0;
-		ene -> statusCountdown = 0;
+		ene -> poison = 0;
+		ene -> poisonCountdown = 0;
+		ene -> slow = 0;
+		ene -> slowCountdown = 0;
 		ene -> colour = 0x0000;
 		break;
 
@@ -226,13 +247,15 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 7;
 		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
-		ene -> status = 0;
-		ene -> statusCountdown = 0;
+		ene -> poison = 0;
+		ene -> poisonCountdown = 0;
+		ene -> slow = 0;
+		ene -> slowCountdown = 0;
 		ene -> colour = 0x00ff;
 		break;
 
 
-	//Mini-Boss shark !!!!SPECIAL SPAWNRATE!!!!
+	//Mini-Boss shark !!!!SPECIAL SPAWNRATE OR NOT!!!!
 	case 4:
 		ene -> damage = 10;
 		ene -> health = 40;
@@ -242,27 +265,12 @@ enePtr createEnemy(enePtr prevEne, int row){
 		ene -> toMove = 7;
 		ene -> baseMove = 7;
 		ene -> moveBlocked = 0;
-		ene -> status = 0;
-		ene -> statusCountdown = 0;
+		ene -> poison = 0;
+		ene -> poisonCountdown = 0;
+		ene -> slow = 0;
+		ene -> slowCountdown = 0;
 		ene -> colour = 0x0ff0;
 		break;
-
-
-	//FINARU BOSSU SHAKKU  !!!!SPECIAL EVERYTHING, MAY REMOVE FROM HERE!!!!
-	case 5:
-		ene -> damage = 50;
-		ene -> health = 60;//300;
-		ene -> speed = 3;
-		ene -> toAttack = 5;
-		ene -> baseAttack = 5;
-		ene -> toMove = 10;
-		ene -> baseMove = 10;
-		ene -> moveBlocked = 0;
-		ene -> status = 0;
-		ene -> statusCountdown = 0;
-		ene -> colour = 0x9955;
-		break;
-
 	}
 
 	//row determines their y-pos
@@ -270,22 +278,22 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	case 0:
 		ene -> body_pos[0] = 320;
-		ene -> body_pos[1] = 45;
+		ene -> body_pos[1] = 53;
 		break;
 
 	case 1:
 		ene -> body_pos[0] = 320;
-		ene -> body_pos[1] = 85;
+		ene -> body_pos[1] = 93;
 		break;
 
 	case 2:
 		ene -> body_pos[0] = 320;
-		ene -> body_pos[1] = 125;
+		ene -> body_pos[1] = 133;
 		break;
 
 	case 3:
 		ene -> body_pos[0] = 320;
-		ene -> body_pos[1] = 165;
+		ene -> body_pos[1] = 173;
 		break;
 
 	}
@@ -297,8 +305,15 @@ enePtr createEnemy(enePtr prevEne, int row){
 
 	return ene;
 
+	}
+	else{
+		printf("shark malloc");
+		return NULL;
+	}
+
 }
 
+//Function to detect shark attacks
 //Function to detect shark attacks
 void sharkAttack(enePtr ene, towPtr tow, dataPtr data){
 
@@ -310,75 +325,73 @@ void sharkAttack(enePtr ene, towPtr tow, dataPtr data){
 		return;
 	}
 
-	if((ene->body_pos[0] - 24) <= (tow->body_pos[2]) ){
+	//If kamikaze shark
+	if(ene->type == 3 && tow->bulletType != 9){
+		tow->health -= ene->damage;
+		killEnemy(ene, data, tow->lane);
 
-		//If kamikaze shark
-		if(ene->type == 3 && tow->bulletType != 9){
-			tow->health -= ene->damage;
-			killEnemy(ene, data, tow->lane);
+		if(tow->health <= 0){
 
-			if(tow->health <= 0){
-
-				//
-				//
-				//REMOV BABY HERE REMOVE BELOW ISALIVE
-				//
-				//
-				tow->isAlive = 0;
-			}
-			return;
-		}
-		//If armed mine tower
-		else if(ene->type != 3 && tow->bulletType == 9){
-
-			//MINE DAMAGE HERE
-					ene->health -= 30;
-					//
-					//
-					//REMOV BABY HERE REMOVE BELOW ISALIVE
-					//
-					//
-					tow->isAlive = 0;
-					if(ene->health <= 0){
-						killEnemy(ene, data, tow->lane);
-					}
-					return;
-		}
-
-		else if(ene->type == 3 && tow->bulletType == 9){
-
-			killEnemy(ene, data, tow->lane);
 			//
 			//
 			//REMOV BABY HERE REMOVE BELOW ISALIVE
 			//
 			//
 			tow->isAlive = 0;
-
-			return;
 		}
-
-		ene->moveBlocked = 1;
-
-		if(ene->toAttack <= 0){
-			ene->toAttack = ene->baseAttack;
-			tow->health -= ene->damage;
-
-			if(tow->health <= 0){
-
-				//
-				//
-				//REMOV BABY HERE REMOVE BELOW ISALIVE
-				//
-				//
-
-
-				tow->isAlive = 0;
-				ene->moveBlocked = 0;
-			}
-		}
-		else ene->toAttack--;
+		return;
 	}
+	//If armed mine tower
+	else if(ene->type != 3 && tow->bulletType == 9){
+
+		//MINE DAMAGE HERE
+		ene->health -= 30;
+		//
+		//
+		//REMOV BABY HERE REMOVE BELOW ISALIVE
+		//
+		//
+		tow->isAlive = 0;
+		if(ene->health <= 0){
+			killEnemy(ene, data, tow->lane);
+		}
+		return;
+	}
+
+	else if(ene->type == 3 && tow->bulletType == 9){
+
+		killEnemy(ene, data, tow->lane);
+		//
+		//
+		//REMOV BABY HERE REMOVE BELOW ISALIVE
+		//
+		//
+		tow->isAlive = 0;
+
+		return;
+	}
+
+	ene->moveBlocked = 1;
+
+	if(ene->toAttack <= 0){
+		ene->toAttack = ene->baseAttack;
+		tow->health -= ene->damage;
+
+		if(tow->health <= 0){
+
+			//
+			//
+			//REMOV BABY HERE REMOVE BELOW ISALIVE
+			//
+			//
+
+
+			tow->isAlive = 0;
+			ene->moveBlocked = 0;
+		}
+	}
+	else ene->toAttack--;
+
 
 }
 
@@ -389,34 +402,23 @@ void moveEnemy(enePtr ene){
 		if(ene->toMove <= 0){
 
 
-			if((ene->body_pos[0] - 24) <= 16){
-
-
-				//
-				//
-				//GAME OVER GOES HERE, REMEMBER TO FREE ALL MEM EITHER HERE OR OUTSIDE
-				//
-				//
-
+			if((ene->body_pos[0]) <= 20){
 				gameOverFlag = 1;
-
-				numEnemy = 0;
-
 				return;
 			}
 
 			draw_background_sharkfin(pixel_buffer, ene->body_pos[0], ene->body_pos[1]);
 
-			//IF NOT FROZEN
-			if(ene->status != 1){
+			//IF NOT SLOWED
+			if(ene->slow != 1){
 				ene->body_pos[0] -= ene->speed;
 				ene->toMove = ene->baseMove;
 			}
 			else{
 				ene->body_pos[0] -= (ene->speed - 2);
 				ene->toMove = (ene->baseMove + 3);
-				ene->statusCountdown--;
-				if(ene->statusCountdown <= 0) ene->status = 0;
+				ene->slowCountdown--;
+				if(ene->slowCountdown <= 0) ene->slow = 0;
 			}
 
 
@@ -436,6 +438,7 @@ void moveEnemy(enePtr ene){
 
 
 //Function for bullet advancement/creation
+//Function for bullet advancement/creation
 void goBullets(towPtr tow, dataPtr data){
 
 	//if bulflag is 1, then we've already tried making a new bullet
@@ -445,8 +448,6 @@ void goBullets(towPtr tow, dataPtr data){
 	if(tow->bulHead == NULL  && tow->bulletType != 1 && tow->bulletType != 4 && tow->bulletType != 5 && tow->bulletType != 9){
 		if(isNewBullet(tow)){
 			tow->bulHead = createBullet(tow, NULL);
-			//moveBullet(tow->bulHead);
-			//detectCollision(data, tow, tow->bulHead);
 		}
 		bulFlag = 1;
 	}
@@ -463,8 +464,8 @@ void goBullets(towPtr tow, dataPtr data){
 			if(tow->toAttack > 0){
 				tow->toAttack--;
 			}
-			else {
-				resources++;
+			else{
+				resources+=2;
 				tow->toAttack = tow->baseAttack;
 			}
 			return;
@@ -490,7 +491,6 @@ void goBullets(towPtr tow, dataPtr data){
 			bulFlag = 1;
 		}
 
-		//move then detect collisions
 
 		if(bul->body_pos[0] >= 320)
 			killBullet(bul, tow);
@@ -525,7 +525,8 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 	//Malloc some space for the bullet
 	bulPtr bul = malloc(sizeof(Bullet));
 
-	//Bullet type is based on tower, and determines their stats
+	if (bul != NULL){
+		//Bullet type is based on tower, and determines their stats
 	bul->type = ownerTow->bulletType;
 	bul -> body_pos[0] = ownerTow->body_pos[2]+1;
 	bul -> body_pos[1] = ownerTow->body_pos[1]-2;
@@ -617,6 +618,14 @@ bulPtr createBullet(towPtr ownerTow, bulPtr prevBul){
 	if(prevBul != NULL) prevBul -> next = bul;
 
 	return bul;
+	}
+	else{
+		printf("bul malloc");
+		return NULL;
+	}
+
+
+
 }
 
 
@@ -699,23 +708,25 @@ void detectCollision(dataPtr data, towPtr tow, bulPtr bul){
 
 
 	while(ene != NULL){
-		if((ene->body_pos[0] - 24) <= (bul->body_pos[0]) ){
+		if((ene->body_pos[0]) <= (bul->body_pos[0])  && (ene->body_pos[0]) >= tow->body_pos[2] ){
 
 			//SLOW
 			if(bul->type == 6){
-				ene->status = 1;
-				ene->statusCountdown = 20;
+				ene->slow = 1;
+				ene->slowCountdown = 20;
 			}
 			//POISON
 			if(bul->type == 7){
-				ene->status = 2;
-				ene->statusCountdown = 300;
+				ene->poison = 1;
+				ene->poisonCountdown = 300;
 			}
 
 			ene->health -= bul->damage;
 			killBullet(bul,tow);
 
-			if(ene->health <= 0) killEnemy(ene, data, (tow->lane));
+
+				if(ene->health <= 0) killEnemy(ene, data, (tow->lane));
+
 			return;
 
 		}

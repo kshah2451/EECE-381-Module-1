@@ -90,10 +90,14 @@ typedef struct Enemy
         int colour;
 
         //Status effect, 0 for none, 1 for slow, 2 for poison
-        int status;
+        //int status;
+        int poison;
+        int slow;
+        int slowCountdown;
+        int poisonCountdown;
 
         //Status effect countdown, when hit with ice or slow, set at a value, counts down until effect is gone
-        int statusCountdown;
+        //int statusCountdown;
 
 
         //pointer to the next and previous enemies

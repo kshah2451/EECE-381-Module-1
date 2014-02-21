@@ -15,12 +15,13 @@
 #define FILESIZEOF_SECOND 640044
 #define FILESIZEOF_THIRD 705324
 #define FILESIZEOF_BACKGROUND 945298
-//unsigned int* load_audio(unsigned char*,alt_up_audio_dev*,int);
-unsigned int* load_audio(int);
+//File size is bytes and was determined by reading the properties in Windows
 
-extern unsigned int tracker_l;
-extern unsigned int tracker_r;
-void play_loop(unsigned int*,alt_up_audio_dev*,int);
-void play_once(unsigned int*,alt_up_audio_dev*,int);
+extern unsigned int tracker_l; //keeps track of position in audio file for the left buffer, defined in main
+extern unsigned int tracker_r; //keeps track of position in audio file for the left buffer, define in main
+
+unsigned int* load_audio(int); //reads wav file from SD Card, concatenates into playable samples and dynamically allocates memory
+void play_loop(unsigned int*,alt_up_audio_dev*,int);//plays an arbitrary number of samples from a file, needs to placed in a loop to create background music
+void play_once(unsigned int*,alt_up_audio_dev*,int);//plays the entire wav file, used for sound effects and short sound clips
 
 #endif /* AUDIO_H_ */

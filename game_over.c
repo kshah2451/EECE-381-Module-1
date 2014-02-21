@@ -17,7 +17,7 @@ void victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev *
 
 	alt_up_audio_dev *audio;
 	audio = alt_up_audio_open_dev("/dev/audio_0");
-	unsigned int* audio_buffer_victory;
+	unsigned int* audio_buffer_victory;//array to hold game over sound clip
 
 
 	draw_sky(pixel_buffer);
@@ -39,15 +39,15 @@ void victory(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev *
 
 
 	alt_up_char_buffer_clear(char_buffer);
-	audio_buffer_victory = load_audio(99);
+	audio_buffer_victory = load_audio(99);//loads sound clip for victory screen
 
-	tracker_l=22;
-	tracker_r=22;
-	play_once(audio_buffer_victory,audio,99);
+	tracker_l=22;//sets left fifo tracker to beginning of sound clip, set at 22 because of wav file header
+	tracker_r=22;//sets right fifo tracker to beginning of sound clip, set at 22 because of wav file header
+	play_once(audio_buffer_victory,audio,99);//plays victory sound clip once
 	alt_up_char_buffer_string(char_buffer, "YOU WIN!", 36, 15);
 	alt_up_char_buffer_string(char_buffer, "PRESS A TO CONTINUE", 32, 42);
 
-	free(audio_buffer_victory);
+	free(audio_buffer_victory); //frees dynamically allocated memory for victory screen
 	while(data != A_KEY){
 
 		decode_scancode(ps2_kb, &decode_mode, &data, &ascii);
@@ -71,16 +71,16 @@ void gameover(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev 
 
 	alt_up_audio_dev *audio;
 	audio = alt_up_audio_open_dev("/dev/audio_0");
-	unsigned int* audio_buffer_gameover;
+	unsigned int* audio_buffer_gameover;//array for game over sound clip
 
 
 	alt_up_char_buffer_clear(char_buffer);
 
-	audio_buffer_gameover = load_audio(9);
+	audio_buffer_gameover = load_audio(9);//loads game over sound clip
 
-	tracker_l=22;
-	tracker_r=22;
-	play_once(audio_buffer_gameover,audio,9);
+	tracker_l=22;//sets left fifo tracker to beginning of sound clip, set at 22 because of wav file header
+	tracker_r=22;//sets right fifo tracker to beginning of sound clip, set at 22 because of wav file header
+	play_once(audio_buffer_gameover,audio,9);//plays game over sound clip
 	alt_up_char_buffer_string(char_buffer, "GAME OVER!", 36, 8);
 	alt_up_char_buffer_string(char_buffer, "ALL YOUR BASE ARE BELONG TO US", 25, 34);
 	alt_up_char_buffer_string(char_buffer, "PRESS A TO RETURN TO MAIN MENU", 25, 38);
@@ -94,7 +94,7 @@ void gameover(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_dev 
 		}
 	}
 
-	free(audio_buffer_gameover);
+	free(audio_buffer_gameover);//frees dynamically allocated memory for game over sound clip
 	alt_up_char_buffer_clear(char_buffer);
 
 }

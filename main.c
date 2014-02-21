@@ -39,20 +39,20 @@ int levelFlag = 1;
 
 
 
-unsigned int tracker_l = 22;
-unsigned int tracker_r = 22;
+unsigned int tracker_l = 22; //keeps track of position in audio file for the left buffer
+unsigned int tracker_r = 22; //keeps track of position in audio file for the right buffer
 
 int level = 1;
 
 alt_up_audio_dev * audio = NULL;
-unsigned int *audio_buffer_title;
+unsigned int *audio_buffer_title;//array to hold title screen background music
 /*main gameplay cursor logic, with some title screen features .. will have to seperate*/
 int main()
 {
 
 	unsigned int* picture;
 	//picture = read_image();
-	audio_buffer_title = load_audio(0);
+	audio_buffer_title = load_audio(0); //loads title screen music
 
 	KB_CODE_TYPE decode_mode;
 	alt_u8 data;

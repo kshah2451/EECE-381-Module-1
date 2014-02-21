@@ -83,7 +83,7 @@ int title_screen(alt_up_pixel_buffer_dma_dev* pixel_buffer, alt_up_char_buffer_d
 	while(enter_pressed < 2){ //wait for user to press start
 
 		//PLAY MUSIC HERE=
-		play_loop(audio_buffer_title,audio,0);
+		play_loop(audio_buffer_title,audio,0);//plays samples repeatedly until the user chooses to start, thus exitting the while loop
 
 		alt_up_char_buffer_string(char_buffer, "New Game", 35, 36);
 		alt_up_char_buffer_string(char_buffer, "Load Game", 35, 39);

@@ -8,7 +8,7 @@ unsigned int* load_audio(int file_to_load) {
 	int file_size = 0;
 	char *file_name;
 
-	switch(file_to_load){
+	switch(file_to_load){ //Sets the file_name and file_size depending on parameter file_to_load, 
 	case 0: file_size = FILESIZEOF_TITLE;
 			file_name = "title.wav";
 			break;
@@ -29,8 +29,8 @@ unsigned int* load_audio(int file_to_load) {
 			break;
 	}
 
-	temp_audio = malloc (file_size * sizeof(char));
-	audio_buffer = malloc ((file_size/2) * sizeof(int));
+	temp_audio = malloc (file_size * sizeof(char));//allocates memory for reading array character by character from SD card
+	audio_buffer = malloc ((file_size/2) * sizeof(int));//allocates memory for int array holding the audio samples to write to fifo buffers
 	int connected = 0;
 	int k,j,m,n;
 	alt_up_sd_card_dev *device_reference = NULL;
@@ -45,24 +45,24 @@ unsigned int* load_audio(int file_to_load) {
 					printf("Reading started\n");
 
 					k=0;
-					while(k<file_size){
+					while(k<file_size){//reads entire wav file into char array
 						*(temp_audio+k)=(char)alt_up_sd_card_read(handle);
 						k++;
 					}
-					alt_up_sd_card_fclose(handle);
+					alt_up_sd_card_fclose(handle);//closes file when done reading
 
 					printf("Reading completed & concatenation started\n");
 
 					n=0;
-					for(m=0;m<file_size;m+=2){
+					for(m=0;m<file_size;m+=2){//loop to concatenate characters into integers used for writing to fifo buffers
 						*(audio_buffer+n) = *(temp_audio+(m+1));
 						*(audio_buffer+n) = *(audio_buffer+n)<< 8;
 						*(audio_buffer+n)+= *(temp_audio+m);
 						n++;
 					}
-					free(temp_audio);
+					free(temp_audio); //frees memory holding character array after concatenation
 	}
-	return audio_buffer;
+	return audio_buffer;//returns to pointer to start of array with audio samples
 
 }
 
@@ -70,12 +70,12 @@ void play_loop(unsigned int* audio_buffer,alt_up_audio_dev* audio, int file_to_l
 	int number_read_l, number_read_r,samples_write_l,samples_write_r;
 	int file_size;
 	char* file_name;
-	number_read_l=0;
-	number_read_r=0;
-	samples_write_l=45;
+	number_read_l=0;//variable to hold the number of samples written in successfully
+	number_read_r=0;//variable to hold the number of samples written in successfully
+	samples_write_l=45;//number of samples to 
 	samples_write_r=45;
 
-	switch(file_to_loop){
+	switch(file_to_loop){//Sets the file_name and file_size depending on parameter file_to_load, 
 	case 0: file_size = FILESIZEOF_TITLE;
 			file_name = "title.wav";
 			break;
@@ -97,28 +97,28 @@ void play_loop(unsigned int* audio_buffer,alt_up_audio_dev* audio, int file_to_l
 	}
 
 	while(samples_write_l>0 && samples_write_r>0){
-		number_read_l = alt_up_audio_write_fifo(audio, audio_buffer+tracker_l, samples_write_l, ALT_UP_AUDIO_LEFT);
-		number_read_r = alt_up_audio_write_fifo(audio, audio_buffer+tracker_r, samples_write_r, ALT_UP_AUDIO_RIGHT);
+		number_read_l = alt_up_audio_write_fifo(audio, audio_buffer+tracker_l, samples_write_l, ALT_UP_AUDIO_LEFT);//stores the number of samples successfully written
+		number_read_r = alt_up_audio_write_fifo(audio, audio_buffer+tracker_r, samples_write_r, ALT_UP_AUDIO_RIGHT);//stores the number of samples successfully written
 		tracker_l+=number_read_l;
 		tracker_r+=number_read_l;
 		samples_write_l-=number_read_l;
 		samples_write_r-=number_read_r;
 	}
-	if((tracker_l >= (file_size/2)) || (tracker_r >= (file_size/2))){
-		tracker_l=22;
-		tracker_r=22;
+	if((tracker_l >= (file_size/2)) || (tracker_r >= (file_size/2))){ //When the end of the samples is reached
+		tracker_l=22; //resets tracker to the start of the wav file data
+		tracker_r=22; //resets tracker to the start of the wav file data
 	}
 
 }
 
 void play_once(unsigned int* audio_buffer,alt_up_audio_dev* audio, int file_to_play){
-	int number_read_l, number_read_r;
+	int number_read_l, number_read_r;//variables to hold the number of samples written in successfully
 	int file_size;
 	char* file_name;
 	number_read_l=0;
 	number_read_r=0;
 
-	switch(file_to_play){
+	switch(file_to_play){//Sets the file_name and file_size depending on parameter file_to_load, 
 	case 0: file_size = FILESIZEOF_TITLE;
 			file_name = "title.wav";
 			break;
@@ -139,13 +139,13 @@ void play_once(unsigned int* audio_buffer,alt_up_audio_dev* audio, int file_to_p
 			break;
 	}
 
-	while((tracker_l < file_size/2) && (tracker_r < file_size/2)){
-		number_read_l = alt_up_audio_write_fifo(audio, audio_buffer+tracker_l, 50, ALT_UP_AUDIO_LEFT);
-		number_read_r = alt_up_audio_write_fifo(audio, audio_buffer+tracker_r, 50, ALT_UP_AUDIO_RIGHT);
-		tracker_l+=number_read_l;
-		tracker_r+=number_read_r;
+	while((tracker_l < file_size/2) && (tracker_r < file_size/2)){//While not at the end of the samples
+		number_read_l = alt_up_audio_write_fifo(audio, audio_buffer+tracker_l, 50, ALT_UP_AUDIO_LEFT);//stores the number of samples successfully read
+		number_read_r = alt_up_audio_write_fifo(audio, audio_buffer+tracker_r, 50, ALT_UP_AUDIO_RIGHT);//stores the number of samples successfully read
+		tracker_l+=number_read_l;//increments tracker
+		tracker_r+=number_read_r;//increments tracker
 	}
-	tracker_l=22;
-	tracker_r=22;
+	tracker_l=22; //resets tracker to the start of the wav file data
+	tracker_r=22; //resets tracker to the start of the wav file data
 
 }

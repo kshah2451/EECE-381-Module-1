@@ -26,5 +26,5 @@
 // moves the cursor depending on what directional key is pressed, updates grid position of cursor
 int move_cursor(int, alt_up_ps2_dev *, KB_CODE_TYPE, alt_u8, char , alt_up_pixel_buffer_dma_dev* );
 
-
+//
 #endif /* CURSOR_H_ */
